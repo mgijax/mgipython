@@ -1,0 +1,46 @@
+#!/bin/sh
+source ./Configuration
+
+printf "\nCleaning up old Install files if needed\n"
+./clean yes
+
+printf "\nSetting up new local virtual environment using python located in $PYTHON\n"
+# set up virtual environment
+$PYTHON virtualenv.py -p $PYTHON .
+
+printf "\nsourcing the new virtual environment."
+printf "\nTo use this installation in the future, you will need to call source bin/activate\n"
+source bin/activate
+
+printf "\nInstalling psycopg2\n"
+easy_install psycopg2
+
+printf "\nInstalling SQL Alchemy\n"
+
+easy_install sqlalchemy==0.9.9
+
+printf "\nInstalling Flask\n" 
+easy_install Flask
+
+printf "\nInstalling Flask-SQLAlchemy extension\n" 
+easy_install Flask-SQLAlchemy
+
+printf "\nInstalling Flask-Admin extension\n"
+easy_install Flask-Admin
+
+printf "\nInstalling Flask Login extension\n"
+easy_install flask_login
+
+
+printf "\nInstalling Python-PAM\n"
+easy_install python-pam
+
+printf "\nInstalling WT Forms extension\n" 
+easy_install wtforms
+
+printf "\nInstalling CherryPy WSGI server \n"
+easy_install cherrypy
+
+
+printf "\nInstalling mgipython library \n"
+python setup.py install --record installed_files.txt

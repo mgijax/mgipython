@@ -1,0 +1,8 @@
+update
+VocTerm
+term	vocabname
+Test Type	allele subtype
+Test Type2	allele subtype
+Test Type3	allele subtype
+Test Type4	allele subtype
+Knockdown	allele subtype

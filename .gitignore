@@ -1,0 +1,13 @@
+.#*
+.project
+*.pyc
+bin
+build
+Configuration
+*.egg-info
+include
+installed_files.txt
+lib
+lib64
+logs
+test.db

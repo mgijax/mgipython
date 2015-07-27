@@ -1,0 +1,5 @@
+update
+AccessionMax
+prefixpart	maxnumericpart
+J:	1
+MGI:	1

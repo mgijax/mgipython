@@ -1,0 +1,8 @@
+update
+VocTerm(vocabname=allele subtype)
+term
+Test Type
+Test Type2
+Test Type3
+Test Type4
+Knockdown

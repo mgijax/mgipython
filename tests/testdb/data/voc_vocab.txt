@@ -1,0 +1,4 @@
+update
+Vocab
+_vocab_key	_refs_key	_logicaldb_key	name
+-1	-1	-1	Test Vocab
