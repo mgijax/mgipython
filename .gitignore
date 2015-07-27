@@ -1,6 +1,8 @@
 .#*
 .project
+.Python
 *.pyc
+.pydevproject
 bin
 build
 Configuration
