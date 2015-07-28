@@ -6,6 +6,7 @@
 bin
 build
 Configuration
+dist
 *.egg-info
 include
 installed_files.txt
