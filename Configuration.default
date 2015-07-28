@@ -7,3 +7,5 @@ export PYTHON
 
 PG_PATH=/usr/local/pgsql/bin/:/usr/local/postgres/lib/:/usr/local/pgsql/lib/
 export PG_PATH
+LD_LIBRARY_PATH=$PG_PATH
+export LD_LIBRARY_PATH
