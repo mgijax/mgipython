@@ -2,7 +2,7 @@
 
 # Set the python that we want to use in this virtual environment
 # We need a 2.7 python executable with zlib and ssl
-PYTHON=/usr/bin/python
+PYTHON=/opt/python/bin/python
 export PYTHON
 
 PG_PATH=/usr/local/pgsql/bin/:/usr/local/postgres/lib/:/usr/local/pgsql/lib/
