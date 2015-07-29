@@ -1,9 +1,5 @@
 #!/bin/sh
 
-
-
-
-
 source ./Configuration
 
 printf "\nCleaning up old Install files if needed\n"
