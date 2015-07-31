@@ -18,7 +18,7 @@ easy_install psycopg2
 
 printf "\nInstalling SQL Alchemy\n"
 
-easy_install sqlalchemy==0.9.9
+easy_install sqlalchemy==1.0.8
 
 printf "\nInstalling Flask\n" 
 easy_install Flask
@@ -45,3 +45,11 @@ easy_install cherrypy
 
 printf "\nInstalling mgipython library \n"
 python setup.py install --record installed_files.txt
+
+printf "\nRunning unit tests \n"
+cd tests
+python all_tests.py
+if [ $? -ne 0 ]; then
+	printf "\nUnit tests failed \n"
+        exit 1
+fi
