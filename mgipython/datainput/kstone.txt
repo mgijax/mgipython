@@ -1,4 +1,0 @@
-update
-MGIUser
-_user_key	_usertype_key	_userstatus_key	login	name
-9999	316355	316350	kstone	Kevin Stone
