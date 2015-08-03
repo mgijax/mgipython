@@ -2,6 +2,8 @@
 
 import argparse
 import os
+import logging
+from . import logger
 
 def parseInput():
 	"""
@@ -32,9 +34,9 @@ def processFiles(inputFiles,
 	from handler import getHandler	
 	from mgipython.modelconfig import db
 	
-	print db
+	logger.debug("db = %s" % db)
 	
-	print inputFiles
+	logger.debug("input files = %s" % inputFiles)
 	
 	# start transaction
 	con = db.session.connection()
@@ -48,7 +50,7 @@ def processFiles(inputFiles,
 		
 	for inputFile in inputFiles:
 		config = _readConfig(inputFile)
-		print config
+		logger.debug(config)
 		
 		
 		# get the handler
@@ -59,26 +61,28 @@ def processFiles(inputFiles,
 								opType = config['opType'],
 								relativeKeyMap = relativeKeyMap)
 		
-		print "\nProcessing file with %s handler" % handler.DATA_TYPE
+		logger.debug("Processing file with %s handler" % handler.DATA_TYPE)
 		
 		
 		handler.validate()
 		
-		print "validated %s file %s" % (handler.DATA_TYPE, handler.filePointer.name)
+		logger.debug("validated %s file %s" % (handler.DATA_TYPE, handler.filePointer.name))
 		
-		print "Calculating inserts and updates"
+		logger.debug("Calculating inserts and updates")
 		
 		handler.unify()
 		
-		print "Calculated inserts and updates"
+		logger.debug("Calculated inserts and updates")
 		
-		print handler.ops
+		logger.debug(handler.ops)
 		
-		print "loading data file"
+		logger.debug("loading data file")
 		
 		handler.load()
 		
 	db.session.commit()
+	
+	logger.debug("Done processing input files")
 
 def _readConfig(inputFile):
 	"""
@@ -153,6 +157,8 @@ def writeDataFile(fileName, dataRows,
 
 if __name__ == "__main__":
 
+	logging.basicConfig(level=logging.INFO)
+	
 	args = parseInput()
 	inputFiles = args.files
 	
@@ -181,4 +187,4 @@ if __name__ == "__main__":
 		for f in inputFiles:
 			f.close()
 
-	print "successfully loaded %s" % [f.name for f in inputFiles]
+	logger.info("successfully loaded %s" % [f.name for f in inputFiles])

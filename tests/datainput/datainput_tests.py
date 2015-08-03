@@ -12,10 +12,15 @@ import unittest
 
 
 # TODO(kstone): get testdb setting somewhere
-server = 'localhost'
-database = 'export'
-user = 'mgd_dbo'
-password = 'db0dev'
+server = os.environ['MGD_DBSERVER']
+database = os.environ['MGD_DBNAME']
+user = os.environ['MGD_DBUSER']
+password = os.environ['MGD_DBSERVER']
+user=os.environ['MGD_DBUSER']
+passwordFile=os.environ['MGD_DBPASSWORDFILE']
+password=''
+with open(passwordFile, 'r') as f:
+    password = f.readline()
 
 
 from testdb import init_testdb
