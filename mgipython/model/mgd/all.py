@@ -38,15 +38,6 @@ class AlleleAnnotView(db.Model,MGIModel):
 
 ### Allele tables ###
 
-class AlleleMarkerAssoc(db.Model,MGIModel):
-    __tablename__="all_marker_assoc"
-    _assoc_key = db.Column(db.Integer,primary_key=True)
-    _marker_key = db.Column(db.Integer,mgi_fk("mrk_marker._marker_key"))
-    _allele_key = db.Column(db.Integer,mgi_fk("all_allele._allele_key"))
-    _qualifier_key = db.Column(db.Integer())
-    _status_key = db.Column(db.Integer())
-
-
 class AlleleCelllineAssoc(db.Model,MGIModel):
     __tablename__="all_allele_cellline"
     _assoc_key = db.Column(db.Integer,primary_key=True)
@@ -71,6 +62,7 @@ class Allele(db.Model,MGIModel):
 
     __tablename__ = "all_allele"
     _allele_key = db.Column(db.Integer,primary_key=True)
+    _marker_key = db.Column(db.Integer, mgi_fk("mrk_marker._marker_key"))
     _allele_status_key = db.Column(db.Integer)
     _allele_type_key=db.Column(db.Integer())
     _mode_key=db.Column(db.Integer())
@@ -265,10 +257,6 @@ class Allele(db.Model,MGIModel):
     )
 
     marker = db.relationship("Marker",
-        secondary=AlleleMarkerAssoc.__table__,
-        primaryjoin="and_(Allele._allele_key==AlleleMarkerAssoc._allele_key) ", 
-        secondaryjoin="AlleleMarkerAssoc._marker_key==Marker._marker_key",
-        foreign_keys="[Allele._allele_key,Marker._marker_key]",
         uselist=False,
         backref="alleles"
     )
