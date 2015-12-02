@@ -3,7 +3,9 @@ from mgipython.modelconfig import db
 from ..core import *
 from acc import Accession
 from mgi import Organism, ReferenceAssoc
+from seq import SeqMarkerCache
 from voc import VocAnnot
+
     
 class MarkerDetailClipNoteChunk(db.Model,MGIModel):
     __tablename__ = "mrk_notes"
@@ -146,6 +148,15 @@ class Marker(db.Model,MGIModel):
                 "Accession._mgitype_key==%s)" % _mgitype_key,
             foreign_keys="[Accession._object_key]",
             order_by="Accession.accid")
+    
+    
+    biotypeconflict_sequences = db.relationship("SeqMarkerCache",
+            primaryjoin="and_(SeqMarkerCache._marker_key==Marker._marker_key,"
+                "SeqMarkerCache._biotypeconflict_key==%s)" % \
+                        SeqMarkerCache._biotypeconflict_yes_key,
+            foreign_keys="[SeqMarkerCache._marker_key]",
+            order_by="SeqMarkerCache._logicaldb_key,SeqMarkerCache.accid")
+    
 
     locations = db.relationship("MarkerLocationCache",
         primaryjoin="Marker._marker_key==MarkerLocationCache._marker_key",

@@ -1,4 +1,4 @@
-# All models for the mgi_* tables
+# All models for the voc_* tables
 from mgipython.modelconfig import db
 from ..core import *
 from acc import Accession
