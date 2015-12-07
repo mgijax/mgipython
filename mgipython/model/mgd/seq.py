@@ -12,7 +12,7 @@ class SeqMarkerCache(db.Model,MGIModel):
     _sequence_key = db.Column(db.Integer)
     _marker_key = db.Column(db.Integer, mgi_fk("mrk_marker._marker_key"))
     _organism_key = db.Column(db.Integer)
-    _logicaldb_key = db.Column(db.Integer)
+    _logicaldb_key = db.Column(db.Integer, mgi_fk("acc_logicaldb._logicaldb_key"))
     accid = db.Column(db.String())
     rawbiotype = db.Column(db.String())
     _sequenceprovider_key = db.Column(db.Integer)
@@ -32,4 +32,20 @@ class SeqMarkerCache(db.Model,MGIModel):
     
     
     marker = db.relationship("Marker")
+    
+    logicaldb_obj = db.relationship("LogicalDb")
+    
+    @property
+    def sequence_url(self):
+        """
+        This requires loading logicaldb_obj
+            and logicaldb_obj.actualdb
+        """
+        url = ""
+        if self.logicaldb_obj and \
+            self.logicaldb_obj.actualdb:
+            
+            url = self.logicaldb_obj.actualdb.url.replace("@@@@", self.accid)
+        
+        return url
     
