@@ -88,7 +88,8 @@ class Sequence(db.Model,MGIModel):
         primaryjoin="Sequence._sequence_key==SeqMarkerCache._sequence_key",
         secondaryjoin="SeqMarkerCache._marker_key==Marker._marker_key",
         foreign_keys="[Sequence._sequence_key,Marker._marker_key]",
-        backref="sequences"
+        backref="sequences",
+        order_by="Marker.symbol"
     )
     
     # sequence can have multiple IDs
