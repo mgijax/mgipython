@@ -93,6 +93,8 @@ class Marker(db.Model,MGIModel):
     #constants
     _mgitype_key=2
     _mcv_annottype_key=1011
+    # the biotype conflict term
+    _biotypeconflict_yes_key = 5420767
     
     # joined fields
     organism = db.column_property(
@@ -150,10 +152,9 @@ class Marker(db.Model,MGIModel):
             order_by="Accession.accid")
     
     
-    biotypeconflict_sequences = db.relationship("SeqMarkerCache",
+    biotype_sequences = db.relationship("SeqMarkerCache",
             primaryjoin="and_(SeqMarkerCache._marker_key==Marker._marker_key,"
-                "SeqMarkerCache._biotypeconflict_key==%s)" % \
-                        SeqMarkerCache._biotypeconflict_yes_key,
+                "SeqMarkerCache.rawbiotype!=None)",
             foreign_keys="[SeqMarkerCache._marker_key]",
             order_by="SeqMarkerCache._logicaldb_key,SeqMarkerCache.accid")
     
@@ -203,11 +204,29 @@ class Marker(db.Model,MGIModel):
     # mapping_experiment_assocs
     # backref in ExperimentMarkerAssoc class
     
+    # sequences
+    # backref in Sequence class
+    
     @classmethod
     def has_explicit_references(self):
         q = self.query.filter(Marker.explicit_references.any())
         return db.object_session(self).query(db.literal(True)) \
             .filter(q.exists()).scalar()
+            
+    @property
+    def has_biotypeconflict(self):
+        """
+        Requires loading self.biotype_sequences
+        """
+        conflict = False
+        if self.biotype_sequences:
+            
+            for seq_cache in self.biotype_sequences:
+                
+                if seq_cache._biotypeconflict_key == self._biotypeconflict_yes_key:
+                    conflict = True
+            
+        return conflict
 
     @property
     def featuretype(self):
