@@ -178,114 +178,6 @@ class Genotype(db.Model, MGIModel):
     
 
 ### assay tables ###
-
-class ADStructure(db.Model, MGIModel):
-    __tablename__ = "gxd_structure"
-    _structure_key = db.Column(db.Integer, primary_key=True)
-    _structurename_key = db.Column(db.Integer, mgi_fk("gxd_structurename._structurename_key"))
-    _parent_key = db.Column(db.Integer, db.ForeignKey(_structure_key))
-    _stage_key = db.Column(db.Integer)
-    printname = db.Column(db.String())
-    structurenote = db.Column(db.Integer)
-    
-    # constants
-    _mgitype_key = 38
-    
-    # column properties
-    
-    mgiid = db.column_property(
-        db.select([Accession.accid]).
-        where(db.and_(Accession._mgitype_key==_mgitype_key,
-            Accession.prefixpart=='MGI:', 
-            Accession.preferred==1, 
-            Accession._logicaldb_key==1, 
-            Accession._object_key==_structure_key)) 
-    )
-    
-    # relationships
-    
-    mgiid_object = db.relationship("Accession",
-        primaryjoin="and_(Accession._object_key==ADStructure._structure_key,"
-                    "Accession.prefixpart=='MGI:',"
-                    "Accession.preferred==1,"
-                    "Accession._logicaldb_key==1,"
-                    "Accession._mgitype_key==%d)" % _mgitype_key,
-        foreign_keys="Accession._object_key",
-        uselist=False
-    )
-    
-    secondaryids = db.relationship("Accession",
-        primaryjoin="and_(Accession._object_key==ADStructure._structure_key,"
-                    "Accession._logicaldb_key!=1,"
-                    "Accession._mgitype_key==%d)" % _mgitype_key,
-        foreign_keys="Accession._object_key",
-        order_by="Accession.accid"
-    )
-    
-    # all names, including synonyms
-    names = db.relationship("ADStructureName",
-        primaryjoin="ADStructureName._structure_key==ADStructure._structure_key",
-        foreign_keys="[ADStructureName._structure_key]"
-    )
-    
-    # results
-    # backref in Result class
-    
-    # only synonyms
-    synonyms = db.relationship("ADStructureName",
-        primaryjoin="and_(ADStructureName._structure_key==ADStructure._structure_key,"
-                    "ADStructureName._structurename_key!=ADStructure._structurename_key)",
-        foreign_keys="[ADStructureName._structure_key,ADStructureName._structurename_key]",
-        order_by="ADStructureName.structure"
-    )
-    
-    children = db.relationship("ADStructure",
-        backref=db.backref("parent", remote_side=_structure_key)
-    )
-    
-    # parent
-    # backref defined above
-    
-    @property
-    def stage(self):
-        return self._stage_key
-     
-    @property
-    def emapsterm(self):
-        term_object = None
-        if self.mgiid_object and self.mgiid_object.emapsids:
-            term_object = self.mgiid_object.emapsids[0].vocterm
-        return term_object
-    
-    # for vocterm compatibility
-    @property
-    def primaryid(self):
-        return self.mgiid
-    
-    @property
-    def term(self):
-        return self.printname
-    
-    @property
-    def display(self):
-        return "TS%s: %s" % (self.stage, self.printname)
-    
-    def __repr__(self):
-        return self.display
-    
-class ADStructureName(db.Model, MGIModel):
-    __tablename__ = "gxd_structurename"
-    _structurename_key = db.Column(db.Integer, primary_key=True)
-    _structure_key = db.Column(db.Integer, mgi_fk("gxd_structure._structure_key"))
-    structure = db.Column(db.String())
-    
-     # for vocterm compatibility
-    @property
-    def synonym(self):
-        return self.structure
-    
-    def __repr__(self):
-        return self.structure
     
 class AssayNote(db.Model, MGIModel):
     __tablename__ = "gxd_assaynote"
@@ -450,7 +342,8 @@ class Result(db.Model, MGIModel):
     _marker_key = db.Column(db.Integer, mgi_fk("mrk_marker._marker_key"))
     _assay_key = db.Column(db.Integer, mgi_fk("gxd_assay._assay_key"))
     _assaytype_key = db.Column(db.Integer, mgi_fk("gxd_assaytype._assaytype_key"))
-    _structure_key = db.Column(db.Integer, mgi_fk("gxd_structure._structure_key"))
+    _emapa_term_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    _stage_key = db.Column(db.Integer, mgi_fk("gxd_theilerstage._stage_key"))
     _genotype_key = db.Column(db.Integer, mgi_fk("gxd_genotype._genotype_key"))
     _specimen_key = db.Column(db.Integer, mgi_fk("gxd_specimen._specimen_key"))
     
@@ -479,7 +372,7 @@ class Result(db.Model, MGIModel):
         uselist=False 
     )
 
-    structure = db.relationship("ADStructure",
+    structure = db.relationship("VocTerm",
         backref="results",    
         uselist=False 
     )
@@ -889,8 +782,28 @@ class InSituResultStructure(db.Model, MGIModel):
     __tablename__ = "gxd_isresultstructure"
     _result_key = db.Column(db.Integer, mgi_fk("gxd_insituresult._result_key"), 
             primary_key=True)
-    _structure_key = db.Column(db.Integer, mgi_fk("gxd_structure._structure_key"), 
+    _emapa_term_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"), 
             primary_key=True)
+    _stage_key = db.Column(db.Integer, mgi_fk("gxd_theilerstage._stage_key"),
+            primary_key=True)
+    
+    term = db.column_property(
+        db.select([VocTerm.term]).
+        where(VocTerm._term_key==_emapa_term_key)
+    )
+    
+    @property
+    def stage(self):
+        return self._stage_key
+    
+    @property
+    def display(self):
+        
+        display = ''
+        if self.term:
+            display = 'TS%s: %s' % (self._stage_key, self.term)
+        return display
+    
     
 class InSituResultImagePane(db.Model, MGIModel):
     __tablename__ = "gxd_insituresultimage"
@@ -924,9 +837,7 @@ class InSituResult(db.Model, MGIModel):
             secondary=InSituResultImagePane.__table__,
             backref="insituresults")
     
-    structures = db.relationship("ADStructure",
-            secondary=InSituResultStructure.__table__,
-            order_by="ADStructure.printname",
+    structures = db.relationship("InSituResultStructure",
             backref="insituresults")
     
 
@@ -947,8 +858,28 @@ class GelLaneStructure(db.Model, MGIModel):
     __tablename__ = "gxd_gellanestructure"
     _gellane_key = db.Column(db.Integer, mgi_fk("gxd_gellane._gellane_key"), 
             primary_key=True)
-    _structure_key = db.Column(db.Integer, mgi_fk("gxd_structure._structure_key"), 
+    _emapa_term_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"), 
             primary_key=True)
+    _stage_key = db.Column(db.Integer, mgi_fk("gxd_theilerstage._stage_key"), 
+            primary_key=True)
+    
+    term = db.column_property(
+        db.select([VocTerm.term]).
+        where(VocTerm._term_key==_emapa_term_key)
+    )
+    
+    @property
+    def stage(self):
+        return self._stage_key
+    
+    @property
+    def display(self):
+        
+        display = ''
+        if self.term:
+            display = 'TS%s: %s' % (self._stage_key, self.term)
+        return display
+    
     
 class GelLane(db.Model, MGIModel):
     __tablename__ = "gxd_gellane"
@@ -981,11 +912,7 @@ class GelLane(db.Model, MGIModel):
             order_by="GelBand.gelrow_sequencenum",
             backref=db.backref("gellane", uselist=False))
     
-    structures = db.relationship("ADStructure",
-        primaryjoin="GelLane._gellane_key==GelLaneStructure._gellane_key",
-        secondary=GelLaneStructure.__table__,
-        secondaryjoin="GelLaneStructure._structure_key==ADStructure._structure_key",
-        foreign_keys="[GelLane._gellane_key, ADStructure._structure_key]",
+    structures = db.relationship("GelLaneStructure",
         backref="gellanes")
     
     genotype = db.relationship("Genotype",
