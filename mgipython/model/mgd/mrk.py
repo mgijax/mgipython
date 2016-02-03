@@ -9,14 +9,14 @@ from voc import VocAnnot
     
 class MarkerDetailClipNoteChunk(db.Model,MGIModel):
     __tablename__ = "mrk_notes"
-    _marker_key = db.Column(db.Integer,db.ForeignKey("mrk_marker._marker_key"),primary_key=True)
+    _marker_key = db.Column(db.Integer,mgi_fk("mrk_marker._marker_key"),primary_key=True)
     note = db.Column(db.String())
     sequencenum = db.Column(db.Integer, primary_key=True)
 
 class MarkerLocationCache(db.Model,MGIModel):
     __tablename__="mrk_location_cache"
     _cache_key = db.Column(db.Integer,primary_key=True)
-    _marker_key = db.Column(db.Integer,db.ForeignKey("mrk_marker._marker_key"))
+    _marker_key = db.Column(db.Integer,mgi_fk("mrk_marker._marker_key"))
     _organism_key = db.Column(db.Integer())
     chromosome = db.Column(db.String())
     cytogeneticoffset = db.Column(db.String())

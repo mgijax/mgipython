@@ -327,7 +327,7 @@ class Probe(db.Model,MGIModel):
     
 class ProbeNoteChunk(db.Model,MGIModel):
     __tablename__ = "prb_notes"
-    _probe_key = db.Column(db.Integer,db.ForeignKey("prb_probe._probe_key"),primary_key=True)
+    _probe_key = db.Column(db.Integer,mgi_fk("prb_probe._probe_key"),primary_key=True)
     note = db.Column(db.String())
     sequencenum = db.Column(db.Integer, primary_key=True)
     
