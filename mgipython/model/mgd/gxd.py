@@ -889,7 +889,7 @@ class GelLane(db.Model, MGIModel):
     __tablename__ = "gxd_gellane"
     _gellane_key = db.Column(db.Integer, primary_key=True)
     _assay_key = db.Column(db.Integer, mgi_fk("gxd_assay._assay_key"))
-    _gelcontrol_key = db.Column(db.Integer, mgi_fk("gxd_gelcontrol"))
+    _gelcontrol_key = db.Column(db.Integer, mgi_fk("gxd_gelcontrol._gelcontrol_key"))
     _genotype_key = db.Column(db.Integer, mgi_fk("gxd_genotype._genotype_key"))
     _gelrnatype_key = db.Column(db.Integer)
     sequencenum = db.Column(db.Integer)
