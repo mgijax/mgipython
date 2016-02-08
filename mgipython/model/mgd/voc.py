@@ -20,6 +20,45 @@ class VocTextChunk(db.Model,MGIModel):
     _term_key = db.Column(db.Integer,mgi_fk("voc_term._term_key"),primary_key=True)
     sequencenum = db.Column(db.Integer(),primary_key=True)
     note = db.Column(db.String())
+    
+class VocTermEMAPA(db.Model,MGIModel):
+    __tablename__ = "voc_term_emapa"
+    _term_key = db.Column(db.Integer,mgi_fk("voc_term._term_key"),primary_key=True)
+    _defaultparent_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    startstage = db.Column(db.Integer, mgi_fk("gxd_theilerstage._stage_key"))
+    endstage = db.Column(db.Integer, mgi_fk("gxd_theilerstage._stage_key"))
+    
+    # relationships 
+    
+    # vocterm
+    # defined in VocTerm
+    
+    defaultparent = db.relationship("VocTerm",
+                primaryjoin = "and_(VocTerm._term_key==VocTermEMAPA._defaultparent_key)",
+                foreign_keys = "[VocTerm._term_key]",
+                uselist=False)
+    
+    
+class VocTermEMAPS(db.Model,MGIModel):
+    __tablename__ = "voc_term_emaps"
+    _term_key = db.Column(db.Integer,mgi_fk("voc_term._term_key"),primary_key=True)
+    _emapa_term_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    _stage_key = db.Column(db.Integer, mgi_fk("gxd_theilerstage._stage_key"))
+    
+    # relationships
+    
+    # vocterm
+    # defined in VocTerm
+    
+    emapa_term = db.relationship("VocTerm",
+                primaryjoin = "and_(VocTerm._term_key==VocTermEMAPS._emapa_term_key)",
+                foreign_keys = "[VocTerm._term_key]",
+                uselist=False)
+    
+    @property
+    def stage(self):
+        return self._stage_key
+    
 
 class VocTerm(db.Model,MGIModel):
     __tablename__ = "voc_term"
@@ -89,6 +128,22 @@ class VocTerm(db.Model,MGIModel):
     
     voctextchunks = db.relationship("VocTextChunk",
         order_by="VocTextChunk.sequencenum")
+    
+    
+    # only valid for EMAPS term
+    emapa_info = db.relationship("VocTermEMAPA",
+                primaryjoin="VocTermEMAPA._term_key==VocTerm._term_key",
+                foreign_keys="[VocTermEMAPA._term_key]",
+                backref=db.backref("vocterm",uselist=False),
+                uselist=False)
+    
+    # only valid for EMAPA term
+    emaps_info = db.relationship("VocTermEMAPS",
+                primaryjoin="VocTermEMAPS._term_key==VocTerm._term_key",
+                foreign_keys="[VocTermEMAPS._term_key]",
+                backref=db.backref("vocterm",uselist=False),
+                uselist=False)
+    
     
     # DEFINED IN dag.py 
     #     Because I can't resolve cyclic import
