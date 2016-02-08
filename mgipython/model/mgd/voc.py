@@ -106,6 +106,15 @@ class VocTerm(db.Model,MGIModel):
         foreign_keys="[Accession._object_key]"
     )
     
+    # for searching
+    all_accession_ids = db.relationship("Accession",
+        primaryjoin="and_(Accession._object_key==VocTerm._term_key,"
+                    "Accession._mgitype_key==%d)" % _mgitype_key,
+        foreign_keys="[Accession._object_key]")
+    
+    vocab = db.relationship("Vocab",
+            uselist=False)
+    
     synonyms = db.relationship("Synonym",
         primaryjoin="and_(VocTerm._term_key==Synonym._object_key, " 
                 "Synonym._mgitype_key==%d)" % _mgitype_key,
