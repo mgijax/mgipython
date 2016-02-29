@@ -73,6 +73,13 @@ class SetMember(db.Model, MGIModel):
     
     # relationships
     emapa = db.relationship("SetMemberEMAPA",
+        cascade="save-update, delete",
+        uselist=False)
+    
+    emapa_term = db.relationship("VocTerm",
+        primaryjoin="and_(VocTerm._term_key==SetMember._object_key,"
+            "SetMember._set_key==%d)" % _emapa_term_set_key,
+        foreign_keys="[SetMember._object_key]",
         uselist=False)
     
 

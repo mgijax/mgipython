@@ -6,6 +6,8 @@ Edit the EMAPA clipboard
 from mgipython.modelconfig import db
 from ...core import *
 from ...mgd import *
+from ...query import batchLoadAttribute
+from mgipython.util.sort import smartAlphaCompare
 
 
 # constants
@@ -59,3 +61,70 @@ def insertItem(_user_key,
     
     db.session.add(setMember)
     
+    
+def deleteItem(_setmember_key):
+    """
+    Deletes an EMAPA clipboard item
+    """
+    
+    setMember = SetMember.query.filter_by(_setmember_key=_setmember_key).first()
+    
+    if setMember:
+        
+        setMember._object_key = None
+        db.session.delete(setMember)
+    
+    
+    
+def sortItemsByAlpha(_user_key):
+    """
+    Sorts all EMAPA clipboard items
+        where _createdby_key == _user_key
+        
+    Sort is by stage, then alpha on term
+    """
+    
+    items = SetMember.query.filter_by(_set_key=EMAPA_CLIPBOARD_SET_KEY) \
+        .filter_by(_createdby_key=_user_key) \
+        .all()
+        
+    batchLoadAttribute(items, "emapa")
+    batchLoadAttribute(items, "emapa_term")
+        
+    # sort
+    _sortItemsByAlpha(items)
+    
+    
+    db.session.add_all(items)
+    
+    
+    
+# function for testing
+def _sortItemsByAlpha(items):
+    """
+    Sort clipboard items by alpha
+    returns nothing.
+    
+    Assigns new sequencenum for each item
+    """
+    
+    # define the compare function
+    def stageTermCompare(a, b):
+        
+        if a.emapa._stage_key != b.emapa._stage_key:
+            return cmp(a.emapa._stage_key, b.emapa._stage_key)
+        
+        # user smart alpha for the term
+        return smartAlphaCompare(a.emapa_term.term, b.emapa_term.term)
+        
+    # apply the sort
+    items.sort(stageTermCompare)
+    
+    # assign sequencenum
+    newSeqnum = 0
+    for item in items:
+        
+        newSeqnum += 1
+        item.sequencenum = newSeqnum
+        
+        
