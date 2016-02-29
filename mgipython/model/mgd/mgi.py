@@ -3,12 +3,6 @@ from mgipython.modelconfig import db
 from ..core import *
 from datetime import datetime
 
-class EmapSMapping(db.Model, MGIModel):
-    __tablename__ = "mgi_emaps_mapping"
-    _mapping_key = db.Column(db.Integer, primary_key=True)
-    accid = db.Column(db.String())
-    emapsid = db.Column(db.String())
-
 class NoteType(db.Model,MGIModel):
     __tablename__ = "mgi_notetype"
     _notetype_key = db.Column(db.Integer,primary_key=True)
@@ -65,6 +59,31 @@ class ReferenceAssoc(db.Model, MGIModel):
         uselist=False
     )
 
+class SetMember(db.Model, MGIModel):
+    __tablename__ = "mgi_setmember"
+    _setmember_key = db.Column(db.Integer, primary_key=True)
+    _set_key = db.Column(db.Integer)
+    _object_key = db.Column(db.Integer)
+    sequencenum = db.Column(db.Integer)
+    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    
+    # constants
+    _emapa_term_set_key = 1046
+    
+    # relationships
+    emapa = db.relationship("SetMemberEMAPA",
+        uselist=False)
+    
+
+class SetMemberEMAPA(db.Model, MGIModel):
+    __tablename__ = "mgi_setmember_emapa"
+    _setmember_emapa_key = db.Column(db.Integer, primary_key=True)
+    _setmember_key = db.Column(db.Integer, mgi_fk("mgi_setmember._setmember_key"))
+    _stage_key = db.Column(db.Integer)
+    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    
 
 class Synonym(db.Model,MGIModel):
     __tablename__ = "mgi_synonym"

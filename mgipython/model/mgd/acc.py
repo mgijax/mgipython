@@ -1,7 +1,6 @@
 # All models for the acc_* tables
 from mgipython.modelconfig import db
 from ..core import *
-from mgi import EmapSMapping
 
 class ActualDb(db.Model,MGIModel):
     __tablename__ = "acc_actualdb"
@@ -71,12 +70,6 @@ class Accession(db.Model,MGIModel):
                 secondary=AccessionReference.__table__,
                 backref="accessions")
     
-    emapsids = db.relationship("Accession",
-        primaryjoin="Accession.accid==EmapSMapping.accid",
-        secondary=EmapSMapping.__table__,
-        secondaryjoin="Accession.accid==EmapSMapping.emapsid",
-        foreign_keys="[EmapSMapping.emapsid, Accession.accid]",
-        backref="adstructureids")
     
     vocterm = db.relationship("VocTerm",
         primaryjoin="VocTerm._term_key==Accession._object_key",
