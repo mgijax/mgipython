@@ -3,7 +3,6 @@ from mgipython.modelconfig import db
 from ..core import *
 from datetime import datetime
 
-
 class Set(db.Model, MGIModel):
     __tablename__ = "mgi_set"
     _set_key = db.Column(db.Integer, primary_key=True)
@@ -20,12 +19,6 @@ class SetMember(db.Model, MGIModel):
     _createdby_key = db.Column(db.Integer, default=1001)
     sequencenum = db.Column(db.Integer)
     
-    name = db.column_property(
-        db.select([Set.name]).
-        where(Set._set_key==_set_key)
-    )
-
-
     #set_member_emapa backref defined in SetMemberEMAPA
     
     # only valid for clipboard entries
@@ -111,6 +104,38 @@ class ReferenceAssoc(db.Model, MGIModel):
         uselist=False
     )
 
+class SetMember(db.Model, MGIModel):
+    __tablename__ = "mgi_setmember"
+    _setmember_key = db.Column(db.Integer, primary_key=True)
+    _set_key = db.Column(db.Integer)
+    _object_key = db.Column(db.Integer)
+    sequencenum = db.Column(db.Integer)
+    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    
+    # constants
+    _emapa_term_set_key = 1046
+    
+    # relationships
+    emapa = db.relationship("SetMemberEMAPA",
+        cascade="save-update, delete",
+        uselist=False)
+    
+    emapa_term = db.relationship("VocTerm",
+        primaryjoin="and_(VocTerm._term_key==SetMember._object_key,"
+            "SetMember._set_key==%d)" % _emapa_term_set_key,
+        foreign_keys="[SetMember._object_key]",
+        uselist=False)
+    
+
+class SetMemberEMAPA(db.Model, MGIModel):
+    __tablename__ = "mgi_setmember_emapa"
+    _setmember_emapa_key = db.Column(db.Integer, primary_key=True)
+    _setmember_key = db.Column(db.Integer, mgi_fk("mgi_setmember._setmember_key"))
+    _stage_key = db.Column(db.Integer)
+    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    
 
 class Synonym(db.Model,MGIModel):
     __tablename__ = "mgi_synonym"

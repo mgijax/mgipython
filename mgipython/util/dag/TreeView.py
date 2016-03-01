@@ -22,7 +22,7 @@ def buildTreeView(vocTerm, dag=None):
         'label' : vocTerm.term,
         'oc': 'open'
     }
-    
+        
     # expand startNode one level down
     children = buildChildNodes(vocTerm)
     if children:
@@ -57,7 +57,7 @@ def buildParentNodes(vocTerm, nodeObj):
         # we have no parents, so must be at the top
         # return current nodeObj
         return nodeObj
-    
+        
     # now create new parent node and attach the child
     newNode = {
         'id': defaultParent.primaryid,
@@ -91,12 +91,13 @@ def buildChildNodes(vocTerm):
     if vocTerm.dagnode:
         
         if vocTerm.dagnode.child_edges:
-            
+                        
             # pre-load needed relationships
+            batchLoadAttribute(vocTerm.dagnode.child_edges, "child_node")
             batchLoadAttribute(vocTerm.dagnode.child_edges, "child_node.vocterm")
             childNodes = [edge.child_node for edge in vocTerm.dagnode.child_edges]
             batchLoadAttributeExists(childNodes, ["child_edges"])
-            
+                        
             childNodes.sort(key=lambda x: x.vocterm.term)
             
             for childNode in childNodes:
