@@ -11,21 +11,54 @@ class Set(db.Model, MGIModel):
     sequencenum = db.Column(db.Integer)
     _createdby_key = db.Column(db.Integer, default=1001)
 
+
 class SetMember(db.Model, MGIModel):
     __tablename__ = "mgi_setmember"
     _setmember_key = db.Column(db.Integer, primary_key=True)
     _set_key = db.Column(db.Integer, mgi_fk("mgi_set._set_key"))
     _object_key = db.Column(db.Integer)
-    _createdby_key = db.Column(db.Integer, default=1001)
     sequencenum = db.Column(db.Integer)
+    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
     
-    #set_member_emapa backref defined in SetMemberEMAPA
+    # constants
+    _emapa_term_set_key = 1046
     
-    # only valid for clipboard entries
-    term = db.relationship("VocTerm",
-                primaryjoin="SetMember._object_key==VocTerm._term_key",
-                foreign_keys="[VocTerm._term_key]",
-                uselist=False)
+    # relationships
+    emapa = db.relationship("SetMemberEMAPA",
+        cascade="save-update, delete",
+        uselist=False)
+    
+    emapa_term = db.relationship("VocTerm",
+        primaryjoin="and_(VocTerm._term_key==SetMember._object_key,"
+            "SetMember._set_key==%d)" % _emapa_term_set_key,
+        foreign_keys="[SetMember._object_key]",
+        uselist=False)
+        
+
+#class SetMember(db.Model, MGIModel):
+#    __tablename__ = "mgi_setmember"
+#    _setmember_key = db.Column(db.Integer, primary_key=True)
+#    _set_key = db.Column(db.Integer, mgi_fk("mgi_set._set_key"))
+#    _object_key = db.Column(db.Integer)
+#    _createdby_key = db.Column(db.Integer, default=1001)
+#    sequencenum = db.Column(db.Integer)
+#    
+#    #set_member_emapa backref defined in SetMemberEMAPA
+#    
+#    # only valid for clipboard entries
+#    term = db.relationship("VocTerm",
+#                primaryjoin="SetMember._object_key==VocTerm._term_key",
+#                foreign_keys="[VocTerm._term_key]",
+#                uselist=False)
+
+#class SetMemberEMAPA(db.Model, MGIModel):
+#    __tablename__ = "mgi_setmember_emapa"
+#    _setmember_emapa_key = db.Column(db.Integer, primary_key=True)
+#    _setmember_key = db.Column(db.Integer, mgi_fk("mgi_setmember._setmember_key"))
+#    _stage_key = db.Column(db.Integer)
+#    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+#    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
 
 
 class SetMemberEMAPA(db.Model, MGIModel):
@@ -34,12 +67,13 @@ class SetMemberEMAPA(db.Model, MGIModel):
     _setmember_key = db.Column(db.Integer, mgi_fk("mgi_setmember._setmember_key"))
     _stage_key = db.Column(db.Integer)
     _createdby_key = db.Column(db.Integer, default=1001)
+    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
     
     # only valid for EMAPA term
-    set_member = db.relationship("SetMember",
+    emapa = db.relationship("SetMember",
                 primaryjoin="SetMemberEMAPA._setmember_key==SetMember._setmember_key",
                 foreign_keys="[SetMember._setmember_key]",
-                backref=db.backref("set_member_emapa",uselist=False),
+                backref=db.backref("set_member_emapa", uselist=False, cascade="save-update, delete"),
                 uselist=False)
 
 class EmapSMapping(db.Model, MGIModel):
@@ -104,38 +138,6 @@ class ReferenceAssoc(db.Model, MGIModel):
         uselist=False
     )
 
-class SetMember(db.Model, MGIModel):
-    __tablename__ = "mgi_setmember"
-    _setmember_key = db.Column(db.Integer, primary_key=True)
-    _set_key = db.Column(db.Integer)
-    _object_key = db.Column(db.Integer)
-    sequencenum = db.Column(db.Integer)
-    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
-    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
-    
-    # constants
-    _emapa_term_set_key = 1046
-    
-    # relationships
-    emapa = db.relationship("SetMemberEMAPA",
-        cascade="save-update, delete",
-        uselist=False)
-    
-    emapa_term = db.relationship("VocTerm",
-        primaryjoin="and_(VocTerm._term_key==SetMember._object_key,"
-            "SetMember._set_key==%d)" % _emapa_term_set_key,
-        foreign_keys="[SetMember._object_key]",
-        uselist=False)
-    
-
-class SetMemberEMAPA(db.Model, MGIModel):
-    __tablename__ = "mgi_setmember_emapa"
-    _setmember_emapa_key = db.Column(db.Integer, primary_key=True)
-    _setmember_key = db.Column(db.Integer, mgi_fk("mgi_setmember._setmember_key"))
-    _stage_key = db.Column(db.Integer)
-    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
-    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
-    
 
 class Synonym(db.Model,MGIModel):
     __tablename__ = "mgi_synonym"
