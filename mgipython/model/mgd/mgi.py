@@ -44,12 +44,6 @@ class SetMemberEMAPA(db.Model, MGIModel):
     _createdby_key = db.Column(db.Integer, default=1001)
     _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
     
-    # only valid for EMAPA term
-    emapa = db.relationship("SetMember",
-                primaryjoin="SetMemberEMAPA._setmember_key==SetMember._setmember_key",
-                foreign_keys="[SetMember._setmember_key]",
-                backref=db.backref("set_member_emapa", uselist=False, cascade="save-update, delete"),
-                uselist=False)
 
 class EmapSMapping(db.Model, MGIModel):
     __tablename__ = "mgi_emaps_mapping"

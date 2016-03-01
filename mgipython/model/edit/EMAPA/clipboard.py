@@ -60,19 +60,28 @@ def insertItem(_user_key,
     setMember.emapa = setMemberEMAPA
     
     db.session.add(setMember)
+    db.session.flush()
     
     
-def deleteItem(_setmember_key):
+def deleteItem(_setmember_key, _user_key=None):
     """
     Deletes an EMAPA clipboard item
+    
+    Also filters by _user_key if provided
     """
     
-    setMember = SetMember.query.filter_by(_setmember_key=_setmember_key).first()
+    query = SetMember.query.filter_by(_setmember_key=_setmember_key)
+    
+    if _user_key:
+        query = query.filter_by(_createdby_key=_user_key)
+    
+    setMember = query.first()
     
     if setMember:
         
         setMember._object_key = None
         db.session.delete(setMember)
+        db.session.flush()
     
     
     
@@ -96,6 +105,7 @@ def sortItemsByAlpha(_user_key):
     
     
     db.session.add_all(items)
+    db.session.flush()
     
     
     
