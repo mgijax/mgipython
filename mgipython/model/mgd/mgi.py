@@ -3,6 +3,52 @@ from mgipython.modelconfig import db
 from ..core import *
 from datetime import datetime
 
+
+class Set(db.Model, MGIModel):
+    __tablename__ = "mgi_set"
+    _set_key = db.Column(db.Integer, primary_key=True)
+    _mgitype_key = db.Column(db.Integer)
+    name = db.Column(db.String())
+    sequencenum = db.Column(db.Integer)
+    _createdby_key = db.Column(db.Integer, default=1001)
+
+class SetMember(db.Model, MGIModel):
+    __tablename__ = "mgi_setmember"
+    _setmember_key = db.Column(db.Integer, primary_key=True)
+    _set_key = db.Column(db.Integer, mgi_fk("mgi_set._set_key"))
+    _object_key = db.Column(db.Integer)
+    _createdby_key = db.Column(db.Integer, default=1001)
+    sequencenum = db.Column(db.Integer)
+    
+    name = db.column_property(
+        db.select([Set.name]).
+        where(Set._set_key==_set_key)
+    )
+
+
+    #set_member_emapa backref defined in SetMemberEMAPA
+    
+    # only valid for clipboard entries
+    term = db.relationship("VocTerm",
+                primaryjoin="SetMember._object_key==VocTerm._term_key",
+                foreign_keys="[VocTerm._term_key]",
+                uselist=False)
+
+
+class SetMemberEMAPA(db.Model, MGIModel):
+    __tablename__ = "mgi_setmember_emapa"
+    _setmember_emapa_key = db.Column(db.Integer, primary_key=True)
+    _setmember_key = db.Column(db.Integer, mgi_fk("mgi_setmember._setmember_key"))
+    _stage_key = db.Column(db.Integer)
+    _createdby_key = db.Column(db.Integer, default=1001)
+    
+    # only valid for EMAPA term
+    set_member = db.relationship("SetMember",
+                primaryjoin="SetMemberEMAPA._setmember_key==SetMember._setmember_key",
+                foreign_keys="[SetMember._setmember_key]",
+                backref=db.backref("set_member_emapa",uselist=False),
+                uselist=False)
+
 class EmapSMapping(db.Model, MGIModel):
     __tablename__ = "mgi_emaps_mapping"
     _mapping_key = db.Column(db.Integer, primary_key=True)
