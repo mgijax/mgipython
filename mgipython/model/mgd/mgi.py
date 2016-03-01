@@ -34,31 +34,6 @@ class SetMember(db.Model, MGIModel):
             "SetMember._set_key==%d)" % _emapa_term_set_key,
         foreign_keys="[SetMember._object_key]",
         uselist=False)
-        
-
-#class SetMember(db.Model, MGIModel):
-#    __tablename__ = "mgi_setmember"
-#    _setmember_key = db.Column(db.Integer, primary_key=True)
-#    _set_key = db.Column(db.Integer, mgi_fk("mgi_set._set_key"))
-#    _object_key = db.Column(db.Integer)
-#    _createdby_key = db.Column(db.Integer, default=1001)
-#    sequencenum = db.Column(db.Integer)
-#    
-#    #set_member_emapa backref defined in SetMemberEMAPA
-#    
-#    # only valid for clipboard entries
-#    term = db.relationship("VocTerm",
-#                primaryjoin="SetMember._object_key==VocTerm._term_key",
-#                foreign_keys="[VocTerm._term_key]",
-#                uselist=False)
-
-#class SetMemberEMAPA(db.Model, MGIModel):
-#    __tablename__ = "mgi_setmember_emapa"
-#    _setmember_emapa_key = db.Column(db.Integer, primary_key=True)
-#    _setmember_key = db.Column(db.Integer, mgi_fk("mgi_setmember._setmember_key"))
-#    _stage_key = db.Column(db.Integer)
-#    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
-#    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
 
 
 class SetMemberEMAPA(db.Model, MGIModel):
