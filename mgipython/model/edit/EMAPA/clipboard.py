@@ -6,7 +6,7 @@ Edit the EMAPA clipboard
 from mgipython.modelconfig import db
 from ...core import *
 from ...mgd import *
-from ...query import batchLoadAttribute
+from ...query import batchLoadAttribute, performQuery
 from mgipython.util.sort import smartAlphaCompare
 
 
@@ -82,6 +82,27 @@ def deleteItem(_setmember_key, _user_key=None):
         setMember._object_key = None
         db.session.delete(setMember)
         db.session.flush()
+    
+    
+    
+def normalizeSequencenums(_user_key):
+    """
+    Normalizes all the sequencenum fields in
+    the MGI_SetMember table for EMAPA
+    
+    This is necessary after you've done any number of 
+        adds or deletes, because it can leave holes
+        in the sequencenum order 
+        e.g [1,2,5,9,10] becomes [1,2,3,4,5]
+    """
+    
+    performQuery("""
+        select MGI_resetSequenceNum(
+                'MGI_SetMember',
+                %d,
+                %d
+            )
+    """ % (EMAPA_CLIPBOARD_SET_KEY, _user_key))
     
     
     
