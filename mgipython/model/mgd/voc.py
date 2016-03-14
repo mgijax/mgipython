@@ -160,6 +160,9 @@ class VocTerm(db.Model,MGIModel):
                 backref=db.backref("vocterm",uselist=False),
                 uselist=False)
     
+    # results
+    # defined in gxd.Result
+    
     
     # DEFINED IN dag.py 
     #     Because I can't resolve cyclic import
