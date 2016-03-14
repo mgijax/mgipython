@@ -124,4 +124,20 @@ def buildChildNodes(vocTerm,
 
     return children
 
+
+def addProp(tree_nodes, id, prop, value):
+    """
+    recurses through tree_nodes.children for node
+        with id==id, and sets prop=value on that node,
+        wherever it occurs
+    """
+
+    for node in tree_nodes:
+        
+        if node["id"] == id:
+            node[prop] = value
+            
+        if "children" in node and node["children"]:
+            addProp(node["children"], id, prop, value)
+
     
