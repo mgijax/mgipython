@@ -6,7 +6,9 @@
 
 from mgipython.model.query import batchLoadAttribute, batchLoadAttributeExists
 
-def buildTreeView(vocTerm, dag=None):
+def buildTreeView(vocTerm, 
+                  dag=None, 
+                  ignoreObsoletes=True):
     """
     Builds a tree views based on the given
         vocTerm.
@@ -24,7 +26,7 @@ def buildTreeView(vocTerm, dag=None):
     }
         
     # expand startNode one level down
-    children = buildChildNodes(vocTerm)
+    children = buildChildNodes(vocTerm, ignoreObsoletes)
     if children:
         startNode['children'] = children
     
@@ -34,7 +36,8 @@ def buildTreeView(vocTerm, dag=None):
     return tree
 
 
-def buildParentNodes(vocTerm, nodeObj):
+def buildParentNodes(vocTerm, nodeObj, 
+                     ignoreObsoletes=True):
     """
     returns parentNode, with all children
     filled in down to vocTerm
@@ -65,7 +68,7 @@ def buildParentNodes(vocTerm, nodeObj):
         'oc': 'open'
     }
     
-    children = buildChildNodes(defaultParent)
+    children = buildChildNodes(defaultParent, ignoreObsoletes)
     if children:
         newNode['children'] = children
         
@@ -82,7 +85,8 @@ def buildParentNodes(vocTerm, nodeObj):
     
 
 
-def buildChildNodes(vocTerm):
+def buildChildNodes(vocTerm, 
+                    ignoreObsoletes=True):
     """
     returns list of child nodes for given parent vocTerm
     """
@@ -102,6 +106,10 @@ def buildChildNodes(vocTerm):
             
             for childNode in childNodes:
                 childTerm = childNode.vocterm
+                
+                # skip if obsolete
+                if ignoreObsoletes and childTerm.isobsolete:
+                    continue
                 
                 children.append({
                     'id': childTerm.primaryid,
