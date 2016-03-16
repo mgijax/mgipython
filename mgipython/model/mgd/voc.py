@@ -38,6 +38,10 @@ class VocTermEMAPA(db.Model,MGIModel):
                 foreign_keys = "[VocTerm._term_key]",
                 uselist=False)
     
+    # emaps_infos
+    # backref defined in VocTermEMAPS
+    #    returns list of VocTermEMAPS objects
+    
     
 class VocTermEMAPS(db.Model,MGIModel):
     __tablename__ = "voc_term_emaps"
@@ -56,6 +60,14 @@ class VocTermEMAPS(db.Model,MGIModel):
                 primaryjoin = "and_(VocTerm._term_key==VocTermEMAPS._emapa_term_key)",
                 foreign_keys = "[VocTerm._term_key]",
                 uselist=False)
+    
+    emapa_info = db.relationship("VocTermEMAPA",
+                primaryjoin = "and_(VocTermEMAPA._term_key==VocTermEMAPS._emapa_term_key)",
+                foreign_keys = "[VocTermEMAPA._term_key]",
+                uselist=False,
+                backref=db.backref("emaps_infos", 
+                                   uselist=True, 
+                                   order_by="VocTermEMAPS._stage_key"))
     
     defaultparent = db.relationship("VocTerm",
                 primaryjoin = "and_(VocTerm._term_key==VocTermEMAPS._defaultparent_key)",
