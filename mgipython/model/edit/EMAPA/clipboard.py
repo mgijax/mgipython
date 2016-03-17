@@ -104,18 +104,6 @@ def normalizeSequencenums(_user_key):
             )
     """ % (EMAPA_CLIPBOARD_SET_KEY, _user_key))
     
-
-def sortClipboardSequencenums(_user_key):
-    """
-    Resorts terms by TS stange / alpha on term
-    """
-    
-    performQuery("""
-        select MGI_sortEMAPClipboard(
-                %d
-            )
-    """ % (_user_key))
-    
     
 def sortItemsByAlpha(_user_key):
     """
