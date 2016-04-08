@@ -768,7 +768,15 @@ class Specimen(db.Model, MGIModel):
         backref=db.backref("specimen", uselist=False))
     
     genotype = db.relationship("Genotype", uselist=False)
-    
+ 
+    reference = db.relationship("Reference",
+        primaryjoin="Assay._assay_key==Specimen._assay_key",
+        secondary=Assay.__table__,
+        secondaryjoin="Assay._refs_key==Reference._refs_key",
+        foreign_keys="[Assay._assay_key,Reference._refs_key]",
+        uselist=False,
+        backref=db.backref("specimens"))
+ 
     @property
     def imagepanes(self):
         panes = []
@@ -780,7 +788,9 @@ class Specimen(db.Model, MGIModel):
                         panes.append(pane)
                         seen.add(pane)
         return panes
-
+    
+    #backref for assay defined in Assay object
+    #backref=db.backref("assay", uselist=False)
 
 class InSituResultStructure(db.Model, MGIModel):
     __tablename__ = "gxd_isresultstructure"
