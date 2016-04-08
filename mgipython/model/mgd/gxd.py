@@ -194,6 +194,7 @@ class AssayType(db.Model, MGIModel):
     __tablename__ = "gxd_assaytype"
     _assaytype_key = db.Column(db.Integer, primary_key=True)
     assaytype = db.Column(db.String())
+    sequencenum = db.Column(db.Integer)
 
 class Assay(db.Model, MGIModel):
     __tablename__ = "gxd_assay"
@@ -231,6 +232,11 @@ class Assay(db.Model, MGIModel):
         db.select([AssayType.assaytype]).
         where(AssayType._assaytype_key==_assaytype_key)
     )  
+    
+    assaytype_seq = db.column_property(
+        db.select([AssayType.sequencenum]).
+        where(AssayType._assaytype_key==_assaytype_key)
+    )
 
     # Relationships
     
