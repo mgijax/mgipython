@@ -384,6 +384,14 @@ class Assay(db.Model, MGIModel):
     @property
     def assaynote(self):
         return "".join([n.assaynote for n in self.assaynotes])
+
+    @property
+    def isCreType(self):
+        return self._assaytype_key in [9,10,11]
+
+    @property
+    def isGxdType(self):
+        return self._assaytype_key not in [10,11]
     
     @property
     def detectionmethod(self):
