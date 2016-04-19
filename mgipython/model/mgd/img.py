@@ -46,7 +46,8 @@ class Image(db.Model,MGIModel):
     reference = db.relationship("Reference",
         primaryjoin="and_(Image._refs_key==Reference._refs_key) ",
         foreign_keys="[Reference._refs_key]",
-        uselist=False 
+        uselist=False,
+        backref=db.backref("images", uselist=True)
     )
 
     thumbnail = db.relationship("Image",
@@ -137,6 +138,16 @@ class ImagePane(db.Model,MGIModel):
         distinctAssays.sort(key=lambda x: x.mgiid)
         #ut.sort(key=lambda x: x.count, reverse=True)
         return distinctAssays
+
+    @property
+    def distinctSpecimens(self):
+        specList = set([])
+        for result in self.insituresults:
+          specList.add(result.specimen)
+        specList = list(specList)
+        specList.sort(key=lambda x: x.specimenlabel)
+        return specList
+
         
 class ImagePaneAssoc(db.Model, MGIModel):
     __tablename__ = "img_imagepane_assoc"
