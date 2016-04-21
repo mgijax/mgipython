@@ -34,6 +34,7 @@ class Reference(db.Model,MGIModel):
     
     # constants
     _mgitype_key=1    
+    expressionImageClass = "6481781"
 
     # mapped columns
     #jnumid = db.Column(db.String())
@@ -59,7 +60,12 @@ class Reference(db.Model,MGIModel):
     
     # accessions
     # backref defined in Accession class
-    
+
+    gxd_images = db.relationship("Image",
+        primaryjoin="and_(Image._refs_key==Reference._refs_key, "
+                        "Image._imageclass_key == %s) " % expressionImageClass,
+        foreign_keys="[Image._refs_key]"
+    )
     
     jnumid_object = db.relationship("Accession",
             primaryjoin="and_(Accession._object_key==Reference._refs_key,"
@@ -99,7 +105,7 @@ class Reference(db.Model,MGIModel):
     
     # antibodypreps
     # backref in AntibodyPrep class
-    
+
     @property
     def citation(self):
         authors = self.authors or ''
