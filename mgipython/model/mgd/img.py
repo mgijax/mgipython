@@ -148,6 +148,16 @@ class ImagePane(db.Model,MGIModel):
         specList.sort(key=lambda x: x.specimenlabel)
         return specList
 
+    @property
+    def allAssays(self):
+        """
+        Return all assays for this imagepane (insitu first)   
+        """
+        assays = []
+        assays.extend(self.distinctInsituAssays)
+        assays.extend(self.gel_assays)
+        return assays
+
         
 class ImagePaneAssoc(db.Model, MGIModel):
     __tablename__ = "img_imagepane_assoc"
