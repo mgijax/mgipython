@@ -428,7 +428,6 @@ class Assay(db.Model, MGIModel):
                     gelbands.append(gelband)
         return gelbands
     
-    
     # marker backref from mrk.Marker
     # reference backref from bib.Reference
     

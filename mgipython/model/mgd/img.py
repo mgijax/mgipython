@@ -140,15 +140,6 @@ class ImagePane(db.Model,MGIModel):
         return distinctAssays
 
     @property
-    def distinctSpecimens(self):
-        specList = set([])
-        for result in self.insituresults:
-          specList.add(result.specimen)
-        specList = list(specList)
-        specList.sort(key=lambda x: x.specimenlabel)
-        return specList
-
-    @property
     def allAssays(self):
         """
         Return all assays for this imagepane (insitu first)   
