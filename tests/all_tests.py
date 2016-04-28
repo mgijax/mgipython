@@ -14,12 +14,14 @@ import unittest
 import dag_tests
 
 from util import gxdindex_aggregator_tests
+from util import sort_tests
 
 # add the test suites
 def master_suite():
 	suites = []
 	suites.append(dag_tests.suite())
 	suites.append(gxdindex_aggregator_tests.suite())
+        suites.append(sort_tests.suite())
 	
 	master_suite = unittest.TestSuite(suites)
 	return master_suite
