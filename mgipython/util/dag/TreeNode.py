@@ -111,25 +111,3 @@ class TreeNode():
     def __repr__(self):
         return "%s(%s)" % (self.term, self.depth) 
     
-class TreeNodeForAD(TreeNode):
-    """
-    Version of TreeNode compatible with ADStructure
-    Terms
-    Note: self.dagnode will be the ADStructure object instead
-        of an actual DagNode
-    
-    TODO(kstone): This will be obsolete when AD vocab retires
-    """
-    
-    def __init__(self, adstructure):
-        self.dagnode=adstructure
-        self.edge_label=''
-        self._term_key=adstructure._structure_key
-        self.children=[]
-        self.parent=None
-        # mark these objects as AD terms
-        self.isadstructure=True
-    
-    @property
-    def term(self):
-        return self.dagnode.printname

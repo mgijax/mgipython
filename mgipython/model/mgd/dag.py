@@ -44,6 +44,11 @@ class DagEdge(db.Model,MGIModel):
 
     
     # relationships
+    # child_node
+    # defined in DagNode
+    
+    # parent_node
+    # defined in DagNode
     
 class DagNode(db.Model,MGIModel):
     __tablename__ = "dag_node"

@@ -20,6 +20,12 @@ printf "\nInstalling SQL Alchemy\n"
 
 easy_install sqlalchemy==1.0.8
 
+printf "\nInstalling markupsafe\n"
+easy_install markupsafe
+
+printf "\nInstalling sqlparse\n"
+easy_install sqlparse
+
 printf "\nInstalling Flask\n" 
 easy_install Flask
 

@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, jsonify
 import datetime
 
 # util
@@ -10,6 +10,14 @@ def batch_list(iterable, n = 1):
        
 def error_template(message):
     return render_template('error.html', message = message)
+
+def error_json(error):
+    json = jsonify(
+        jsonerror=True,
+        title=error.__class__.__name__,
+        message=error.message
+    )
+    return (json, 500)
 
 def createSummaryList(originalResults, columns):
     """
