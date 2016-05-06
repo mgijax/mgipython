@@ -348,6 +348,8 @@ class GxdStrength(db.Model, MGIModel):
 class TheilerStage(db.Model, MGIModel):
     __tablename__ = 'gxd_theilerstage'
     _stage_key = db.Column(db.Integer, primary_key = True)
+    dpcmin = db.Column(db.Numeric)
+    dpcmax = db.Column(db.Numeric)
     
 
 ### Result Tables ##
