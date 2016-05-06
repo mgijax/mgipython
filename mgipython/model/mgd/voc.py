@@ -74,6 +74,8 @@ class VocTermEMAPS(db.Model,MGIModel):
                 foreign_keys = "[VocTerm._term_key]",
                 uselist=False)
     
+    theilerstage = db.relationship("TheilerStage")
+
     @property
     def stage(self):
         return self._stage_key
