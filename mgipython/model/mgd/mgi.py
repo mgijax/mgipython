@@ -130,8 +130,8 @@ class MGIUser(db.Model, MGIModel):
     orcid = db.Column(db.String())
     _createdby_key = db.Column(db.Integer, default=1001)
     _modifiedby_key = db.Column(db.Integer, default=1001)
-    creation_date = db.Column(db.DateTime, onupdate=datetime.now)
-    modification_date = db.Column(db.DateTime, onupdate=datetime.now)
+    creation_date = db.Column(db.DateTime, default=datetime.now)
+    modification_date = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     
     
     usertype_object = db.relationship("VocTerm",
