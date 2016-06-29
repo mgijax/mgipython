@@ -44,6 +44,9 @@ easy_install flask-restful
 printf "\nInstalling Flask REST Swagger extension\n"
 easy_install flask-restful-swagger
 
+printf "\nInstalling Flask Cache extension\n"
+easy_install Flask-Cache
+
 printf "\nInstalling Python-PAM\n"
 easy_install python-pam
 
