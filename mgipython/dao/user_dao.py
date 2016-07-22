@@ -1,10 +1,11 @@
 from mgipython.model import MGIUser
 from mgipython.model import db
+from sqlalchemy_dao import SQLAlchemyDAO
 
-class UserDAO():
+
+class UserDAO(SQLAlchemyDAO):
     
-    def get_by_key(self, _user_key):
-        return MGIUser.query.filter_by(_user_key=_user_key).first()
+    model_class = MGIUser
     
     def search(self,
                login=None,
@@ -51,19 +52,5 @@ class UserDAO():
         query = query.order_by(MGIUser.login)
         
         return query.all()
-    
-    def get_next_key(self):
-        """
-        Return next primary key for MGIUser
-        """
-        next_key = db.session.query(db.func.max(MGIUser._user_key).label("max_key")) \
-                .one().max_key + 1
-        return next_key
-    
-    def save(self, user):
-        db.session.add(user)
-        
-    def delete(self, user):
-        db.session.delete(user)
         
         
