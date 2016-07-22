@@ -11,6 +11,8 @@ class UserService():
     
     def get_by_key(self, _user_key):
         user = self.user_dao.get_by_key(_user_key)
+        if not user:
+            raise NotFoundException("No MGIUser for _user_key=%d" % _user_key)
         return user
     
     

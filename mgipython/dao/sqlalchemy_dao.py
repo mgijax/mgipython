@@ -25,7 +25,7 @@ class SQLAlchemyDAO():
             )
             
         pkName = pkNames[0]
-        return self.model_class.query.filter(getattr(self.model_class, pkName)).first()
+        return self.model_class.query.filter(getattr(self.model_class, pkName)==key).first()
     
     
     def save(self, object):
