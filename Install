@@ -57,6 +57,9 @@ printf "\nInstalling CherryPy WSGI server \n"
 easy_install cherrypy
 
 
+printf "\nInstalling watchdog for dev file monitoring \n"
+easy_install watchdog
+
 printf "\nInstalling mgipython library \n"
 python setup.py install --record installed_files.txt
 
