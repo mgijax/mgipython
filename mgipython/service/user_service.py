@@ -65,6 +65,8 @@ class UserService():
         user._usertype_key = args._usertype_key
         user._userstatus_key = args._userstatus_key
         #user._modifiedby_key = current_user._modifiedby_key
+        
+        self.user_dao.save()
         return user
         
         
@@ -72,9 +74,9 @@ class UserService():
         """
         Delete MGIUser object
         """
-        user = self.user_dao.get_by_key(key)
+        user = self.user_dao.get_by_key(_user_key)
         if not user:
-            raise NotFoundException("No MGIUser for _user_key=%d" % key)
+            raise NotFoundException("No MGIUser for _user_key=%d" % _user_key)
         self.user_dao.delete(user)
         
     

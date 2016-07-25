@@ -28,17 +28,22 @@ class SQLAlchemyDAO():
         return self.model_class.query.filter(getattr(self.model_class, pkName)==key).first()
     
     
-    def save(self, object):
+    def save(self, object=None):
         """
         Save object to the database
+        flushes database changes
         """
-        db.session.add(object)
+        if object:
+            db.session.add(object)
+        db.session.flush()
     
     def delete(self, object):
         """
         Delete object from the database
+        flushes database changes
         """
         db.session.delete(object)
+        db.session.flush()
         
     
     def get_next_key(self):
