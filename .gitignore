@@ -14,4 +14,5 @@ installed_files.txt
 lib
 lib64
 logs
+pip-selfcheck.json
 test.db
