@@ -66,10 +66,15 @@ class Accession(db.Model,MGIModel):
         primaryjoin="MGIType._mgitype_key==Accession._mgitype_key",
         foreign_keys="[MGIType._mgitype_key]")
     
+    marker = db.relationship("Marker",
+                primaryjoin="Marker._marker_key==Accession._object_key",
+                foreign_keys="Marker._marker_key",
+                uselist=False
+    )
+    
     references = db.relationship("Reference",
                 secondary=AccessionReference.__table__,
                 backref="accessions")
-    
     
     vocterm = db.relationship("VocTerm",
         primaryjoin="VocTerm._term_key==Accession._object_key",
