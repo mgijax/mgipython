@@ -1,4 +1,7 @@
 from mgipython.model import db
+import logging
+
+logger = logging.getLogger('mgipython.dao')
 
 class SQLAlchemyDAO():
     """
@@ -8,24 +11,32 @@ class SQLAlchemyDAO():
     # All sub classes must set model_class
     model_class = None
     
-    def get_by_key(self, key):
+    def get_by_key(self, key, model_class=None):
         """
         Return object by primary key
         
         NOTE: Only supports DAOs with a single primary key
             NotImplementedError is thrown for more complex DAOs
+            
+        uses self.model_class by default
         """
+        if not model_class:
+            model_class = self.model_class
+            
+        return self._get_by_key(key, model_class)
+    
+    def _get_by_key(self, key, model_class):
         
         # Reflect the correct primary key column for the current model_class
-        pkNames = [pk.key for pk in self.model_class.__mapper__.primary_key]
+        pkNames = [pk.key for pk in model_class.__mapper__.primary_key]
         
         if len(pkNames) > 1:
             raise NotImplementedError("%s object does not have a single primary key. Found keys: %s" 
-                                      % (self.model_class, pkNames)
+                                      % (model_class, pkNames)
             )
             
         pkName = pkNames[0]
-        return self.model_class.query.filter(getattr(self.model_class, pkName)==key).first()
+        return model_class.query.filter(getattr(model_class, pkName)==key).first()
     
     
     def save(self, object=None):
@@ -35,6 +46,16 @@ class SQLAlchemyDAO():
         """
         if object:
             db.session.add(object)
+        db.session.flush()
+        
+    def save_all(self, objects=[]):
+        """
+        Save list of objects to the database
+        flushes database changes
+        """
+        if objects:
+            logger.debug('calling save_all on objects: %s' % objects)
+            db.session.add_all(objects)
         db.session.flush()
     
     def delete(self, object):
@@ -46,21 +67,28 @@ class SQLAlchemyDAO():
         db.session.flush()
         
     
-    def get_next_key(self):
+    def get_next_key(self, model_class=None):
         """
         Return next primary key value for the model_class
+        Uses self.model_class by default
         """
+        if not model_class:
+            model_class = self.model_class
+            
+        return self._get_next_key(model_class)
+        
+    def _get_next_key(self, model_class):
          # Reflect the correct primary key column for the current model_class
-        pkNames = [pk.key for pk in self.model_class.__mapper__.primary_key]
+        pkNames = [pk.key for pk in model_class.__mapper__.primary_key]
         
         if len(pkNames) > 1:
             raise NotImplementedError("%s object does not have a single primary key. Found keys: %s" 
-                                      % (self.model_class, pkNames)
+                                      % (model_class, pkNames)
             )
             
         pkName = pkNames[0]
         
-        next_key = db.session.query(db.func.max(getattr(self.model_class, pkName)).label("max_key")) \
+        next_key = db.session.query(db.func.max(getattr(model_class, pkName)).label("max_key")) \
                 .one().max_key + 1
         return next_key
     

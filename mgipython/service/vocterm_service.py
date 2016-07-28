@@ -1,19 +1,23 @@
-from mgipython.dao.user_dao import UserDAO
 from mgipython.dao.vocterm_dao import VocTermDAO
-from mgipython.model import MGIUser
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
+from mgipython.model.query import batchLoadAttribute
 
-class UserService():
+class VocTermService():
     
-    user_dao = UserDAO()
     vocterm_dao = VocTermDAO()
     
-    def get_by_key(self, _user_key):
-        user = self.user_dao.get_by_key(_user_key)
-        if not user:
-            raise NotFoundError("No MGIUser for _user_key=%d" % _user_key)
-        return user
+    def get_by_key(self, _term_key):
+        term = self.vocterm_dao.get_by_key(_term_key)
+        if not term:
+            raise NotFoundError("No VocTerm for _term_key=%d" % _term_key)
+        return term
+    
+    def get_by_primary_id(self, id):
+        term = self.vocterm_dao.get_by_primary_id(id)
+        if not term:
+            raise NotFoundError("No VocTerm with id=%s" % id)
+        return term
     
     
     def search(self, args):
@@ -30,6 +34,27 @@ class UserService():
             _modifiedby_key=args._modifiedby_key
         )
         return users
+    
+    
+    def search_emapa_terms(self,
+                         termSearch="",
+                         stageSearch="",
+                         isobsolete=0,
+                         limit=None):
+        """
+        Search specifically for EMAPA vocterm objects
+        """
+        terms = self.vocterm_dao.search_emapa_terms(
+             termSearch=termSearch,
+             stageSearch=stageSearch,
+             isobsolete=isobsolete,
+             limit=limit
+        )
+        
+        # batch load necessary attributes
+        batchLoadAttribute(terms, "emapa_info")
+        
+        return terms
     
     
         
