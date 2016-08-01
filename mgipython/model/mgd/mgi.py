@@ -127,7 +127,7 @@ class MGIUser(db.Model, MGIModel):
     _userstatus_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
     login = db.Column(db.String())
     name = db.Column(db.String())
-    orcid = db.Column(db.String())
+    #orcid = db.Column(db.String())
     _createdby_key = db.Column(db.Integer, default=1001)
     _modifiedby_key = db.Column(db.Integer, default=1001)
     creation_date = db.Column(db.DateTime, default=datetime.now)
@@ -142,6 +142,8 @@ class MGIUser(db.Model, MGIModel):
         primaryjoin="VocTerm._term_key==MGIUser._userstatus_key",
         uselist=False)
     
+    user_roles = db.relationship("MGIRole",
+        primaryjoin="MGIUser._user_key == MGIRole._user_key")
     
     # Properties for Flask-Login functionality
     def is_authenticated(self):
@@ -155,7 +157,36 @@ class MGIUser(db.Model, MGIModel):
     
     def get_id(self):
         return self.login
+
+class MGIRole(db.Model, MGIModel):
+
+    __tablename__ = "mgi_userrole"
+    _userrole_key = db.Column(db.Integer, primary_key=True)
+    _role_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    _user_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
     
+    role_object = db.relationship("VocTerm",
+        primaryjoin="VocTerm._term_key==MGIRole._role_key",
+        uselist=False)
+
+    user_tasks = db.relationship("MGITask",
+        primaryjoin="MGIRole._role_key == MGITask._role_key",
+        foreign_keys="MGITask._role_key")
+
+class MGITask(db.Model, MGIModel):
+    __tablename__ = "mgi_roletask"
+    _roletask_key = db.Column(db.Integer, primary_key=True)
+    _role_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    _task_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+
+    role_object = db.relationship("VocTerm",
+        primaryjoin="VocTerm._term_key==MGITask._role_key",
+        uselist=False)
+
+    task_object = db.relationship("VocTerm",
+        primaryjoin="VocTerm._term_key==MGITask._task_key",
+        uselist=False)
+   
     
 class DbInfo(db.Model, MGIModel):
     __tablename__ = "mgi_dbinfo"
