@@ -54,7 +54,7 @@ printf "\nInstalling WT Forms extension\n"
 easy_install wtforms
 
 printf "\nInstalling CherryPy WSGI server \n"
-easy_install cherrypy
+easy_install cherrypy==6.2.0
 
 
 printf "\nInstalling watchdog for dev file monitoring \n"

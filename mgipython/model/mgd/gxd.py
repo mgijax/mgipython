@@ -528,6 +528,10 @@ class AntibodyAlias(db.Model, MGIModel):
     reference = db.relationship("Reference", 
                     backref=db.backref("AntibodyAlias", uselist=False),
                     uselist=False)
+    
+    def __repr__(self):
+        return self.alias
+    
 
 class Antibody(db.Model, MGIModel):
     __tablename__ = "gxd_antibody"
