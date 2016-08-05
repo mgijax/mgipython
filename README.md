@@ -24,6 +24,12 @@ Shared python modules and virtual environment installation
     python
     >import mgipython
     
+## Software Requirements
+* LD\_LIBRARY\_PATH=/opt/python/lib
+* Python built with the following
+* ssl
+* zlib
+    
 ### Using the model
 To use the model you have to setup the modelconfig *before* importing any model or datainput classes. This attaches a database session to each model object.
 
