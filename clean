@@ -14,4 +14,4 @@ else
 fi
 
 echo "Removing previous install files"
-rm -rf lib/ lib64/ include/ bin/ build/
+rm -rf lib lib64 include bin build

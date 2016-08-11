@@ -25,8 +25,7 @@ def createDatabaseEngine(server, database,
         
     Used outside the context of a webapp
     """
-    dburi = "postgresql+psycopg2://%s:%s@%s/%s"%(user,password,
-        server,database)
+    dburi = "postgresql+psycopg2://%s:%s@%s/%s"%(user,password,server,database)
     
     dummyApp = _createDummyAppFromUri(dburi, trace=trace)
     
