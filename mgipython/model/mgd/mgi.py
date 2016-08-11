@@ -107,6 +107,17 @@ class ReferenceAssoc(db.Model, MGIModel):
         uselist=False
     )
 
+class Property(db.Model,MGIModel):
+    __tablename__ = "mgi_property"
+    _property_key = db.Column(db.Integer, primary_key=True)
+    _propertytype_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    type_object = db.relationship("VocTerm", primaryjoin="Property._propertytype_key==VocTerm._term_key", uselist=False)
+    _propertyterm_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    term_object = db.relationship("VocTerm", primaryjoin="Property._propertyterm_key==VocTerm._term_key", uselist=False)
+    _object_key = db.Column(db.Integer)
+    _mgitype_key = db.Column(db.Integer)
+    value = db.Column(db.String())
+    sequencenum = db.Column(db.Integer)
 
 class Synonym(db.Model,MGIModel):
     __tablename__ = "mgi_synonym"

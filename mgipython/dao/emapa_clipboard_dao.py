@@ -1,10 +1,10 @@
 from mgipython.model import db
 from mgipython.model import SetMember, SetMemberEMAPA
 from mgipython.model.query import performQuery
-from sqlalchemy_dao import SQLAlchemyDAO
+from base_dao import BaseDAO
 
 
-class EMAPAClipboardDAO(SQLAlchemyDAO):
+class EMAPAClipboardDAO(BaseDAO):
     """
     Uses both the SetMember and SetMemberEMAPA tables
     which combined represent a single EMAPA clipboard entry

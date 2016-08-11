@@ -1,9 +1,9 @@
 from mgipython.model import MGIUser
 from mgipython.model import db
-from sqlalchemy_dao import SQLAlchemyDAO
+from base_dao import BaseDAO
 
 
-class UserDAO(SQLAlchemyDAO):
+class UserDAO(BaseDAO):
     
     model_class = MGIUser
     

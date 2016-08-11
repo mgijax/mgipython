@@ -3,7 +3,7 @@ import logging
 
 logger = logging.getLogger('mgipython.dao')
 
-class SQLAlchemyDAO():
+class BaseDAO():
     """
     Base class for all DAOs
     """

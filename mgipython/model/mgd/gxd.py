@@ -16,6 +16,7 @@ but column property tables must appear first
 
 from mgipython.modelconfig import db
 from ..core import *
+from datetime import datetime
 from acc import Accession
 from img import ImagePaneAssoc
 from mgi import Note, NoteChunk, Organism, ReferenceAssoc
@@ -1010,3 +1011,111 @@ class GelBand(db.Model, MGIModel):
     
     gelrow = db.relationship("GelRow", uselist=False)
     
+
+class GxdHTExperiment(db.Model, MGIModel):
+    __tablename__ = "gxd_htexperiment"
+    _experiment_key = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(db.String())
+    description = db.Column(db.String())
+    arraydesign = db.Column(db.String())
+    assaycount = db.Column(db.Integer)
+    samplecount = db.Column(db.Integer)
+
+    release_date = db.Column(db.DateTime)
+    lastupdate_date = db.Column(db.DateTime, onupdate=datetime.now)
+
+    evaluated_date = db.Column(db.DateTime)
+    curated_date = db.Column(db.DateTime)
+    creation_date = db.Column(db.DateTime)
+    modification_date = db.Column(db.DateTime, onupdate=datetime.now)
+
+    _source_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    source_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==GxdHTExperiment._source_key", uselist=False)
+    _triagestate_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    triagestate_object = db.relationship("VocTerm", primaryjoin="GxdHTExperiment._triagestate_key==VocTerm._term_key", uselist=False)
+    _curationstate_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    curationstate_object = db.relationship("VocTerm", primaryjoin="GxdHTExperiment._curationstate_key==VocTerm._term_key", uselist=False)
+    _studytype_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    studytype_object = db.relationship("VocTerm", primaryjoin="GxdHTExperiment._studytype_key==VocTerm._term_key", uselist=False)
+
+    _evaluatedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    _curatedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+
+    _mgitype_key = 42
+
+    notes = db.relationship("Note", primaryjoin="and_(GxdHTExperiment._experiment_key==Note._object_key,"
+        "Note._mgitype_key==%d)" % _mgitype_key, foreign_keys="[Note._object_key]"
+    )
+
+    experiment_variables = db.relationship("GxdHTExperimentVariable", primaryjoin="GxdHTExperiment._experiment_key == GxdHTExperimentVariable._experiment_key", foreign_keys="[GxdHTExperimentVariable._experiment_key]")
+
+	# Raw Fields
+
+    all_properties = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
+        "Property._mgitype_key==%d)" % _mgitype_key, foreign_keys="[Property._object_key]"
+    )
+
+    assay_count = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
+        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw assay count", foreign_keys="[Property._object_key]"
+    )
+
+    pubmed_ids = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
+        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "PubMed ID", foreign_keys="[Property._object_key]"
+    )
+
+    experimental_factors = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
+        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw experimental factor", foreign_keys="[Property._object_key]"
+    )
+
+    experiment_designs = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
+        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw experiment design", foreign_keys="[Property._object_key]"
+    )
+
+    experiment_types = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
+        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw experiment type", foreign_keys="[Property._object_key]"
+    )
+
+    provider_contact_names = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
+        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw contact name", foreign_keys="[Property._object_key]"
+    )
+
+    sample_count = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
+        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw sample count", foreign_keys="[Property._object_key]"
+    )
+
+    assay_designs = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
+        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw array design", foreign_keys="[Property._object_key]"
+    )
+
+    primaryid = db.column_property(
+        db.select([Accession.accid]).
+        where(db.and_(Accession._mgitype_key==_mgitype_key,
+            Accession.preferred==1,
+            Accession.private==0,
+            Accession._object_key==_experiment_key))
+    )
+
+    primaryid_object = db.relationship("Accession",
+        primaryjoin="and_(Accession._object_key==GxdHTExperiment._experiment_key,"
+                    "Accession.preferred==1,"
+                    "Accession.private==0,"
+                    "Accession._mgitype_key==%d)" % _mgitype_key,
+        foreign_keys="[Accession._object_key]",
+        uselist=False)
+
+    secondaryids = db.relationship("Accession",
+        primaryjoin="and_(Accession._object_key==GxdHTExperiment._experiment_key,"
+                    "Accession._mgitype_key==%d,"
+                    "Accession.preferred==0)" % _mgitype_key,
+        foreign_keys="[Accession._object_key]"
+    )
+    
+class GxdHTExperimentVariable(db.Model, MGIModel):
+    __tablename__ = "gxd_htexperimentvariable"
+    _experimentvariable_key = db.Column(db.Integer, primary_key=True)
+    _experiment_key = db.Column(db.Integer, mgi_fk("GxdHTExperiment._experiment_key"))
+    _term_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    term_object = db.relationship("VocTerm", primaryjoin="GxdHTExperimentVariable._term_key == VocTerm._term_key", uselist=False)
