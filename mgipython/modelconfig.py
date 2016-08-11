@@ -2,8 +2,9 @@
 This must be set up before using the model module
 """
 
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
+from flask_cache import Cache
 
 
 #
@@ -11,6 +12,8 @@ from flask import Flask
 # this must be set before importing from model
 #
 db = None
+# create a null cache by default
+cache = Cache()
 
 
 def createDatabaseEngine(server, database,
@@ -30,7 +33,7 @@ def createDatabaseEngine(server, database,
     createDatabaseEngineFromApp(dummyApp)
     
     
-def createDatabaseEngineFromApp(app):
+def createDatabaseEngineFromApp(app, appCache=None):
     """
     Initializes a db engine using the provided 
         Flask app
@@ -38,9 +41,14 @@ def createDatabaseEngineFromApp(app):
         app.config['SQLALCHEMY_DATABASE_URI']
         
     Used within context of a webapp
+    
+    Optionally pass in a Flask Cache object as appCache
     """
     global db
+    global cache
     db = SQLAlchemy(app)
+    if cache:
+        cache = appCache
     
     
 def createMockDatabaseEngine(trace=False):

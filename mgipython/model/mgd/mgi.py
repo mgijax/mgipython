@@ -127,6 +127,11 @@ class MGIUser(db.Model, MGIModel):
     _userstatus_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
     login = db.Column(db.String())
     name = db.Column(db.String())
+    orcid = db.Column(db.String())
+    _createdby_key = db.Column(db.Integer, default=1001)
+    _modifiedby_key = db.Column(db.Integer, default=1001)
+    creation_date = db.Column(db.DateTime, default=datetime.now)
+    modification_date = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     
     
     usertype_object = db.relationship("VocTerm",

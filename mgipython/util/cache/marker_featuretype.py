@@ -10,16 +10,10 @@ from mgipython.modelconfig import db
 FEATURE_TYPE_VOCAB_NAME = "Marker Category"
 FEATURE_TYPE_ROOT = "all feature types"
 
-# Caches
-__FEATURE_TYPE_DAG__ = None
 
 def getFeatureTypeDag():
-    global __FEATURE_TYPE_DAG__
-    if __FEATURE_TYPE_DAG__:
-        return __FEATURE_TYPE_DAG__
     
-    __FEATURE_TYPE_DAG__ = _loadFeatureTypeDag()
-    return __FEATURE_TYPE_DAG__
+    return _loadFeatureTypeDag()
     
 def _loadFeatureTypeDag():
     """

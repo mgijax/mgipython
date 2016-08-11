@@ -11,8 +11,8 @@ import unittest
 from mgipython.modelconfig import createMockDatabaseEngine
 createMockDatabaseEngine()
 
-from mgipython.model.edit.EMAPA import clipboard
 from mgipython.model import *
+from mgipython.service.emapa_clipboard_service import EMAPAClipboardService
 
 
 class ClipboardSortTest(unittest.TestCase):
@@ -21,6 +21,7 @@ class ClipboardSortTest(unittest.TestCase):
     """
     
     def setUp(self):
+        self.clipboard_service = EMAPAClipboardService()
         self.seqnum = 1
         
         
@@ -35,7 +36,7 @@ class ClipboardSortTest(unittest.TestCase):
              self.mockClipboardItem("term1", 9)
              ]
         
-        clipboard._sortItemsByAlpha(l)
+        self.clipboard_service._sort_items_by_alpha(l)
         
         self.assertClipboardOrder(["term1 TS9", "term1 TS20"], l)
         
@@ -47,7 +48,7 @@ class ClipboardSortTest(unittest.TestCase):
              self.mockClipboardItem("term8", 10)
              ]
         
-        clipboard._sortItemsByAlpha(l)
+        self.clipboard_service._sort_items_by_alpha(l)
         
         self.assertClipboardOrder(["term8 TS10", "term12 TS10"], l)
         
@@ -59,7 +60,7 @@ class ClipboardSortTest(unittest.TestCase):
              self.mockClipboardItem("somite 5", 10)
              ]
         
-        clipboard._sortItemsByAlpha(l)
+        self.clipboard_service._sort_items_by_alpha(l)
         
         self.assertClipboardOrder(["somite 5 TS10", "somite 11 TS10"], l)
         
@@ -69,7 +70,7 @@ class ClipboardSortTest(unittest.TestCase):
         """
             Asserts that expectedList
                 in format ["term TSstage", ...]
-            matches the order of actualItems clipboard items
+            matches the order of actualItems self.clipboard_service items
         """
         
         # format actualList

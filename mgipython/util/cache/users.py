@@ -4,16 +4,9 @@ cache of MGI Users
 from mgipython.model import MGIUser, VocTerm
 from mgipython.modelconfig import db
 
-# Caches
-__USERNAMES__ = None
-
 def getUsernames():
-    global __USERNAMES__
-    if __USERNAMES__:
-        return __USERNAMES__
     
-    __USERNAMES__ = _loadUsernames()
-    return __USERNAMES__
+    return _loadUsernames()
     
 def _loadUsernames():
     """

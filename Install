@@ -38,6 +38,14 @@ easy_install Flask-Admin
 printf "\nInstalling Flask Login extension\n"
 easy_install flask_login
 
+printf "\nInstalling Flask REST extension\n"
+easy_install flask-restful
+
+printf "\nInstalling Flask REST Swagger extension\n"
+easy_install flask-restful-swagger
+
+printf "\nInstalling Flask Cache extension\n"
+easy_install Flask-Cache
 
 printf "\nInstalling Python-PAM\n"
 easy_install python-pam
@@ -48,6 +56,9 @@ easy_install wtforms
 printf "\nInstalling CherryPy WSGI server \n"
 easy_install cherrypy==6.2.0
 
+
+printf "\nInstalling watchdog for dev file monitoring \n"
+easy_install watchdog
 
 printf "\nInstalling mgipython library \n"
 python setup.py install --record installed_files.txt
