@@ -1,10 +1,10 @@
 from mgipython.model import GxdIndexRecord, GxdIndexStage, Marker, Reference
 
 from mgipython.model import db
-from sqlalchemy_dao import SQLAlchemyDAO
+from base_dao import BaseDAO
 
 
-class GxdIndexDAO(SQLAlchemyDAO):
+class GxdIndexDAO(BaseDAO):
     
     model_class = GxdIndexRecord
     
