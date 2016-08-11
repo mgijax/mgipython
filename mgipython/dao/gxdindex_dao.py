@@ -29,7 +29,6 @@ class GxdIndexDAO(BaseDAO):
         """
         query = GxdIndexRecord.query
         
-        
         if _refs_key:
             query = query.filter(GxdIndexRecord._refs_key==_refs_key)
             
@@ -58,6 +57,11 @@ class GxdIndexDAO(BaseDAO):
         
         # join to Reference for sorting
         query = query.join(GxdIndexRecord.reference)
+        
+        
+        # eager-load the marker and reference relationships
+        query = query.options(db.subqueryload('marker'))
+        query = query.options(db.subqueryload('reference'))
         
         
         query = query.order_by(Marker.symbol, Reference.authors)

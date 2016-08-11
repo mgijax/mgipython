@@ -3,11 +3,13 @@ from mgipython.dao.vocterm_dao import VocTermDAO
 from mgipython.model import MGIUser
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
+from vocterm_service import VocTermService
 
 class UserService():
     
     user_dao = UserDAO()
     vocterm_dao = VocTermDAO()
+    vocterm_service = VocTermService()
     
     def get_by_key(self, _user_key):
         user = self.user_dao.get_by_key(_user_key)
@@ -87,14 +89,10 @@ class UserService():
         return format is
         { 'choices': [{'term', '_term_key'}] }
         """
-        terms = self.vocterm_dao.search(_vocab_key=22)
-        json = {
-            'choices':[]
-        }
-        for term in terms:
-            json['choices'].append({'term':term.term, '_term_key':term._term_key})
         
-        return json
+        user_status_vocab_key = 22
+        return self.vocterm_service \
+            .get_term_choices_by_vocab_key(user_status_vocab_key)
     
     @cache.memoize()
     def get_user_type_choices(self):
@@ -103,13 +101,8 @@ class UserService():
         return format is
         { 'choices': [{'term', '_term_key'}] }
         """
-        terms = self.vocterm_dao.search(_vocab_key=23)
-        json = {
-            'choices':[]
-        }
-        for term in terms:
-            json['choices'].append({'term':term.term, '_term_key':term._term_key})
-        
-        return json
+        user_type_vocab_key = 23
+        self.vocterm_service \
+            .get_term_choices_by_vocab_key(user_type_vocab_key)
         
         

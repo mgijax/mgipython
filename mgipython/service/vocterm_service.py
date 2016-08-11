@@ -105,14 +105,15 @@ class VocTermService():
         self.user_dao.delete(user)
         
     
-    @cache.memoize()
-    def get_user_status_choices(self):
+    
+    def get_term_choices_by_vocab_key(self, _vocab_key):
         """
-        Get all possible userstatus choices
+        Get all possible term choices
+        for the given _vocab_key
         return format is
         { 'choices': [{'term', '_term_key'}] }
         """
-        terms = self.vocterm_dao.search(_vocab_key=22)
+        terms = self.vocterm_dao.search(_vocab_key=_vocab_key)
         json = {
             'choices':[]
         }
@@ -121,20 +122,5 @@ class VocTermService():
         
         return json
     
-    @cache.memoize()
-    def get_user_type_choices(self):
-        """
-        Get all possible usertype choices
-        return format is
-        { 'choices': [{'term', '_term_key'}] }
-        """
-        terms = self.vocterm_dao.search(_vocab_key=23)
-        json = {
-            'choices':[]
-        }
-        for term in terms:
-            json['choices'].append({'term':term.term, '_term_key':term._term_key})
-        
-        return json
         
         
