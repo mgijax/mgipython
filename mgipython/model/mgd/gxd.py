@@ -418,6 +418,11 @@ class GxdIndexRecord(db.Model, MGIModel):
     _priority_key = db.Column(db.Integer)
     _conditionalmutants_key = db.Column(db.Integer)
     comments = db.Column(db.String())
+    _createdby_key = db.Column(db.Integer, default=1001)
+    _modifiedby_key = db.Column(db.Integer, default=1001)
+    creation_date = db.Column(db.DateTime, default=datetime.now)
+    modification_date = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    
     
     # column properties
     conditionalmutants = db.column_property(
