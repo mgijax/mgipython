@@ -11,11 +11,10 @@ fi
 
 # Set the python that we want to use in this virtual environment
 # We need a 2.7 python executable with zlib and ssl
-if [ "${PYTHON_HOME}" = "" ]
-then
-	PYTHON_HOME=/opt/python
+PYTHON_HOME=/opt/python
+if [ "${OVERRIDE_PYTHON_HOME}" != "" ]; then
+	PYTHON_HOME=$OVERRIDE_PYTHON_HOME
 fi
-
 PYTHON_C_INCLUDE=$PYTHON_HOME/include/python2.7
 PYTHON_LD_LIB=$PYTHON_HOME/lib
 PYTHON=$PYTHON_HOME/bin/python
