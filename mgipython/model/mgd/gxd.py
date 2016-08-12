@@ -1033,8 +1033,6 @@ class GxdHTExperiment(db.Model, MGIModel):
     name = db.Column(db.String())
     description = db.Column(db.String())
     arraydesign = db.Column(db.String())
-    assaycount = db.Column(db.Integer)
-    samplecount = db.Column(db.Integer)
 
     release_date = db.Column(db.DateTime)
     lastupdate_date = db.Column(db.DateTime, onupdate=datetime.now)
