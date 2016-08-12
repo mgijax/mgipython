@@ -419,8 +419,8 @@ class GxdIndexRecord(db.Model, MGIModel):
     _priority_key = db.Column(db.Integer)
     _conditionalmutants_key = db.Column(db.Integer)
     comments = db.Column(db.String())
-    _createdby_key = db.Column(db.Integer, default=1001)
-    _modifiedby_key = db.Column(db.Integer, default=1001)
+    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"), default=1001)
+    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"), default=1001)
     creation_date = db.Column(db.DateTime, default=datetime.now)
     modification_date = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     
@@ -457,6 +457,15 @@ class GxdIndexRecord(db.Model, MGIModel):
     )
     
     indexstages = db.relationship("GxdIndexStage")
+    
+    createdby = db.relationship("MGIUser",
+        primaryjoin="GxdIndexRecord._createdby_key==MGIUser._user_key",
+        foreign_keys="[MGIUser._user_key]",
+        uselist=False)
+    modifiedby = db.relationship("MGIUser",
+        primaryjoin="GxdIndexRecord._modifiedby_key==MGIUser._user_key",
+        foreign_keys="[MGIUser._user_key]",
+        uselist=False)
         
     @property
     def unique_stages(self):
