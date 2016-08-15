@@ -8,6 +8,14 @@ class ReviewStatus(db.Model,MGIModel):
     __tablename__="bib_reviewstatus"
     _reviewstatus_key = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
+    
+
+class ReferenceCitationCache(db.Model,MGIModel):
+    __tablename__ = "bib_citation_cache"
+    _refs_key = db.Column(db.Integer, mgi_fk("bib_refs._refs_key"), primary_key=True)
+    citation = db.Column(db.String)
+    short_citation = db.Column(db.String)
+    
 
 class Reference(db.Model,MGIModel):
     __tablename__ = "bib_refs"
@@ -60,6 +68,10 @@ class Reference(db.Model,MGIModel):
     
     # accessions
     # backref defined in Accession class
+    
+    citation_cache = db.relationship("ReferenceCitationCache", 
+        uselist=False
+    )
 
     gxd_images = db.relationship("Image",
         primaryjoin="and_(Image._refs_key==Reference._refs_key, "

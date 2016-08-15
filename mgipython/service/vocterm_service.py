@@ -2,6 +2,10 @@ from mgipython.dao.vocterm_dao import VocTermDAO
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from mgipython.model.query import batchLoadAttribute
+import logging
+
+logger = logging.getLogger('mgipython.service')
+
 
 class VocTermService():
     

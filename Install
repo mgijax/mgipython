@@ -41,6 +41,10 @@ easy_install flask_login
 printf "\nInstalling Flask REST extension\n"
 easy_install flask-restful
 
+
+printf "\nInstalling Flask RESTPlus extension\n"
+easy_install flask-restplus
+
 printf "\nInstalling Flask REST Swagger extension\n"
 easy_install flask-restful-swagger
 
