@@ -1,0 +1,1 @@
+This package contains service-layer models, which we are calling 'schema'. These schema are used to communicate complex information to the services, such as search queries, search results, and display only objects.

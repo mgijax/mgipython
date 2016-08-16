@@ -1,4 +1,5 @@
 from mgipython.model import db
+from mgipython.service_schema.search import SearchResults
 import logging
 
 logger = logging.getLogger('mgipython.dao')
@@ -91,5 +92,77 @@ class BaseDAO():
         next_key = db.session.query(db.func.max(getattr(model_class, pkName)).label("max_key")) \
                 .one().max_key + 1
         return next_key
+    
+    
+    def search(self, search_query):
+        """
+        Take SearchQuery, 
+            build query,
+            runs query
+        Return SearchResults
+        """
+        sqa_query = self._build_search_query(search_query)
+        search_results = self._run_query_or_paginate(search_query, sqa_query)
+        return search_results
+    
+    
+    def _build_search_query(self, search_query):
+        """
+        Method to override for building SQLAlchemy query
+        must return an SQLALchemy query
+        """
+        raise NotImplementedError("_build_search_query must be implemented in DAO subclass")
+        
+        
+    def _run_query_or_paginate(self, search_query, sqa_query):
+        """
+        Run the given query object or call paginate based
+            on given search_query object
+            
+        search_query is SearchQuery object
+        sqa_query is SQLAlchemy query object
+        
+        return SearchResults object
+        """
+        if search_query.paginator and search_query.paginator.page_size:
+            search_results = self._run_paginated_query(
+                sqa_query, search_query.paginator
+            )
+        else:
+            search_results = self._run_query(sqa_query)
+            
+        return search_results
+    
+    
+    def _run_paginated_query(self, sqa_query, paginator):
+        """
+        run SQLAlchemy query.paginate(),
+        return SearchResults
+        set paginator on SearchResults
+        """
+        search_results = SearchResults()
+        logger.debug("running paginated query, page_num=%s, page_size=%s" \
+                     % (paginator.page_num, paginator.page_size))
+        pagination = sqa_query.paginate(
+                paginator.page_num,
+                paginator.page_size,
+                False
+        )
+        search_results.items = pagination.items
+        search_results.total_count = pagination.total
+        search_results.paginator = paginator
+        
+        return search_results
+        
+    def _run_query(self, sqa_query):
+        """
+        run SQLAlachemy query, 
+        return SearchResults
+        """
+        search_results = SearchResults()
+        search_results.items = sqa_query.all()
+        search_results.total_count = len(search_results.items)
+        return search_results
+    
     
     

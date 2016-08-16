@@ -38,15 +38,15 @@ easy_install Flask-Admin
 printf "\nInstalling Flask Login extension\n"
 easy_install flask_login
 
-printf "\nInstalling Flask REST extension\n"
-easy_install flask-restful
-
-
 printf "\nInstalling Flask RESTPlus extension\n"
 easy_install flask-restplus
 
-printf "\nInstalling Flask REST Swagger extension\n"
-easy_install flask-restful-swagger
+# Fix dependency error with jsonschema
+printf "\nUpdating jsonschema dependency\n"
+pip install --upgrade jsonschema
+
+printf "\nInstalling Marshmallow\n"
+easy_install marshmallow
 
 printf "\nInstalling Flask Cache extension\n"
 easy_install Flask-Cache

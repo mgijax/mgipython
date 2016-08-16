@@ -1,6 +1,0 @@
-update
-ReviewStatus
-_reviewstatus_key	name
-1	Unreviewed
-2	Reviewed by MGI Editorial Staff
-3	Peer Reviewed

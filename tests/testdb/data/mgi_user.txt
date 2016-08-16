@@ -1,4 +1,0 @@
-update
-MGIUser
-_user_key	_usertype_key	_userstatus_key	login	name
-1001	-1	-1	mgd_dbo	MGD Database Operator

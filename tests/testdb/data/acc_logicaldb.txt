@@ -1,5 +1,0 @@
-update
-LogicalDb
-_logicaldb_key	name
--1	Test DB
-1	MGD
