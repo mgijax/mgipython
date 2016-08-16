@@ -2,8 +2,38 @@
 	Contains core functions and classes for working with SQL Alchemy
 """
 from mgipython.modelconfig import db
+from sqlalchemy.inspection import inspect
+from datetime import datetime
 
-class MGIModel:
+class Serializer(object):
+
+    def serialize(self):
+        dict = {}
+        for c in inspect(self).attrs.keys():
+            if c not in inspect(self).unloaded:
+                if isinstance(getattr(self, c), list):
+                    dict[c] = self.serialize_list(getattr(self, c))
+                elif isinstance(getattr(self, c), unicode):
+                    dict[c] = str(getattr(self, c))
+                elif isinstance(getattr(self, c), datetime):
+                    dict[c] = str(getattr(self, c))
+                elif isinstance(getattr(self, c), float):
+                    dict[c] = float(getattr(self, c))
+                elif isinstance(getattr(self, c), int):
+                    dict[c] = int(getattr(self, c))
+                elif isinstance(getattr(self, c), str):
+                    dict[c] = str(getattr(self, c))
+                elif getattr(self, c) is None:
+                    continue
+                else:
+                    dict[c] = getattr(self, c).serialize()
+        return dict
+
+    @staticmethod
+    def serialize_list(l):
+        return [m.serialize() for m in l]
+
+class MGIModel(Serializer):
         __table_args__ = {"useexisting": True}
         __table_args__["schema"] = "mgd"
         # define a method to retrieve the current table subclass
