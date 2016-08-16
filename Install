@@ -60,6 +60,8 @@ easy_install wtforms
 printf "\nInstalling CherryPy WSGI server \n"
 easy_install cherrypy==6.2.0
 
+printf "\nMake sure jsonschema is up to date \n"
+pip install --upgrade jsonschema
 
 printf "\nInstalling watchdog for dev file monitoring \n"
 easy_install watchdog
