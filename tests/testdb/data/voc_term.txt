@@ -1,4 +1,0 @@
-update
-VocTerm(vocabname=Test Vocab)
-_term_key	term
--1	Test Term

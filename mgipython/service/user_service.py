@@ -18,19 +18,11 @@ class UserService():
         return user
     
     
-    def search(self, args):
+    def search(self, search_query):
         """
-        Search using an argument object
+        Search using a SearchQuery
         """
-        users = self.user_dao.search(
-            login=args.login,
-            name=args.name,
-            _usertype_key=args._usertype_key,
-            _userstatus_key=args._userstatus_key,
-            orcid=args.orcid,
-            _createdby_key=args._createdby_key,
-            _modifiedby_key=args._modifiedby_key
-        )
+        users = self.user_dao.search(search_query)
         return users
     
     

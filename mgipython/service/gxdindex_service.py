@@ -20,22 +20,12 @@ class GxdIndexService():
         return gxdindex_record
     
     
-    def search(self, args):
+    def search(self, search_query):
         """
-        Search using an argument object
+        Search using a SearchQuery
         """
-        index_records = self.gxdindex_dao.search(
-            _refs_key=args._refs_key,
-            short_citation=args.short_citation,
-            _marker_key=args._marker_key,
-            _priority_key=args._priority_key,
-            _conditionalmutants_key=args._conditionalmutants_key,
-            comments=args.comments,
-            _createdby_key=args._createdby_key,
-            _modifiedby_key=args._modifiedby_key
-        )
-        
-        return index_records
+        gxdindex_records = self.gxdindex_dao.search(search_query)
+        return gxdindex_records
     
     
         
