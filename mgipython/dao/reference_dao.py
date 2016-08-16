@@ -1,4 +1,4 @@
-from mgipython.model import Accession, Reference
+from mgipython.model import Accession, Marker, Reference
 from mgipython.model import db
 from mgipython.parse.parser import splitCommaInput
 from base_dao import BaseDAO
@@ -144,10 +144,10 @@ class ReferenceDAO(BaseDAO):
                     .filter(sub_ref2._refs_key==Reference._refs_key) \
                     .correlate(Reference)
             
-        query1 = query.filter(ref_sq.exists())
-        query2 = query.filter(pmed_sq.exists())
+            query1 = query.filter(ref_sq.exists())
+            query2 = query.filter(pmed_sq.exists())
             
-        query = query1.union(query2)
+            query = query1.union(query2)
                             
         # setting sort
         query = query.order_by(Reference._refs_key.desc())
