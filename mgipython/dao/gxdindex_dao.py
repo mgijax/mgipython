@@ -63,13 +63,11 @@ class GxdIndexDAO(BaseDAO):
         if search_query.has_valid_param('is_coded'):
             is_coded = search_query.get_value('is_coded')
             
-            logger.debug("is_coded = %s" % is_coded)
-            logger.debug("params = %s" % search_query._params)
             query = query.filter(GxdIndexRecord.fully_coded==is_coded)
             
             
         if search_query.has_valid_param('_conditionalmutants_key'):
-            _conditional_mutants_key = search_query.get_value('_conditionalmutants_key')
+            _conditionalmutants_key = search_query.get_value('_conditionalmutants_key')
             query = query.filter(GxdIndexRecord._conditionalmutants_key==_conditionalmutants_key)
             
             

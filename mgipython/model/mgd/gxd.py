@@ -425,6 +425,10 @@ class GxdIndexRecord(db.Model, MGIModel):
     modification_date = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     
     
+    # constants
+    _conditionalmutants_vocab_key = 74
+    _priority_vocab_key = 11
+    
     # column properties
     conditionalmutants = db.column_property(
         db.select([VocTerm.term]).
@@ -456,7 +460,9 @@ class GxdIndexRecord(db.Model, MGIModel):
         uselist=False 
     )
     
-    indexstages = db.relationship("GxdIndexStage")
+    indexstages = db.relationship("GxdIndexStage",
+        cascade="save-update, delete"
+    )
     
     createdby = db.relationship("MGIUser",
         primaryjoin="GxdIndexRecord._createdby_key==MGIUser._user_key",
@@ -496,6 +502,14 @@ class GxdIndexStage(db.Model,MGIModel):
                         primary_key=True)
     _stageid_key = db.Column(db.Integer,
                         primary_key=True)
+    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"), default=1001)
+    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"), default=1001)
+    creation_date = db.Column(db.DateTime, default=datetime.now)
+    modification_date = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    
+    # constants
+    _indexassay_vocab_key = 12
+    _stageid_vocab_key = 13
 
     # column properties
     indexassay = db.column_property(
