@@ -7,23 +7,20 @@ class GxdHTExperimentDAO(BaseDAO):
     
     model_class = GxdHTExperiment
     
-    def search(self, searchObject=None):
+    def _build_search_query(self, search_query):
 
         query = GxdHTExperiment.query
 
-        if searchObject.params.has_key("name"):
-            name = searchObject.params["name"].lower()
+        if search_query.has_valid_param("name"):
+            name = search_query.get_value("name")
+            name = name.lower()
             query = query.filter(db.func.lower(GxdHTExperiment.name).like(name))
-            
-        if searchObject.params.has_key("description"):
-            description = searchObject.params["description"].lower()
+
+        if search_query.has_valid_param("description"):
+            description = search_query.get_value("description")
+            description = description.lower()
             query = query.filter(db.func.lower(GxdHTExperiment.description).like(description))
             
-        if searchObject.params.has_key("_createdby_key"):
-            query = query.filter(GxdHTExperiment._createdby_key==searchObject.params["_createdby_key"])
-        if searchObject.params.has_key("_modifiedby_key"):
-            query = query.filter(GxdHTExperiment._modifiedby_key==searchObject.params["_modifiedby_key"])
-        
         query = query.order_by(GxdHTExperiment._experiment_key)
         
-        return query.all()
+        return query

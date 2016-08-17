@@ -14,7 +14,7 @@ class Serializer(object):
                 if isinstance(getattr(self, c), list):
                     dict[c] = self.serialize_list(getattr(self, c))
                 elif isinstance(getattr(self, c), unicode):
-                    dict[c] = str(getattr(self, c))
+                    dict[c] = unicode(getattr(self, c))
                 elif isinstance(getattr(self, c), datetime):
                     dict[c] = str(getattr(self, c))
                 elif isinstance(getattr(self, c), float):

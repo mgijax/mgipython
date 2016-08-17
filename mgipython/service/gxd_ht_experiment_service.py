@@ -15,11 +15,12 @@ class GxdHTExperimentService():
             raise NotFoundError("No GxdHTExperiment for _experiment_key=%d" % key)
         return experiment
     
-    def search(self, searchQuery):
-        searchResult = self.gxd_dao.search(searchQuery)
-        for experiment in searchResult.items:
+    def search(self, search_query):
+        search_result = self.gxd_dao.search(search_query)
+        print search_result
+        for experiment in search_result.items:
             self.loadAttributes(experiment)
-        return searchResult
+        return search_result
 
     def edit(self, key, args):
         experiment = self.gxd_dao.get_by_key(key)
