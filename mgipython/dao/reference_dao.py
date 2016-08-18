@@ -1,4 +1,4 @@
-from mgipython.model import Accession, Marker, Reference
+from mgipython.model import Accession, Allele, Marker, Reference
 from mgipython.model import db
 from mgipython.parse.parser import splitCommaInput
 from base_dao import BaseDAO
@@ -56,8 +56,6 @@ class ReferenceDAO(BaseDAO):
             marker_id,
             allele_id
         """
-        
-        logger.debug('In ReferenceDAO - calling search')
         
         query = Reference.query
         
