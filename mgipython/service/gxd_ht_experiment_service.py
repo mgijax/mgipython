@@ -8,34 +8,33 @@ class GxdHTExperimentService():
     
     gxd_dao = GxdHTExperimentDAO()
     
-    def get_by_key(self, key):
-        experiment = self.gxd_dao.get_by_key(key)
-        self.loadAttributes(experiment)
-        if not experiment:
-            raise NotFoundError("No GxdHTExperiment for _experiment_key=%d" % key)
-        return experiment
-    
     def search(self, search_query):
         search_result = self.gxd_dao.search(search_query)
-        print search_result
-        for experiment in search_result.items:
-            self.loadAttributes(experiment)
+        self.loadAttributes(search_result.items)
         return search_result
-
-    def edit(self, key, args):
-        experiment = self.gxd_dao.get_by_key(key)
-        if not experiment:
-            raise NotFoundError("No GxdHTExperiment for _experiment_key=%d" % key)
-        experiment.name = args.name
-        experiment.description = args.description
-        
-        self.gxd_dao.save(experiment)
-        return experiment
 
     def create(self, args):
         experiment = GxdHTExperiment()
-        experiment.name = args.name
-        experiment.description = args.description
+        experiment.name = args["name"]
+        experiment.description = args["description"]
+        self.gxd_dao.save(experiment)
+        return experiment
+
+    # Read
+    def get(self, key):
+        experiment = self.gxd_dao.get_by_key(key)
+        self.loadAttributes([experiment])
+        if not experiment:
+            raise NotFoundError("No GxdHTExperiment for _experiment_key=%d" % key)
+        return experiment
+ 
+    # Update
+    def save(self, key, args):
+        experiment = self.gxd_dao.get_by_key(key)
+        if not experiment:
+            raise NotFoundError("No GxdHTExperiment for _experiment_key=%d" % key)
+        experiment.name = args["name"]
+        experiment.description = args["description"]
         self.gxd_dao.save(experiment)
         return experiment
 
@@ -45,23 +44,26 @@ class GxdHTExperimentService():
             raise NotFoundError("No GXD HT Experiment for _experiment_key=%d" % key)
         self.gxd_dao.delete(experiment)
 
-    def loadAttributes(self, experiment):
-        batchLoadAttribute([experiment], "source_object")
-        batchLoadAttribute([experiment], "triagestate_object")
-        batchLoadAttribute([experiment], "curationstate_object")
-        batchLoadAttribute([experiment], "studytype_object")
-        batchLoadAttribute([experiment], "notes")
-        #batchLoadAttribute([experiment], "experiment_variables")
+    def loadAttributes(self, objects):
+        batchLoadAttribute(objects, "source_object")
+        batchLoadAttribute(objects, "triagestate_object")
+        batchLoadAttribute(objects, "curationstate_object")
+        batchLoadAttribute(objects, "studytype_object")
+        batchLoadAttribute(objects, "notes")
+        batchLoadAttribute(objects, "experiment_variables")
 
-        #batchLoadAttribute([experiment], "assay_count.value")
-        #batchLoadAttribute([experiment], "pubmed_ids")
+        #batchLoadAttribute([experiment], "all_properties")
+        batchLoadAttribute(objects, "assay_count")
+        batchLoadAttribute(objects, "pubmed_ids")
+        batchLoadAttribute(objects, "experimental_factors")
+        batchLoadAttribute(objects, "experiment_designs")
+        batchLoadAttribute(objects, "experiment_types")
+        batchLoadAttribute(objects, "provider_contact_names")
+        batchLoadAttribute(objects, "sample_count")
+        batchLoadAttribute(objects, "primaryid_object")
+        batchLoadAttribute(objects, "secondaryids")
 
-        #batchLoadAttribute([experiment], "experimental_factors")
-        #batchLoadAttribute([experiment], "experiment_designs")
-        #batchLoadAttribute([experiment], "experiment_types")
-        #batchLoadAttribute([experiment], "provider_contact_names")
-        #batchLoadAttribute([experiment], "sample_count")
-        #batchLoadAttribute([experiment], "assay_designs")
-        batchLoadAttribute([experiment], "primaryid_object")
-        batchLoadAttribute([experiment], "secondaryids")
-
+        batchLoadAttribute(objects, "evaluatedby_object")
+        batchLoadAttribute(objects, "curatedby_object")
+        batchLoadAttribute(objects, "createdby_object")
+        batchLoadAttribute(objects, "modifiedby_object")

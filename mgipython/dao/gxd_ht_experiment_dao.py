@@ -20,6 +20,12 @@ class GxdHTExperimentDAO(BaseDAO):
             description = search_query.get_value("description")
             description = description.lower()
             query = query.filter(db.func.lower(GxdHTExperiment.description).like(description))
+
+        if search_query.has_valid_param("release_date"):
+            release_date = search_query.get_value("release_date")
+            query = query.filter(GxdHTExperiment.release_date >= release_date)
+
+
             
         query = query.order_by(GxdHTExperiment._experiment_key)
         

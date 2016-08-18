@@ -1056,7 +1056,21 @@ class GxdHTExperiment(db.Model, MGIModel):
     _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
     _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
 
+    evaluatedby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._evaluatedby_key==MGIUser._user_key", uselist=False)
+    curatedby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._curatedby_key==MGIUser._user_key", uselist=False)
+    createdby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._createdby_key==MGIUser._user_key", uselist=False)
+    modifiedby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._modifiedby_key==MGIUser._user_key", uselist=False)
+
     _mgitype_key = 42
+
+    _assay_count_key = 19880470
+    _experimental_factors_key = 19880471
+    _experiment_designs_key = 19880472
+    _experiment_types_key = 19880473
+    _provider_contact_names_key = 19880474
+    _sample_count_key = 19880475
+
+    _pubmed_ids_key = 19880480
 
     notes = db.relationship("Note", primaryjoin="and_(GxdHTExperiment._experiment_key==Note._object_key,"
         "Note._mgitype_key==%d)" % _mgitype_key, foreign_keys="[Note._object_key]"
@@ -1071,35 +1085,31 @@ class GxdHTExperiment(db.Model, MGIModel):
     )
 
     assay_count = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw assay count", foreign_keys="[Property._object_key]"
+        "Property._propertyterm_key==%d)" % _assay_count_key, foreign_keys="[Property._object_key]"
     )
 
     pubmed_ids = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "PubMed ID", foreign_keys="[Property._object_key]"
+        "Property._propertyterm_key==%d)" % _pubmed_ids_key, foreign_keys="[Property._object_key]"
     )
 
     experimental_factors = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw experimental factor", foreign_keys="[Property._object_key]"
+        "Property._propertyterm_key==%d)" % _experimental_factors_key, foreign_keys="[Property._object_key]"
     )
 
     experiment_designs = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw experiment design", foreign_keys="[Property._object_key]"
+        "Property._propertyterm_key==%d)" % _experiment_designs_key, foreign_keys="[Property._object_key]"
     )
 
     experiment_types = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw experiment type", foreign_keys="[Property._object_key]"
+        "Property._propertyterm_key==%d)" % _experiment_types_key, foreign_keys="[Property._object_key]"
     )
 
     provider_contact_names = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw contact name", foreign_keys="[Property._object_key]"
+        "Property._propertyterm_key==%d)" % _provider_contact_names_key, foreign_keys="[Property._object_key]"
     )
 
     sample_count = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw sample count", foreign_keys="[Property._object_key]"
-    )
-
-    assay_designs = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==VocTerm._term_key,VocTerm.term==\"%s\")" % "raw array design", foreign_keys="[Property._object_key]"
+        "Property._propertyterm_key==%d)" % _sample_count_key, foreign_keys="[Property._object_key]"
     )
 
     primaryid = db.column_property(

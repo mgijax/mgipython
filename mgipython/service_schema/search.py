@@ -13,6 +13,10 @@ class Paginator():
     """
     page_num = 1
     page_size = 0
+
+    def __init__(self):
+        self.page_num = 1
+        self.page_size = 0
     
     
 class SearchQuery():
@@ -24,6 +28,11 @@ class SearchQuery():
     _params = {}
     sorts = []
     paginator = None
+ 
+    def __init__(self):
+        self._params = {}
+        self.sorts = []
+        self.paginator = None
     
     def set_params(self, params):
         """
@@ -31,7 +40,7 @@ class SearchQuery():
         """
         for key, value in params.items():
             self.set_param(key, value)
-        
+
     def set_param(self, param_name, value):
         """
         set a single param_name, value pair
@@ -82,4 +91,8 @@ class SearchResults():
     items = []
     total_count = 0
     paginator = None
-    
+
+    def __init__(self):
+        self.items = []
+        self.total_count = 0
+        paginator = None
