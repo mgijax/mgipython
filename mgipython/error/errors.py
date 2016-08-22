@@ -26,3 +26,7 @@ class InvalidEMAPAIDError(SyntaxError):
     Raised on invalid EMAPA ID input
     """
     
+class DateFormatError(Exception):
+    """
+    Raised due to invalid date format
+    """

@@ -2,13 +2,20 @@ from mgipython.dao.gxd_ht_experiment_dao import GxdHTExperimentDAO
 from mgipython.model import GxdHTExperiment
 from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
+from mgipython.error import DateFormatError
 from mgipython.modelconfig import cache
+from dateutil import parser
+import sys
 
 class GxdHTExperimentService():
     
     gxd_dao = GxdHTExperimentDAO()
     
     def search(self, search_query):
+
+        if search_query.has_valid_param("release_date"):
+            self.validate_date(search_query.get_value("release_date"))
+
         search_result = self.gxd_dao.search(search_query)
         self.loadAttributes(search_result.items)
         return search_result
@@ -67,3 +74,20 @@ class GxdHTExperimentService():
         batchLoadAttribute(objects, "curatedby_object")
         batchLoadAttribute(objects, "createdby_object")
         batchLoadAttribute(objects, "modifiedby_object")
+
+
+    def validate_date(self, date):
+        try:
+            if " " in date:
+                [operator, check_date] = date.split(" ")
+                parser.parse(check_date)
+            elif ".." in date:
+                [date1, date2] = date.split("..")
+                parser.parse(date1)
+                parser.parse(date2)
+            else:
+                parser.parse(date)
+        except:
+            e = sys.exc_info()[0]
+            raise DateFormatError("Invalid Date format: %s" % str(e))
+ 
