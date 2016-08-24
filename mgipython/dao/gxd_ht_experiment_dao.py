@@ -42,6 +42,6 @@ class GxdHTExperimentDAO(BaseDAO):
             else:
                 query = query.filter(GxdHTExperiment.release_date == release_date)
             
-        query = query.order_by(GxdHTExperiment._experiment_key)
+        #query = query.order_by(GxdHTExperiment._experiment_key)
         
         return query
