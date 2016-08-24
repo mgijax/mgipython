@@ -3,6 +3,13 @@ import sys
 from mgipython.error import DateFormatError
 from dateutil import parser
 
+
+#--  >  09/09/1995
+#--  <  09/09/1995
+#--  >= 09/09/1995
+#--  <= 09/09/1995
+#--  07/01/2005..07/06/2005 (between)  
+#--  07/01/2005 (=)
 class DateHelper():
 
     def validate_date(self, date):
