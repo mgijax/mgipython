@@ -16,7 +16,7 @@ class GxdHTExperimentService():
             DateHelper().validate_date(search_query.get_value("release_date"))
 
         search_result = self.gxd_dao.search(search_query)
-        #self.loadAttributes(search_result.items)
+        self.loadAttributes(search_result.items)
         return search_result
 
     def create(self, args):

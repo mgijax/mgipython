@@ -27,3 +27,21 @@ class DateHelper():
         except:
             e = sys.exc_info()[0]
             raise DateFormatError("Invalid Date format: %s" % str(e))
+
+    def build_query_with_date(self, query, field, date):
+        if ">=" in date:
+            query = query.filter(field > re.sub('>=', '', date).strip())
+        elif "<=" in date:
+            query = query.filter(field > re.sub('<=', '', date).strip())
+        elif "<" in date:
+            query = query.filter(field > re.sub('<', '', date).strip())
+        elif ">" in date:
+            query = query.filter(field > re.sub('>', '', date).strip())
+        elif ".." in date:
+            [date1, date2] = release_date.split("..")
+            query = query.filter(field.between(date1.strip(), date2.strip()))
+        else:
+            query = query.filter(field == date)
+
+        return query
+ 
