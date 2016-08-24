@@ -1,5 +1,6 @@
 from mgipython.model import GxdHTExperiment
 from mgipython.model import db
+from voc import VocTerm
 from base_dao import BaseDAO
 
 
@@ -41,6 +42,32 @@ class GxdHTExperimentDAO(BaseDAO):
                 query = query.filter(GxdHTExperiment.release_date.between(date1, date2))
             else:
                 query = query.filter(GxdHTExperiment.release_date == release_date)
+            
+        if search_query.has_valid_param("creation_date"):
+            creation_date = search_query.get_value("creation_date")
+
+            # As above for release date...
+            # This following code needs to be pulled out into a parser in order to be use
+            # on all date fields for searching
+            if " " in creation_date:
+                [operator, date] = creation_date.split(" ")
+                if operator == ">":
+                    query = query.filter(GxdHTExperiment.creation_date > date)
+                elif operator == "<":
+                    query = query.filter(GxdHTExperiment.creation_date < date)
+                elif operator == ">=":
+                    query = query.filter(GxdHTExperiment.creation_date >= date)
+                elif operator == "<=":
+                    query = query.filter(GxdHTExperiment.creation_date <= date)
+            elif ".." in creation_date:
+                [date1, date2] = creation_date.split("..")
+                query = query.filter(GxdHTExperiment.creation_date.between(date1, date2))
+            else:
+                query = query.filter(GxdHTExperiment.creation_date == creation_date)
+
+        if search_query.has_valid_param("_TriageState_key"):
+            triage_state_key = search_query.get_value("_TriageState_key")
+            query = query.filter(GxdHTExperiment._triagestate_key == triage_state_key)
             
         query = query.order_by(GxdHTExperiment._experiment_key)
         
