@@ -2,10 +2,9 @@ from mgipython.dao.gxd_ht_experiment_dao import GxdHTExperimentDAO
 from mgipython.model import GxdHTExperiment
 from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
-from mgipython.error import DateFormatError
+from mgipython.service.helpers.date_helper import DateHelper
 from mgipython.modelconfig import cache
 from dateutil import parser
-import sys
 
 class GxdHTExperimentService():
     
@@ -15,7 +14,7 @@ class GxdHTExperimentService():
 
         for dateField in [ 'release_date', 'created_date' ]:
             if search_query.has_valid_param(dateField):
-                self.validate_date(search_query.get_value(dateField))
+                DateHelper().validate_date(search_query.get_value(dateField))
 
         search_result = self.gxd_dao.search(search_query)
         self.loadAttributes(search_result.items)
@@ -53,42 +52,27 @@ class GxdHTExperimentService():
         self.gxd_dao.delete(experiment)
 
     def loadAttributes(self, objects):
-        batchLoadAttribute(objects, "source_object")
-        batchLoadAttribute(objects, "triagestate_object")
-        batchLoadAttribute(objects, "curationstate_object")
-        batchLoadAttribute(objects, "studytype_object")
-        batchLoadAttribute(objects, "notes")
-        batchLoadAttribute(objects, "experiment_variables")
+        batchLoadAttribute(objects, "source_object", 1000, True)
+        batchLoadAttribute(objects, "triagestate_object", 1000, True)
+        batchLoadAttribute(objects, "curationstate_object", 1000, True)
+        batchLoadAttribute(objects, "studytype_object", 1000, True)
+        batchLoadAttribute(objects, "notes", 1000, True)
+        #batchLoadAttribute(objects, "experiment_variables", 1000, True)
 
-        #batchLoadAttribute([experiment], "all_properties")
-        batchLoadAttribute(objects, "assay_count")
-        batchLoadAttribute(objects, "pubmed_ids")
-        batchLoadAttribute(objects, "experimental_factors")
-        batchLoadAttribute(objects, "experiment_designs")
-        batchLoadAttribute(objects, "experiment_types")
-        batchLoadAttribute(objects, "provider_contact_names")
-        batchLoadAttribute(objects, "sample_count")
-        batchLoadAttribute(objects, "primaryid_object")
-        batchLoadAttribute(objects, "secondaryids")
+        batchLoadAttribute(objects, "all_properties", 1000, True)
 
-        batchLoadAttribute(objects, "evaluatedby_object")
-        batchLoadAttribute(objects, "curatedby_object")
-        batchLoadAttribute(objects, "createdby_object")
-        batchLoadAttribute(objects, "modifiedby_object")
+        #batchLoadAttribute(objects, "assay_count", 1000, True)
+        #batchLoadAttribute(objects, "pubmed_ids", 1000, True)
+        #batchLoadAttribute(objects, "experimental_factors", 1000, True)
+        #batchLoadAttribute(objects, "experiment_designs", 1000, True)
+        #batchLoadAttribute(objects, "experiment_types", 1000, True)
+        #batchLoadAttribute(objects, "provider_contact_names", 1000, True)
+        #batchLoadAttribute(objects, "sample_count", 1000, True)
+        batchLoadAttribute(objects, "primaryid_object", 1000, True)
+        batchLoadAttribute(objects, "secondaryids", 1000, True)
 
+        batchLoadAttribute(objects, "evaluatedby_object", 1000, True)
+        batchLoadAttribute(objects, "curatedby_object", 1000, True)
+        batchLoadAttribute(objects, "createdby_object", 1000, True)
+        batchLoadAttribute(objects, "modifiedby_object", 1000, True)
 
-    def validate_date(self, date):
-        try:
-            if " " in date:
-                [operator, check_date] = date.split(" ")
-                parser.parse(check_date)
-            elif ".." in date:
-                [date1, date2] = date.split("..")
-                parser.parse(date1)
-                parser.parse(date2)
-            else:
-                parser.parse(date)
-        except:
-            e = sys.exc_info()[0]
-            raise DateFormatError("Invalid Date format: %s" % str(e))
- 

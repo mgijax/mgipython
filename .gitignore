@@ -17,3 +17,4 @@ lib64
 logs
 pip-selfcheck.json
 test.db
+*~
