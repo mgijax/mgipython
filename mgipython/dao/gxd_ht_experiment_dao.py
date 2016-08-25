@@ -1,6 +1,5 @@
 from mgipython.model import GxdHTExperiment
 from mgipython.model import db
-from voc import VocTerm
 from base_dao import BaseDAO
 
 
@@ -67,7 +66,7 @@ class GxdHTExperimentDAO(BaseDAO):
 
         if search_query.has_valid_param("_TriageState_key"):
             triage_state_key = search_query.get_value("_TriageState_key")
-            query = query.filter(GxdHTExperiment._triagestate_key == triage_state_key)
+            query = query.filter(GxdHTExperiment._triagestate_key == int(triage_state_key))
             
         query = query.order_by(GxdHTExperiment._experiment_key)
         

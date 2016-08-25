@@ -13,8 +13,9 @@ class GxdHTExperimentService():
     
     def search(self, search_query):
 
-        if search_query.has_valid_param("release_date"):
-            self.validate_date(search_query.get_value("release_date"))
+        for dateField in [ 'release_date', 'created_date' ]:
+            if search_query.has_valid_param(dateField):
+                self.validate_date(search_query.get_value(dateField))
 
         search_result = self.gxd_dao.search(search_query)
         self.loadAttributes(search_result.items)
