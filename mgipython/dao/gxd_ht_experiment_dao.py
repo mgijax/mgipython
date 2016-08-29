@@ -30,6 +30,22 @@ class GxdHTExperimentDAO(BaseDAO):
             creation_date = search_query.get_value("creation_date")
             query = DateHelper().build_query_with_date(query, GxdHTExperiment.creation_date, creation_date)
 
+        if search_query.has_valid_param("modification_date"):
+            modification_date = search_query.get_value("modification_date")
+            query = DateHelper().build_query_with_date(query, GxdHTExperiment.modification_date, modification_date)
+
+        if search_query.has_valid_param("evaluated_date"):
+            evaluated_date = search_query.get_value("evaluated_date")
+            query = DateHelper().build_query_with_date(query, GxdHTExperiment.evaluated_date, evaluated_date)
+
+        if search_query.has_valid_param("curated_date"):
+            curated_date = search_query.get_value("curated_date")
+            query = DateHelper().build_query_with_date(query, GxdHTExperiment.curated_date, curated_date)
+
+        if search_query.has_valid_param("lastupdate_date"):
+            lastupdate_date = search_query.get_value("lastupdate_date")
+            query = DateHelper().build_query_with_date(query, GxdHTExperiment.lastupdate_date, lastupdate_date)
+
         if search_query.has_valid_param("_TriageState_key"):
             triage_state_key = search_query.get_value("_TriageState_key")
             query = query.filter(GxdHTExperiment._triagestate_key == int(triage_state_key))
