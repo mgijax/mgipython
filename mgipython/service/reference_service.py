@@ -24,6 +24,9 @@ class ReferenceService():
         if not reference:
             raise NotFoundError("No Reference for J Number=%s" % jnum_id)
         
+        # load citation_cache
+        reference.citation_cache
+        
         return reference
     
     def get_by_jnumber(self, jnumber):
