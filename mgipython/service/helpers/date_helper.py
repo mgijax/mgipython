@@ -1,5 +1,6 @@
 import re
 import sys
+from sqlalchemy import Date, cast
 from mgipython.error import DateFormatError
 from dateutil import parser
 
@@ -37,18 +38,18 @@ class DateHelper():
 
     def build_query_with_date(self, query, field, date):
         if ">=" in date:
-            query = query.filter(field > re.sub('>=', '', date).strip())
+            query = query.filter(cast(field, Date) >= re.sub('>=', '', date).strip())
         elif "<=" in date:
-            query = query.filter(field > re.sub('<=', '', date).strip())
+            query = query.filter(cast(field, Date) <= re.sub('<=', '', date).strip())
         elif "<" in date:
-            query = query.filter(field > re.sub('<', '', date).strip())
+            query = query.filter(cast(field, Date) < re.sub('<', '', date).strip())
         elif ">" in date:
-            query = query.filter(field > re.sub('>', '', date).strip())
+            query = query.filter(cast(field, Date) > re.sub('>', '', date).strip())
         elif ".." in date:
-            [date1, date2] = release_date.split("..")
+            [date1, date2] = date.split("..")
             query = query.filter(field.between(date1.strip(), date2.strip()))
         else:
-            query = query.filter(field == date)
+            query = query.filter(cast(field, Date) == date)
 
         return query
  
