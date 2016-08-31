@@ -17,25 +17,23 @@ class VocTermDAO(BaseDAO):
         accAlias = db.aliased(Accession)
         return VocTerm.query.join(accAlias, VocTerm.primaryid_object) \
                 .filter(accAlias.accid==id).first()
-            
-    
-    def search(self,
-               _vocab_key=None
-                ):
-        """
-        Search VocTerm by fields:
-            _vocab_key
-        """
+
+    def _build_search_query(self, search_query):
+
         query = VocTerm.query
         
-        if _vocab_key:
-            query = query.filter(VocTerm._vocab_key==_vocab_key)
-            
-        
+        if search_query.has_valid_param("_vocab_key"):
+            query = query.filter(VocTerm._vocab_key==search_query.get_value("_vocab_key"))
+
+        if search_query.has_valid_param("_term_key"):
+            query = query.filter(VocTerm._term_key==search_query.get_value("_term_key"))
+
+        if search_query.has_valid_param("vocab_name"):
+            query = query.filter(VocTerm.vocabname==search_query.get_value("vocab_name"))
+
         query = query.order_by(VocTerm.term)
         
-        return query.all()
-    
+        return query
         
     def search_emapa_terms(self,
                          termSearch="",
