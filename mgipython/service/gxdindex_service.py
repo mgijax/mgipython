@@ -5,6 +5,9 @@ from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from vocterm_service import VocTermService
+import logging
+
+logger = logging.getLogger("mgipython.service")
 
 class GxdIndexService():
     
@@ -24,8 +27,21 @@ class GxdIndexService():
         """
         Search using a SearchQuery
         """
-        gxdindex_records = self.gxdindex_dao.search(search_query)
-        return gxdindex_records
+        search_results = self.gxdindex_dao.search(search_query)
+        
+        # load data to be displayed
+        
+        gxdindex_records = search_results.items
+        batchLoadAttribute(gxdindex_records, 'indexstages')
+        batchLoadAttribute(gxdindex_records, 'reference')
+        batchLoadAttribute(gxdindex_records, 'reference.citation_cache')
+        batchLoadAttribute(gxdindex_records, 'marker')
+        batchLoadAttribute(gxdindex_records, 'createdby')
+        batchLoadAttribute(gxdindex_records, 'modifiedby')
+        
+        logger.debug("createdby = %s" % gxdindex_records[0].createdby.login)
+        logger.debug("modifiedby = %s" % gxdindex_records[0].modifiedby.login)
+        return search_results
     
     
         
