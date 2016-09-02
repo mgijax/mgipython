@@ -193,10 +193,204 @@ class LoadFromModelTestCase(unittest.TestCase):
         self.assertEqual(serializer.computed.name, "child1")
     
 
+
 class SerializeTestCase(unittest.TestCase):
     """
     Test serialize() method
     """
+    
+    def test_empty_serialize(self):
+        class EmptyDomain(Serializer):
+            __fields__ = []
+            
+        serializer = EmptyDomain()
+        output = serializer.serialize()
+        self.assertEqual(output, {})
+        
+    
+    def test_simple_serialize(self):
+        class SimpleDomain(Serializer):
+            __fields__ = [
+                Field("col1"),
+                Field("col2")
+            ]
+            
+        serializer = SimpleDomain()
+        serializer.col1 = 1
+        serializer.col2 = "2"
+        
+        output = serializer.serialize()
+        expected = {
+            "col1": 1,
+            "col2": "2"
+        }
+        self.assertEqual(output, expected)
+        
+        
+    def test_nested_serialize(self):
+        
+        class NestedDomain(Serializer):
+            __fields__ = [
+                Field("name")
+            ]
+        
+        class ParentDomain(Serializer):
+            __fields__ = [
+                Field("child")
+            ]
+            
+        parent = ParentDomain()
+        child = NestedDomain()
+        child.name = "test"
+        parent.child = child
+        
+        output = parent.serialize()
+        expected = {
+            "child": {
+                "name": "test"
+            }
+        }
+        self.assertEqual(output, expected)
+        
+        
+    def test_nested_list_serialize(self):
+        
+        class NestedDomain(Serializer):
+            __fields__ = [
+                Field("name")
+            ]
+        
+        class ParentDomain(Serializer):
+            __fields__ = [
+                Field("children")
+            ]
+            
+        parent = ParentDomain()
+        
+        child1 = NestedDomain()
+        child1.name = "child1"
+        
+        child2 = NestedDomain()
+        child2.name = "child2"
+        
+        parent.children = [child1, child2]
+        
+        output = parent.serialize()
+        expected = {
+            "children": [
+                {"name": "child1"},
+                {"name": "child2"}
+            ]
+        }
+        self.assertEqual(output, expected)
+        
+    
+    
+class LoadFromDictTestCase(unittest.TestCase):
+    """
+    Test load_from_dict() method
+    """
+    
+    def test_empty_dict(self):
+        
+        class SimpleDomain(Serializer):
+            __fields__ = [
+                Field("col1")
+            ]
+            
+        serializer = SimpleDomain()
+        serializer.load_from_dict({})
+        
+        self.assertEqual(serializer.col1, None)
+        
+        
+    def test_simple_dict(self):
+        
+        class SimpleDomain(Serializer):
+            __fields__ = [
+                Field("col1"),
+                Field("col2"),
+                Field("col3")
+            ]
+            
+        input = {
+            "col1": 1,
+            "col2": "2",
+            "col3": [1,2,3,4]
+        }
+            
+        serializer = SimpleDomain()
+        serializer.load_from_dict(input)
+        
+        self.assertEqual(serializer.col1, 1)
+        self.assertEqual(serializer.col2, "2")
+        self.assertEqual(serializer.col3, [1,2,3,4])
+        
+        
+    def test_extra_fields(self):
+        
+        class SimpleDomain(Serializer):
+            __fields__ = [
+                Field("col1"),
+                Field("col2")
+            ]
+            
+        input = {
+            "col1": 1,
+            "col2": "2",
+            "col3": [1,2,3,4]
+        }
+            
+        serializer = SimpleDomain()
+        serializer.load_from_dict(input)
+        
+        self.assertEqual(serializer.col1, 1)
+        self.assertEqual(serializer.col2, "2")
+        self.assertFalse(hasattr(serializer, "col3"), "SimpleDomain should not have a col3 attribute")
+        
+    
+    def test_missing_field(self):
+        
+        class SimpleDomain(Serializer):
+            __fields__ = [
+                Field("col1"),
+                Field("col2"),
+                Field("col3")
+            ]
+            
+        input = {
+            "col1": 1,
+            "col2": "2"
+        }
+            
+        serializer = SimpleDomain()
+        serializer.load_from_dict(input)
+        
+        self.assertEqual(serializer.col1, 1)
+        self.assertEqual(serializer.col2, "2")
+        self.assertEqual(serializer.col3, None)
+        
+        
+    def test_nested_domain(self):
+        
+        class NestedDomain(Serializer):
+            __fields__ = [
+                Field("name")
+            ]
+            
+        class ParentDomain(Serializer):
+            __fields__ = [
+                Field("child", conversion_class=NestedDomain)
+            ]
+            
+        input = {
+            "child": {"name":"test"}
+        }
+            
+        parent = ParentDomain()
+        parent.load_from_dict(input)
+        
+        self.assertIsInstance(parent.child, NestedDomain)
     
     
         
@@ -204,6 +398,7 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(LoadFromModelTestCase))
     suite.addTest(unittest.makeSuite(SerializeTestCase))
+    suite.addTest(unittest.makeSuite(LoadFromTestCase))
     # add future test suites here
     return suite
 

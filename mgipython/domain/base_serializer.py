@@ -170,6 +170,7 @@ class Serializer():
                     else:
                         obj = field.conversion_class()
                         obj.load_from_dict(value)
+                        value = obj
 
                 setattr(self, field.field_name, value)
 
