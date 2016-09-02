@@ -47,7 +47,6 @@ class GxdIndexService():
         
         
         # convert results to gxd index domain objects
-        serializer = IndexRecordDomain()
         search_results.items = convert_models(gxdindex_records, IndexRecordDomain)
         
         return search_results
