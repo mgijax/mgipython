@@ -75,7 +75,7 @@ class IndexRecordSearchResultDomain(Serializer):
     def get_short_citation(self, record):
         return record.reference.short_citation
     
-    def get_marker_symbol(self):
+    def get_marker_symbol(self, record):
         return record.marker.symbol
     
     

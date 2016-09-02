@@ -1,4 +1,4 @@
-class Field():
+class Field(object):
     """
     Serializeable Field
     
@@ -15,7 +15,7 @@ class Field():
         self.conversion_class = conversion_class
 
 
-class Serializer():
+class Serializer(object):
     """
     A base class for creating serializable domain objects.
     

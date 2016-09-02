@@ -5,7 +5,7 @@ from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from mgipython.domain import convert_models
-from mgipython.domain.gxdindex_domains import IndexRecordDomain
+from mgipython.domain.gxdindex_domains import IndexRecordDomain, IndexRecordSearchResultDomain
 from vocterm_service import VocTermService
 import logging
 
@@ -42,12 +42,9 @@ class GxdIndexService():
         batchLoadAttribute(gxdindex_records, 'createdby')
         batchLoadAttribute(gxdindex_records, 'modifiedby')
         
-        logger.debug("createdby = %s" % gxdindex_records[0].createdby.login)
-        logger.debug("modifiedby = %s" % gxdindex_records[0].modifiedby.login)
-        
         
         # convert results to gxd index domain objects
-        search_results.items = convert_models(gxdindex_records, IndexRecordDomain)
+        search_results.items = convert_models(gxdindex_records, IndexRecordSearchResultDomain)
         
         return search_results
     
