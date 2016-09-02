@@ -1,6 +1,7 @@
 from Property import PropertyDomain
 from Accession import AccessionDomain
 from User import UserDomain
+from VocTerm import VocTermDomain
 
 class GxdHTExperimentDomain():
 
@@ -11,6 +12,12 @@ class GxdHTExperimentDomain():
             self.key = db_object._experiment_key
             self.name = db_object.name
             self.description = db_object.description
+
+            self.source = VocTermDomain(db_object.source_object)
+            self.curationstate = VocTermDomain(db_object.curationstate_object)
+            self._triagestate_key = db_object._triagestate_key
+            self._studytype_key = db_object._studytype_key
+            self.notes = db_object.notes
 
             self.provider_contact_names = []
             self.pubmed_ids = []
