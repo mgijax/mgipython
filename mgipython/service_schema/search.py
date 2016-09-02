@@ -3,6 +3,7 @@ Models for driving search services
 """
 import logging
 
+
 logger = logging.getLogger('mgipython.service_schema')
 
 
@@ -80,8 +81,6 @@ class SearchQuery():
         return self._params[param_name]
     
     
-    
-    
 class SearchResults():
     """
     items is the list of result objects (typically database models)
@@ -95,4 +94,4 @@ class SearchResults():
     def __init__(self):
         self.items = []
         self.total_count = 0
-        paginator = None
+        self.paginator = None
