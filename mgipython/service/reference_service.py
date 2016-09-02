@@ -3,6 +3,8 @@ from mgipython.model import GxdIndexRecord
 from mgipython.model.query import batchLoadAttributeExists
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
+from mgipython.domain.reference_domains import SmallReference
+from mgipython.domain import convert_models
 
 class ReferenceService():
     
@@ -32,8 +34,10 @@ class ReferenceService():
     def get_by_jnumber(self, jnumber):
         """
         Retrieve a single reference by jnumber (without J: prefix)
+        returns SmallReference
         """
-        return self.get_by_jnum_id("J:%s" % jnumber)
+        reference = self.get_by_jnum_id("J:%s" % jnumber)
+        return convert_models(reference, SmallReference)
   
   
     def search(self, args):
