@@ -24,21 +24,10 @@ class VocTermService():
         return term
     
     
-    def search(self, args):
-        """
-        Search using an argument object
-        """
-        users = self.user_dao.search(
-            login=args.login,
-            name=args.name,
-            _usertype_key=args._usertype_key,
-            _userstatus_key=args._userstatus_key,
-            orcid=args.orcid,
-            _createdby_key=args._createdby_key,
-            _modifiedby_key=args._modifiedby_key
-        )
-        return users
-    
+    def search(self, search_query):
+        search_result = self.vocterm_dao.search(search_query)
+        #batchLoadAttribute(search_result.items, "term")
+        return search_result
     
     def search_emapa_terms(self,
                          termSearch="",
@@ -59,57 +48,7 @@ class VocTermService():
         batchLoadAttribute(terms, "emapa_info")
         
         return terms
-    
-    
-        
-    def create(self, args):
-        """
-        Create user with an argument object
-        """
-        user = MGIUser()
-        # get the next primary key
-        user._user_key = self.user_dao.get_next_key()
-        # set MGIUser values
-        user.login = args.login
-        user.name = args.name
-        user._usertype_key = args._usertype_key
-        user._userstatus_key = args._userstatus_key
-        
-        #user._createdby_key = current_user._user_key
-        #user._modifiedby_key = current_user._modifiedby_key
-        self.user_dao.save(user)
-        
-        return user
-        
-        
-    def edit(self, key, args):
-        """
-        Edit user with and argument object
-        """
-        user = self.user_dao.get_by_key(key)
-        if not user:
-            raise NotFoundError("No MGIUser for _user_key=%d" % key)
-        user.login = args.login
-        user.name = args.name
-        user._usertype_key = args._usertype_key
-        user._userstatus_key = args._userstatus_key
-        #user._modifiedby_key = current_user._modifiedby_key
-        
-        self.user_dao.save()
-        return user
-        
-        
-    def delete(self, _user_key):
-        """
-        Delete MGIUser object
-        """
-        user = self.user_dao.get_by_key(_user_key)
-        if not user:
-            raise NotFoundError("No MGIUser for _user_key=%d" % _user_key)
-        self.user_dao.delete(user)
-        
-    
-    
+
     def get_term_choices_by_vocab_key(self, _vocab_key):
         """
         Get all possible term choices
@@ -117,7 +56,10 @@ class VocTermService():
         return format is
         { 'choices': [{'term', '_term_key'}] }
         """
-        terms = self.vocterm_dao.search(_vocab_key=_vocab_key)
+        search_query = SearchQuery()
+        search_query.set_param("_vocab_key", _vocab_key)
+        search_result = self.vocterm_dao.search(_vocab_key=_vocab_key)
+        terms = search_result.items
         json = {
             'choices':[]
         }
@@ -125,6 +67,3 @@ class VocTermService():
             json['choices'].append({'term':term.term, '_term_key':term._term_key})
         
         return json
-    
-        
-        

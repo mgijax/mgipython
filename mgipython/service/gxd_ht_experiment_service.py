@@ -3,6 +3,7 @@ from mgipython.model import GxdHTExperiment
 from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
 from mgipython.service.helpers.date_helper import DateHelper
+from mgipython.domain.GxdHTExperiment import GxdHTExperimentDomain
 from mgipython.modelconfig import cache
 from dateutil import parser
 
@@ -17,7 +18,11 @@ class GxdHTExperimentService():
                 DateHelper().validate_date(search_query.get_value(dateField))
 
         search_result = self.gxd_dao.search(search_query)
-        self.loadAttributes(search_result.items)
+        newitems = []
+        for item in search_result.items:
+            newitems.append(GxdHTExperimentDomain(item))
+        search_result.items = newitems
+        #self.loadAttributes(search_result.items)
         return search_result
 
     def create(self, args):
@@ -25,7 +30,7 @@ class GxdHTExperimentService():
         experiment.name = args["name"]
         experiment.description = args["description"]
         self.gxd_dao.save(experiment)
-        return experiment
+        return GxdHTExperimentDomain(experiment)
 
     # Read
     def get(self, key):
@@ -33,7 +38,7 @@ class GxdHTExperimentService():
         self.loadAttributes([experiment])
         if not experiment:
             raise NotFoundError("No GxdHTExperiment for _experiment_key=%d" % key)
-        return experiment
+        return GxdHTExperimentDomain(experiment)
  
     # Update
     def save(self, key, args):
@@ -43,7 +48,7 @@ class GxdHTExperimentService():
         experiment.name = args["name"]
         experiment.description = args["description"]
         self.gxd_dao.save(experiment)
-        return experiment
+        return GxdHTExperimentDomain(experiment)
 
     def delete(self, key):
         experiment = self.gxd_dao.get_by_key(key)
@@ -60,6 +65,7 @@ class GxdHTExperimentService():
         #batchLoadAttribute(objects, "experiment_variables", 1000, True)
 
         batchLoadAttribute(objects, "all_properties", 1000, True)
+        batchLoadAttribute(objects, "all_properties.term_object", 1000, True)
 
         #batchLoadAttribute(objects, "assay_count", 1000, True)
         #batchLoadAttribute(objects, "pubmed_ids", 1000, True)
@@ -68,7 +74,7 @@ class GxdHTExperimentService():
         #batchLoadAttribute(objects, "experiment_types", 1000, True)
         #batchLoadAttribute(objects, "provider_contact_names", 1000, True)
         #batchLoadAttribute(objects, "sample_count", 1000, True)
-        batchLoadAttribute(objects, "primaryid_object", 1000, True)
+        #batchLoadAttribute(objects, "primaryid_object", 1000, True)
         batchLoadAttribute(objects, "secondaryids", 1000, True)
 
         batchLoadAttribute(objects, "evaluatedby_object", 1000, True)

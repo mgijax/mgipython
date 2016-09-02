@@ -202,8 +202,8 @@ class VocTerm(db.Model,MGIModel):
     def __repr__(self):
         return self.term
 
-    def serialize(self):
-        return str(self.term)
+    #def serialize(self):
+    #    return str(self.term)
 
 
     

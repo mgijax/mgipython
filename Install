@@ -35,6 +35,9 @@ easy_install Flask-SQLAlchemy
 printf "\nInstalling Flask-Admin extension\n"
 easy_install Flask-Admin
 
+printf "\nInstalling Flask-JSON extension\n"
+easy_install Flask-JSON
+
 printf "\nInstalling Flask Login extension\n"
 easy_install flask_login
 
