@@ -17,8 +17,38 @@ class Field():
 
 class Serializer():
     """
-    MAGIC
+    A base class for creating serializable domain objects.
+    
+    They can be easily created from database models,
+    and also input/output dictionaries for JSON serialization.
+    
+    e.g.
+    class MarkerDomain(Serializer):
+      __fields__ = [
+        Field('_marker_key'),
+        Field('symbol')
+      ]
+      
+    Can be used as:
+    d_marker = MarkerDomain()
+    d_marker.load_from_model( sql_alchemy_marker_object )
+    
+    # these values will automatically be set
+        d_marker._marker_key, d_marker.symbol
+        
+    Dictionary is created by calling serialize()
+    d_marker.serialize()
+    { 
+      _marker_key: 1,
+      symbol: 'Kit'
+    }
+    
+    To recreate the domain object call
+    d_marker.load_from_dict( json_dict )
     """
+    
+    # primary configuration to be declared in sub-class
+    #  is-a: list of Field objects
     __fields__ = []
 
     def __init__(self):
@@ -103,7 +133,7 @@ class Serializer():
 
     def convert_nested_object(self, model, conversion_class):
         converted = conversion_class()
-        converted.load_from_model(obj)
+        converted.load_from_model(model)
         return converted
 
     def convert_nested_list(self, models, conversion_class):

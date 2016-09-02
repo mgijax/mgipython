@@ -126,6 +126,71 @@ class LoadFromModelTestCase(unittest.TestCase):
         
         self.assertIsInstance(serializer.child, NestedDomain)
         self.assertEqual(serializer.child.name, "single_child")
+        
+        
+    def test_single_nested_model_list(self):
+        
+        class NestedDomain(Serializer):
+            __fields__ = [
+                Field("name")
+            ]
+            
+        class ParentDomain(Serializer):
+            __fields__ = [
+                Field("children", conversion_class=NestedDomain)
+            ]
+            
+        parent_model = ParentModel()
+            
+        serializer = ParentDomain()
+        serializer.load_from_model(parent_model)
+        
+        # there should be 3 children of type NestedDomain
+        self.assertEqual(len(serializer.children), 3)
+        self.assertIsInstance(serializer.children[0], NestedDomain)
+        self.assertEqual(serializer.children[0].name, "child1")
+        
+        
+    def test_computed_field(self):
+        
+        class ComputedDomain(Serializer):
+            __fields__ = [
+              Field("computed")
+            ]
+            
+            def get_computed(self, model):
+                return model.col2 + "_test"
+            
+        simple_model = SimpleModel()
+            
+        serializer = ComputedDomain()
+        serializer.load_from_model(simple_model)
+        
+        self.assertEqual(serializer.computed, "2_test")
+        
+        
+    def test_computed_nested_model(self):
+        
+        class NestedDomain(Serializer):
+            __fields__ = [
+                Field("name")
+            ]
+            
+        class ComputedDomain(Serializer):
+            __fields__ = [
+              Field("computed", conversion_class=NestedDomain)
+            ]
+            
+            def get_computed(self, model):
+                return model.children[0]
+            
+        parent_model = ParentModel()
+            
+        serializer = ComputedDomain()
+        serializer.load_from_model(parent_model)
+        
+        self.assertIsInstance(serializer.computed, NestedDomain)
+        self.assertEqual(serializer.computed.name, "child1")
     
 
 class SerializeTestCase(unittest.TestCase):
