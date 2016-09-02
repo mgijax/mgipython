@@ -2,6 +2,8 @@ from mgipython.dao.vocterm_dao import VocTermDAO
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from mgipython.model.query import batchLoadAttribute
+from mgipython.service_schema.search import SearchQuery
+from mgipython.domain.vocab_domains import VocTermChoiceList
 import logging
 
 logger = logging.getLogger('mgipython.service')
@@ -53,17 +55,17 @@ class VocTermService():
         """
         Get all possible term choices
         for the given _vocab_key
-        return format is
-        { 'choices': [{'term', '_term_key'}] }
+        return format is a VocTermChoiceList object
         """
         search_query = SearchQuery()
         search_query.set_param("_vocab_key", _vocab_key)
-        search_result = self.vocterm_dao.search(_vocab_key=_vocab_key)
+        search_result = self.vocterm_dao.search(search_query)
         terms = search_result.items
-        json = {
-            'choices':[]
-        }
-        for term in terms:
-            json['choices'].append({'term':term.term, '_term_key':term._term_key})
         
-        return json
+        # convert to choice list
+        choice_list = VocTermChoiceList()
+        choice_list.choices = terms
+        
+        return choice_list
+    
+    
