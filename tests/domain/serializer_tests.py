@@ -391,6 +391,34 @@ class LoadFromDictTestCase(unittest.TestCase):
         parent.load_from_dict(input)
         
         self.assertIsInstance(parent.child, NestedDomain)
+        self.assertEqual(parent.child.name, "test")
+        
+        
+    def test_nested_domain_as_list(self):
+        
+        class NestedDomain(Serializer):
+            __fields__ = [
+                Field("name")
+            ]
+            
+        class ParentDomain(Serializer):
+            __fields__ = [
+                Field("children", conversion_class=NestedDomain)
+            ]
+            
+        input = {
+            "children": [
+                {"name":"child1"},
+                {"name":"child2"}
+            ]
+        }
+            
+        parent = ParentDomain()
+        parent.load_from_dict(input)
+        
+        self.assertEqual(len(parent.children), 2)
+        self.assertIsInstance(parent.children[0], NestedDomain)
+        self.assertEqual(parent.children[1].name, "child2")
     
     
         
