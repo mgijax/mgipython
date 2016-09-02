@@ -426,7 +426,7 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(LoadFromModelTestCase))
     suite.addTest(unittest.makeSuite(SerializeTestCase))
-    suite.addTest(unittest.makeSuite(LoadFromTestCase))
+    suite.addTest(unittest.makeSuite(LoadFromDictTestCase))
     # add future test suites here
     return suite
 
