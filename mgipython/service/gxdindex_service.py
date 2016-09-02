@@ -50,7 +50,7 @@ class GxdIndexService():
     
     
         
-    def create(self, args, current_user):
+    def create(self, indexrecord_domain, current_user):
         """
         Create GxdIndexRecord with an argument object
         """
@@ -58,22 +58,22 @@ class GxdIndexService():
         # get the next primary key
         gxdindex_record._index_key = self.gxdindex_dao.get_next_key()
         # set GxdIndexRecord values
-        gxdindex_record._refs_key = args['_refs_key']
-        gxdindex_record._marker_key = args['_marker_key']
-        gxdindex_record._priority_key = args['_priority_key']
-        gxdindex_record._conditionalmutants_key = args['_conditionalmutants_key']
-        gxdindex_record.comments = args['comments']
+        gxdindex_record._refs_key = indexrecord_domain._refs_key
+        gxdindex_record._marker_key = indexrecord_domain._marker_key
+        gxdindex_record._priority_key = indexrecord_domain._priority_key
+        gxdindex_record._conditionalmutants_key = indexrecord_domain._conditionalmutants_key
+        gxdindex_record.comments = indexrecord_domain.comments
         gxdindex_record._createdby_key = current_user._user_key
         gxdindex_record._modifiedby_key = current_user._user_key
         
         # add the GxdIndexStage(s)
         gxdindex_record.indexstages = []
-        for indexstage_input in args['indexstages']:
+        for indexstage_input in indexrecord_domain.indexstages:
             
             indexstage = GxdIndexStage()
             indexstage._index_key = gxdindex_record._index_key
-            indexstage._indexassay_key = indexstage_input['_indexassay_key']
-            indexstage._stageid_key = indexstage_input['_stageid_key']
+            indexstage._indexassay_key = indexstage_input._indexassay_key
+            indexstage._stageid_key = indexstage_input._stageid_key
             indexstage._createdby_key = current_user._user_key
             indexstage._modifiedby_key = current_user._user_key
             
@@ -84,7 +84,7 @@ class GxdIndexService():
         return convert_models(gxdindex_record, IndexRecordDomain)
         
         
-    def edit(self, key, args, current_user):
+    def edit(self, key, indexrecord_domain, current_user):
         """
         Edit GxdIndexRecord with and argument object
         """
@@ -93,11 +93,11 @@ class GxdIndexService():
             raise NotFoundError("No GxdIndexRecord for _index_key=%d" % key)
         
         # set GxdIndexRecord values
-        gxdindex_record._refs_key = args['_refs_key']
-        gxdindex_record._marker_key = args['_marker_key']
-        gxdindex_record._priority_key = args['_priority_key']
-        gxdindex_record._conditionalmutants_key = args['_conditionalmutants_key']
-        gxdindex_record.comments = args['comments']
+        gxdindex_record._refs_key = indexrecord_domain._refs_key
+        gxdindex_record._marker_key = indexrecord_domain._marker_key
+        gxdindex_record._priority_key = indexrecord_domain._priority_key
+        gxdindex_record._conditionalmutants_key = indexrecord_domain._conditionalmutants_key
+        gxdindex_record.comments = indexrecord_domain.comments
         gxdindex_record._createdby_key = current_user._user_key
         gxdindex_record._modifiedby_key = current_user._user_key
         
