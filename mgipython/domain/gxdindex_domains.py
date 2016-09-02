@@ -1,7 +1,10 @@
 """
 gxdindex related domain objects
 """
-import Field, Serializer
+from base_serializer import Field, Serializer
+import logging
+
+logger = logging.getLogger("mgipython.domain")
 
 class IndexStageDomain(Serializer):
     
@@ -42,8 +45,14 @@ class IndexRecordDomain(Serializer):
     def get_short_citation(self, record):
         return record.reference.short_citation
     
-    def marker_symbol(self):
+    def get_marker_symbol(self, record):
         return record.marker.symbol
+    
+    def get_createdby_login(self, record):
+        return record.createdby.login
+    
+    def get_modifiedby_login(self, record):
+        return record.modifiedby.login
     
     
 class IndexRecordSearchResultDomain(Serializer):
@@ -66,7 +75,7 @@ class IndexRecordSearchResultDomain(Serializer):
     def get_short_citation(self, record):
         return record.reference.short_citation
     
-    def marker_symbol(self):
+    def get_marker_symbol(self):
         return record.marker.symbol
     
     

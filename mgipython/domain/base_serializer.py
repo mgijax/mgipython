@@ -119,7 +119,7 @@ class Serializer():
             value = getattr(model, field.field_name)
 
         return value
-
+    
 
     def convert_value_to_class(self, value, conversion_class):
 
@@ -201,4 +201,14 @@ class Serializer():
             output[field.field_name] = value
 
         return output
+    
+    
+# helper methods 
+def convert_models(model, domain_class):
+    """
+    converts model or list of models into the domain_class
+    by using domain_class.load_from_model(model)
+    """
+    instance = domain_class()
+    return instance.convert_value_to_class(model, domain_class)
 

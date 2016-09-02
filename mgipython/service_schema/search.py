@@ -2,30 +2,41 @@
 Models for driving search services
 """
 import logging
+from mgipython.domain import Field, Serializer
 
 
 logger = logging.getLogger('mgipython.service_schema')
 
 
-class Paginator():
+class Paginator(Serializer):
     """
     page_num is the page you are on or requesting
     page_size is the number of results per page
     """
-    page_num = 1
-    page_size = 0
+    __fields__ = [
+        Field("page_num"),
+        Field("page_size")
+    ]
 
     def __init__(self):
+        super(Paginator, self).__init__()
         self.page_num = 1
         self.page_size = 0
+        
     
     
-class SearchQuery():
+class SearchQuery(Serializer):
     """
     params is a dict of search field names to values
     sorts is a list of sort argument strings
     paginator is a Paginator instance
     """
+    __field__ = [
+        Field("_params"),
+        Field("sorts"),
+        Field("paginator", conversion_class=Paginator)
+    ]
+    
     _params = {}
     sorts = []
     paginator = None
@@ -81,17 +92,21 @@ class SearchQuery():
         return self._params[param_name]
     
     
-class SearchResults():
+class SearchResults(Serializer):
     """
     items is the list of result objects (typically database models)
     total_count of items (if paginated, represents total count in database)
     paginator - populated if results are paginated
     """
-    items = []
-    total_count = 0
-    paginator = None
+    
+    __fields__ = [
+        Field("items"),
+        Field("total_count"),
+        Field("paginator", conversion_class=Paginator)
+    ]
 
     def __init__(self):
+        super(SearchResults, self).__init__()
         self.items = []
         self.total_count = 0
         self.paginator = None

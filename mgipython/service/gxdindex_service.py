@@ -4,6 +4,8 @@ from mgipython.model import GxdIndexRecord, GxdIndexStage
 from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
+from mgipython.domain import convert_models
+from mgipython.domain.gxdindex_domains import IndexRecordDomain
 from vocterm_service import VocTermService
 import logging
 
@@ -20,7 +22,9 @@ class GxdIndexService():
         if not gxdindex_record:
             raise NotFoundError("No GxdIndexRecord for _index_key=%d" % _index_key)
     
-        return gxdindex_record
+        
+        # convert to domain object
+        return convert_models(gxdindex_record, IndexRecordDomain)
     
     
     def search(self, search_query):
@@ -30,7 +34,6 @@ class GxdIndexService():
         search_results = self.gxdindex_dao.search(search_query)
         
         # load data to be displayed
-        
         gxdindex_records = search_results.items
         batchLoadAttribute(gxdindex_records, 'indexstages')
         batchLoadAttribute(gxdindex_records, 'reference')
@@ -41,6 +44,12 @@ class GxdIndexService():
         
         logger.debug("createdby = %s" % gxdindex_records[0].createdby.login)
         logger.debug("modifiedby = %s" % gxdindex_records[0].modifiedby.login)
+        
+        
+        # convert results to gxd index domain objects
+        serializer = IndexRecordDomain()
+        search_results.items = convert_models(gxdindex_records, IndexRecordDomain)
+        
         return search_results
     
     
@@ -76,7 +85,7 @@ class GxdIndexService():
         
         self.gxdindex_dao.save(gxdindex_record)
         
-        return gxdindex_record
+        return convert_models(gxdindex_record, IndexRecordDomain)
         
         
     def edit(self, key, args, current_user):
@@ -102,7 +111,7 @@ class GxdIndexService():
         #   Pre-existing ones should...
         
         self.gxdindex_dao.save()
-        return gxdindex_record
+        return convert_models(gxdindex_record, IndexRecordDomain)
         
         
     def delete(self, _index_key):
