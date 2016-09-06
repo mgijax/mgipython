@@ -3,7 +3,7 @@ from mgipython.model import GxdHTExperiment
 from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
 from mgipython.service.helpers.date_helper import DateHelper
-from mgipython.domain.GxdHTExperiment import GxdHTExperimentDomain
+from mgipython.domain.gxd_domains import GxdHTExperimentDomain
 from mgipython.modelconfig import cache
 from dateutil import parser
 
