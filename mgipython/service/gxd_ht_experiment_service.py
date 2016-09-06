@@ -18,11 +18,13 @@ class GxdHTExperimentService():
                 DateHelper().validate_date(search_query.get_value(dateField))
 
         search_result = self.gxd_dao.search(search_query)
+        self.loadAttributes(search_result.items)
         newitems = []
         for item in search_result.items:
-            newitems.append(GxdHTExperimentDomain(item))
+            newitem = GxdHTExperimentDomain()
+            newitem.load_from_model(item)
+            newitems.append(newitem)
         search_result.items = newitems
-        #self.loadAttributes(search_result.items)
         return search_result
 
     def create(self, args):

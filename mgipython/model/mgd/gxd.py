@@ -1098,14 +1098,6 @@ class GxdHTExperiment(db.Model, MGIModel):
         "Property._mgitype_key==%d)" % _mgitype_key, foreign_keys="[Property._object_key]"
     )
 
-    assay_count = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==%d)" % _assay_count_key, foreign_keys="[Property._object_key]"
-    )
-
-    pubmed_ids = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==%d)" % _pubmed_ids_key, foreign_keys="[Property._object_key]"
-    )
-
     experimental_factors = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
         "Property._propertyterm_key==%d)" % _experimental_factors_key, foreign_keys="[Property._object_key]"
     )
@@ -1116,14 +1108,6 @@ class GxdHTExperiment(db.Model, MGIModel):
 
     experiment_types = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
         "Property._propertyterm_key==%d)" % _experiment_types_key, foreign_keys="[Property._object_key]"
-    )
-
-    provider_contact_names = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==%d)" % _provider_contact_names_key, foreign_keys="[Property._object_key]"
-    )
-
-    sample_count = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
-        "Property._propertyterm_key==%d)" % _sample_count_key, foreign_keys="[Property._object_key]"
     )
 
     primaryid = db.column_property(
