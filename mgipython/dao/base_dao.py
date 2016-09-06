@@ -40,6 +40,13 @@ class BaseDAO():
         return model_class.query.filter(getattr(model_class, pkName)==key).first()
     
     
+    def get_total_count(self):
+        """
+        Retrieve total count of the model_class table
+        """
+        return self.model_class.query.count()
+    
+    
     def save(self, object=None):
         """
         Save object to the database

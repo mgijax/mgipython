@@ -27,4 +27,9 @@ class VocTermChoiceList(Serializer):
     def __init__(self):
         super(VocTermChoiceList, self).__init__()
         self.choices = []
+        
+        
+    def get_choices(self, terms):
+        return terms
+    
     

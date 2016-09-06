@@ -23,7 +23,7 @@ class IndexRecordDomain(Serializer):
       Field("_priority_key"),
       Field("_conditionalmutants_key"),
       Field("comments"),
-      Field("fully_coded"),
+      Field("is_coded"),
       Field("_createdby_key"),
       Field("createdby_login"),
       Field("creation_date"),
@@ -39,11 +39,14 @@ class IndexRecordDomain(Serializer):
       Field("marker_symbol")
     ]
     
+    def get_is_coded(self, record):
+        return record.fully_coded
+    
     def get_jnumid(self, record):
         return record.reference.jnumid
     
     def get_short_citation(self, record):
-        return record.reference.short_citation
+        return record.reference.citation_cache.short_citation
     
     def get_marker_symbol(self, record):
         return record.marker.symbol
@@ -73,7 +76,7 @@ class IndexRecordSearchResultDomain(Serializer):
         return record.reference.jnumid
     
     def get_short_citation(self, record):
-        return record.reference.short_citation
+        return record.reference.citation_cache.short_citation
     
     def get_marker_symbol(self, record):
         return record.marker.symbol

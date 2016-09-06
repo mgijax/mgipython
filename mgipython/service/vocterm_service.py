@@ -64,7 +64,7 @@ class VocTermService():
         
         # convert to choice list
         choice_list = VocTermChoiceList()
-        choice_list.choices = terms
+        choice_list.load_from_model(terms)
         
         return choice_list
     
