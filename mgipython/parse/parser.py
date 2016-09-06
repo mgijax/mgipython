@@ -91,6 +91,29 @@ def emapaStageParser(input):
     return stages
 
 
+
+def parse_jnumber(input):
+    """
+    Valid inputs are 
+    J:1234
+    J1234
+    1234
+    
+    returns valid jnumid format (e.g. J:1234)
+    """
+    jnumber = input.lower()
+        
+    if jnumber.startswith("j:"):
+        jnumber = jnumber[2:]
+        
+    elif jnumber.startswith("j"):
+        jnumber = jnumber[1:]
+        
+    if jnumber:
+        jnumber = "J:" + jnumber
+        
+    return jnumber
+
 def splitCommaInput(param):
     """
     split input on comma
