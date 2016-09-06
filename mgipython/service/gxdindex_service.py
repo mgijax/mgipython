@@ -117,6 +117,8 @@ class GxdIndexService():
         gxdindex_record = self.gxdindex_dao.get_by_key(_index_key)
         if not gxdindex_record:
             raise NotFoundError("No GxdIndexRecord for _index_key=%d" % _index_Key)
+        
+        logger.debug("nulling out createdby fields")
         self.gxdindex_dao.delete(gxdindex_record)
         
         

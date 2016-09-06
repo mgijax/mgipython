@@ -466,11 +466,9 @@ class GxdIndexRecord(db.Model, MGIModel):
     
     createdby = db.relationship("MGIUser",
         primaryjoin="GxdIndexRecord._createdby_key==MGIUser._user_key",
-        foreign_keys="[MGIUser._user_key]",
         uselist=False)
     modifiedby = db.relationship("MGIUser",
         primaryjoin="GxdIndexRecord._modifiedby_key==MGIUser._user_key",
-        foreign_keys="[MGIUser._user_key]",
         uselist=False)
         
     @property
