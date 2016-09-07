@@ -84,9 +84,9 @@ class GxdIndexService():
         return convert_models(gxdindex_record, IndexRecordDomain)
         
         
-    def edit(self, key, indexrecord_domain, current_user):
+    def update(self, key, indexrecord_domain, current_user):
         """
-        Edit GxdIndexRecord with and argument object
+        Update GxdIndexRecord with and argument object
         """
         gxdindex_record = self.gxdindex_dao.get_by_key(key)
         if not gxdindex_record:
