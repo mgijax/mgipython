@@ -59,6 +59,11 @@ class SearchQuery(Serializer):
         """
         self._params[param_name] = value
         
+    def clear_param(self, param_name):
+        """
+        unset a single param_name, value pair
+        """
+        self._params[param_name] = None
     
     def has_valid_param(self, param_name):
         """

@@ -1,4 +1,5 @@
 from mgipython.dao.vocterm_dao import VocTermDAO
+from mgipython.dao.vocvocab_dao import VocVocabDAO
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from mgipython.model.query import batchLoadAttribute
@@ -12,6 +13,7 @@ logger = logging.getLogger('mgipython.service')
 class VocTermService():
     
     vocterm_dao = VocTermDAO()
+    vocvocab_dao = VocVocabDAO()
     
     def get_by_key(self, _term_key):
         term = self.vocterm_dao.get_by_key(_term_key)
@@ -27,6 +29,14 @@ class VocTermService():
     
     
     def search(self, search_query):
+        if search_query.has_valid_param("vocab_name"):
+            vocvocab_dao = VocVocabDAO()
+            search_query_vocab = SearchQuery()
+            search_query_vocab.set_param("name", search_query.get_value("vocab_name"))
+            search_result = vocvocab_dao.search(search_query_vocab)
+            search_query.clear_param("vocab_name")
+            search_query.set_param("_vocab_key", search_result.items[0]._vocab_key)
+
         search_result = self.vocterm_dao.search(search_query)
         #batchLoadAttribute(search_result.items, "term")
         return search_result
