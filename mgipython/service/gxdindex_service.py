@@ -27,6 +27,10 @@ class GxdIndexService():
         return convert_models(gxdindex_record, IndexRecordDomain)
     
     
+    def get_total_count(self):
+        return self.gxdindex_dao.get_total_count()
+    
+    
     def search(self, search_query):
         """
         Search using a SearchQuery
