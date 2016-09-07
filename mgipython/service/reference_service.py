@@ -5,6 +5,7 @@ from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from mgipython.domain.reference_domains import SmallReference
 from mgipython.domain import convert_models
+from mgipython.parse import parse_jnumber
 
 class ReferenceService():
     
@@ -36,7 +37,8 @@ class ReferenceService():
         Retrieve a single reference by jnumber (without J: prefix)
         returns SmallReference
         """
-        reference = self.get_by_jnum_id("J:%s" % jnumber)
+        jnum_id = parse_jnumber(jnumber)
+        reference = self.get_by_jnum_id(jnum_id)
         return convert_models(reference, SmallReference)
   
   

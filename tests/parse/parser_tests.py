@@ -11,8 +11,45 @@ import unittest
 from mgipython.modelconfig import createMockDatabaseEngine
 createMockDatabaseEngine()
 
-from mgipython.parse import emapaStageParser
+from mgipython.parse import emapaStageParser, parse_jnumber
 from mgipython.error import  InvalidStageInputError
+
+
+class JNumberParserTestCase(unittest.TestCase):
+    """
+    Test parsing of jnumber input
+    """
+    
+    
+    def test_empty_input(self):
+        jnumber = parse_jnumber("")
+        expected = ""
+        self.assertEqual(expected, jnumber)
+        
+        
+    def test_numeric_value(self):
+        jnumber = parse_jnumber("1234")
+        expected = "J:1234"
+        self.assertEqual(expected, jnumber)
+
+
+    def test_jnumber_with_colon(self):
+        jnumber = parse_jnumber("J:1234")
+        expected = "J:1234"
+        self.assertEqual(expected, jnumber)
+
+
+    def test_jnumber_without_colon(self):
+        jnumber = parse_jnumber("J1234")
+        expected = "J:1234"
+        self.assertEqual(expected, jnumber)
+
+
+    def test_lowercase(self):
+        jnumber = parse_jnumber("j:1234")
+        expected = "J:1234"
+        self.assertEqual(expected, jnumber)
+
 
 
 # EMAPA theiler stage search parser
@@ -126,6 +163,7 @@ class TheilerStageParserTestCase(unittest.TestCase):
         
 def suite():
     suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(JNumberParserTestCase))
     suite.addTest(unittest.makeSuite(TheilerStageParserTestCase))
     # add future test suites here
     return suite
