@@ -461,7 +461,7 @@ class GxdIndexRecord(db.Model, MGIModel):
     )
     
     indexstages = db.relationship("GxdIndexStage",
-        cascade="save-update, delete"
+        cascade="save-update, delete, delete-orphan"
     )
     
     createdby = db.relationship("MGIUser",

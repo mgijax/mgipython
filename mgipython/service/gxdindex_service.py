@@ -98,13 +98,19 @@ class GxdIndexService():
         gxdindex_record._priority_key = indexrecord_domain._priority_key
         gxdindex_record._conditionalmutants_key = indexrecord_domain._conditionalmutants_key
         gxdindex_record.comments = indexrecord_domain.comments
-        gxdindex_record._createdby_key = current_user._user_key
         gxdindex_record._modifiedby_key = current_user._user_key
         
-        # TODO(kstone:
-        # Some magic to determine how to save indexstages
-        #   New ones should not have _createdby_key
-        #   Pre-existing ones should...
+        gxdindex_record.indexstages = []
+        for indexstage_input in indexrecord_domain.indexstages:
+            
+            indexstage = GxdIndexStage()
+            indexstage._index_key = gxdindex_record._index_key
+            indexstage._indexassay_key = indexstage_input._indexassay_key
+            indexstage._stageid_key = indexstage_input._stageid_key
+            indexstage._createdby_key = current_user._user_key
+            indexstage._modifiedby_key = current_user._user_key
+            
+            gxdindex_record.indexstages.append(indexstage)
         
         self.gxdindex_dao.save()
         return convert_models(gxdindex_record, IndexRecordDomain)
