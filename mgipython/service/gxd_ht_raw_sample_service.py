@@ -30,6 +30,9 @@ class GxdHTRawSampleService():
         
         search_result = SearchResults()
         search_result.items = JsonHelper().fromJson(response.content)['experiment']['sample']
+        for row in search_result.items:
+            row["savableFields"] = {}
+            row["savableFields"]["name"] = row["source"]["name"]
         search_result.total_count = len(search_result.items)
         
         return search_result

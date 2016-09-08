@@ -3,7 +3,7 @@ from mgipython.model import GxdHTExperiment
 from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
 from mgipython.service.helpers.date_helper import DateHelper
-from mgipython.domain.gxd_domains import GxdHTExperimentDomain
+from mgipython.domain.gxd_domains import *
 from mgipython.modelconfig import cache
 from dateutil import parser
 
@@ -13,12 +13,11 @@ class GxdHTExperimentService():
     
     def search(self, search_query):
 
-        for dateField in [ 'release_date', 'created_date' ]:
+        for dateField in [ 'release_date', 'lastupdate_date', 'evaluated_date', 'curated_date', 'creation_date', 'modification_date' ]:
             if search_query.has_valid_param(dateField):
                 DateHelper().validate_date(search_query.get_value(dateField))
 
         search_result = self.gxd_dao.search(search_query)
-        self.loadAttributes(search_result.items)
         newitems = []
         for item in search_result.items:
             newitem = GxdHTExperimentDomain()
@@ -26,6 +25,21 @@ class GxdHTExperimentService():
             newitems.append(newitem)
         search_result.items = newitems
         return search_result
+
+    def summary_search(self, search_query):
+        for dateField in [ 'release_date', 'lastupdate_date', 'evaluated_date', 'curated_date', 'creation_date', 'modification_date' ]:
+            if search_query.has_valid_param(dateField):
+                DateHelper().validate_date(search_query.get_value(dateField))
+
+        search_result = self.gxd_dao.search(search_query)
+        newitems = []
+        for item in search_result.items:
+            newitem = GxdHTExperimentSummaryDomain()
+            newitem.load_from_model(item)
+            newitems.append(newitem)
+        search_result.items = newitems
+        return search_result
+
 
     def create(self, args):
         experiment = GxdHTExperiment()
@@ -57,30 +71,3 @@ class GxdHTExperimentService():
         if not experiment:
             raise NotFoundError("No GXD HT Experiment for _experiment_key=%d" % key)
         self.gxd_dao.delete(experiment)
-
-    def loadAttributes(self, objects):
-        batchLoadAttribute(objects, "source_object", 1000, True)
-        batchLoadAttribute(objects, "triagestate_object", 1000, True)
-        batchLoadAttribute(objects, "curationstate_object", 1000, True)
-        batchLoadAttribute(objects, "studytype_object", 1000, True)
-        batchLoadAttribute(objects, "notes", 1000, True)
-        #batchLoadAttribute(objects, "experiment_variables", 1000, True)
-
-        batchLoadAttribute(objects, "all_properties", 1000, True)
-        batchLoadAttribute(objects, "all_properties.term_object", 1000, True)
-
-        #batchLoadAttribute(objects, "assay_count", 1000, True)
-        #batchLoadAttribute(objects, "pubmed_ids", 1000, True)
-        #batchLoadAttribute(objects, "experimental_factors", 1000, True)
-        #batchLoadAttribute(objects, "experiment_designs", 1000, True)
-        #batchLoadAttribute(objects, "experiment_types", 1000, True)
-        #batchLoadAttribute(objects, "provider_contact_names", 1000, True)
-        #batchLoadAttribute(objects, "sample_count", 1000, True)
-        #batchLoadAttribute(objects, "primaryid_object", 1000, True)
-        batchLoadAttribute(objects, "secondaryids", 1000, True)
-
-        batchLoadAttribute(objects, "evaluatedby_object", 1000, True)
-        batchLoadAttribute(objects, "curatedby_object", 1000, True)
-        batchLoadAttribute(objects, "createdby_object", 1000, True)
-        batchLoadAttribute(objects, "modifiedby_object", 1000, True)
-

@@ -7,6 +7,13 @@ from mgipython.domain.mgi_domains import *
 #from User import UserDomain
 #from VocTerm import VocTermDomain
 
+class GxdHTExperimentSummaryDomain(Serializer):
+
+    __fields__ = [
+        Field("_experiment_key"),
+        Field("primaryid"),
+    ]
+
 class GxdHTExperimentDomain(Serializer):
 
     __fields__ = [

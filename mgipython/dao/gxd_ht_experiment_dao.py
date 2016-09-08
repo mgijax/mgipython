@@ -49,7 +49,11 @@ class GxdHTExperimentDAO(BaseDAO):
         if search_query.has_valid_param("_triagestate_key"):
             triage_state_key = search_query.get_value("_triagestate_key")
             query = query.filter(GxdHTExperiment._triagestate_key == int(triage_state_key))
-            
+
+        if search_query.has_valid_param("_experiment_key"):
+            experiment_key = search_query.get_value("_experiment_key")
+            query = query.filter(GxdHTExperiment._experiment_key == int(experiment_key))
+           
         #query = query.order_by(GxdHTExperiment._experiment_key)
         
         return query

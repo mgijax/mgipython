@@ -5,6 +5,7 @@ from mgipython.modelconfig import cache
 from mgipython.model.query import batchLoadAttribute
 from mgipython.service_schema.search import SearchQuery
 from mgipython.domain.vocab_domains import VocTermChoiceList
+from mgipython.domain.voc_domains import VocTermDomain
 import logging
 
 logger = logging.getLogger('mgipython.service')
@@ -13,7 +14,6 @@ logger = logging.getLogger('mgipython.service')
 class VocTermService():
     
     vocterm_dao = VocTermDAO()
-    vocvocab_dao = VocVocabDAO()
     
     def get_by_key(self, _term_key):
         term = self.vocterm_dao.get_by_key(_term_key)
@@ -33,12 +33,17 @@ class VocTermService():
             vocvocab_dao = VocVocabDAO()
             search_query_vocab = SearchQuery()
             search_query_vocab.set_param("name", search_query.get_value("vocab_name"))
-            search_result = vocvocab_dao.search(search_query_vocab)
+            search_result_vocab = vocvocab_dao.search(search_query_vocab)
             search_query.clear_param("vocab_name")
-            search_query.set_param("_vocab_key", search_result.items[0]._vocab_key)
+            search_query.set_param("_vocab_key", search_result_vocab.items[0]._vocab_key)
 
         search_result = self.vocterm_dao.search(search_query)
-        #batchLoadAttribute(search_result.items, "term")
+        newitems = []
+        for item in search_result.items:
+            newitem = VocTermDomain()
+            newitem.load_from_model(item)
+            newitems.append(newitem)
+        search_result.items = newitems
         return search_result
     
     def search_emapa_terms(self,
