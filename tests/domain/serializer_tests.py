@@ -169,6 +169,30 @@ class LoadFromModelTestCase(unittest.TestCase):
         self.assertEqual(serializer.computed, "2_test")
         
         
+    def test_boolean_field(self):
+        
+        class BooleanModel(object):
+            false_field = False
+            true_field = True
+            null_field = None
+        
+        class BooleanDomain(Serializer):
+            __fields__ = [
+              Field("false_field"),
+              Field("true_field"),
+              Field("null_field")
+            ]
+            
+        boolean_model = BooleanModel()
+            
+        serializer = BooleanDomain()
+        serializer.load_from_model(boolean_model)
+        
+        self.assertEqual(serializer.false_field, False)
+        self.assertEqual(serializer.true_field, True)
+        self.assertEqual(serializer.null_field, None)
+        
+        
     def test_computed_nested_model(self):
         
         class NestedDomain(Serializer):
