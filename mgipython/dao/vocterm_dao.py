@@ -31,7 +31,14 @@ class VocTermDAO(BaseDAO):
         if search_query.has_valid_param("vocab_name"):
             query = query.filter(VocTerm.vocabname==search_query.get_value("vocab_name"))
 
-        query = query.order_by(VocTerm.term)
+	#
+        #query = query.order_by(VocTerm.term)
+	#
+	# changed default, but this will not work in all cases
+	# that is, the query order could be different depending on
+	# the vocabulary and/or the module
+	#
+        query = query.order_by(VocTerm.sequencenum)
         
         return query
         
