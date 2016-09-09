@@ -38,6 +38,9 @@ class MarkerService():
         batchLoadAttribute(markers, 'current_markers')
         batchLoadAttribute(markers, 'featuretype_vocterms')
         
+        # put current protein coding genes first
+        markers.sort(key = lambda x: x._marker_type_key)
+        
         # convert db models to domain objects
         search_results.items = convert_models(markers, SmallMarker)
         
