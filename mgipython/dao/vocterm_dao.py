@@ -28,11 +28,23 @@ class VocTermDAO(BaseDAO):
         if search_query.has_valid_param("_term_key"):
             query = query.filter(VocTerm._term_key==search_query.get_value("_term_key"))
 
+
+        # handle sorts
+        sorts = []
         if len(search_query.sorts) > 0:
-            if "sequencenum" in search_query.sorts:
-                query = query.order_by(VocTerm.sequencenum)
+            
+            for sort_name in search_query.sorts:
+                
+                if sort_name == "sequencenum":
+                    sorts.append(VocTerm.sequencenum.asc())
+                    
+                elif sort_name == "term":
+                    sorts.append(VocTerm.term.asc())
+                    
         else:
-            query = query.order_by(VocTerm.sequencenum)
+            sorts.append(VocTerm.sequencenum.asc())
+            
+        query = query.order_by(*sorts)
 
         return query
         
