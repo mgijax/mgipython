@@ -46,7 +46,7 @@ class MarkerDAO(BaseDAO):
         
         
         
-        query = query.order_by(Marker.symbol)
+        query = query.order_by(Marker._marker_status_key, Marker.symbol)
         
         return query
         
