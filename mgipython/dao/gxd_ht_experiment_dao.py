@@ -53,6 +53,10 @@ class GxdHTExperimentDAO(BaseDAO):
         if search_query.has_valid_param("_experiment_key"):
             experiment_key = search_query.get_value("_experiment_key")
             query = query.filter(GxdHTExperiment._experiment_key == int(experiment_key))
+
+        if search_query.has_valid_param("primaryid"):
+            primaryid = search_query.get_value("primaryid")
+            query = query.filter(GxdHTExperiment.primaryid == primaryid)
            
         #query = query.order_by(GxdHTExperiment._experiment_key)
         
