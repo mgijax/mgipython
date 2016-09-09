@@ -37,6 +37,7 @@ class VocTermService():
             search_query.clear_param("vocab_name")
             search_query.set_param("_vocab_key", search_result_vocab.items[0]._vocab_key)
 
+        search_query.sorts.append("sequencenum")
         search_result = self.vocterm_dao.search(search_query)
         newitems = []
         for item in search_result.items:
