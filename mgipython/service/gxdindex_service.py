@@ -39,12 +39,8 @@ class GxdIndexService():
         
         # load data to be displayed
         gxdindex_records = search_results.items
-        batchLoadAttribute(gxdindex_records, 'indexstages')
-        batchLoadAttribute(gxdindex_records, 'reference')
+        
         batchLoadAttribute(gxdindex_records, 'reference.citation_cache')
-        batchLoadAttribute(gxdindex_records, 'marker')
-        batchLoadAttribute(gxdindex_records, 'createdby')
-        batchLoadAttribute(gxdindex_records, 'modifiedby')
         
         
         # convert results to gxd index domain objects
