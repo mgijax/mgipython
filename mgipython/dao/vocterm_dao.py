@@ -6,7 +6,7 @@ from base_dao import BaseDAO
 class VocTermDAO(BaseDAO):
     
     model_class = VocTerm
-    
+   
     def get_by_primary_id(self, id):
         """
         Returns a VocTerm object using its primary ID 
@@ -28,18 +28,12 @@ class VocTermDAO(BaseDAO):
         if search_query.has_valid_param("_term_key"):
             query = query.filter(VocTerm._term_key==search_query.get_value("_term_key"))
 
-        if search_query.has_valid_param("vocab_name"):
-            query = query.filter(VocTerm.vocabname==search_query.get_value("vocab_name"))
+        if len(search_query.sorts) > 0:
+            if "sequencenum" in search_query.sorts:
+                query = query.order_by(VocTerm.sequencenum)
+        else:
+            query = query.order_by(VocTerm.sequencenum)
 
-	#
-        #query = query.order_by(VocTerm.term)
-	#
-	# changed default, but this will not work in all cases
-	# that is, the query order could be different depending on
-	# the vocabulary and/or the module
-	#
-        query = query.order_by(VocTerm.sequencenum)
-        
         return query
         
     def search_emapa_terms(self,

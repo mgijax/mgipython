@@ -13,13 +13,11 @@ class GxdHTExperimentDAO(BaseDAO):
         query = GxdHTExperiment.query
 
         if search_query.has_valid_param("name"):
-            name = search_query.get_value("name")
-            name = name.lower()
+            name = search_query.get_value("name").lower()
             query = query.filter(db.func.lower(GxdHTExperiment.name).like(name))
 
         if search_query.has_valid_param("description"):
-            description = search_query.get_value("description")
-            description = description.lower()
+            description = search_query.get_value("description").lower()
             query = query.filter(db.func.lower(GxdHTExperiment.description).like(description))
 
         if search_query.has_valid_param("release_date"):
@@ -49,7 +47,13 @@ class GxdHTExperimentDAO(BaseDAO):
         if search_query.has_valid_param("_triagestate_key"):
             triage_state_key = search_query.get_value("_triagestate_key")
             query = query.filter(GxdHTExperiment._triagestate_key == int(triage_state_key))
-            
-        #query = query.order_by(GxdHTExperiment._experiment_key)
-        
+
+        if search_query.has_valid_param("_experiment_key"):
+            experiment_key = search_query.get_value("_experiment_key")
+            query = query.filter(GxdHTExperiment._experiment_key == int(experiment_key))
+
+        if search_query.has_valid_param("primaryid"):
+            primaryid = search_query.get_value("primaryid")
+            query = query.filter(GxdHTExperiment.primaryid == primaryid)
+
         return query
