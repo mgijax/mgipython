@@ -6,6 +6,18 @@ from mgi import Organism, ReferenceAssoc
 from seq import SeqMarkerCache
 from voc import VocAnnot
 
+
+class CurrentMarkerAssoc(db.Model, MGIModel):
+    __tablename__ = "mrk_current"
+    _current_key = db.Column(db.Integer, 
+                     mgi_fk("mrk_marker._marker_key"), 
+                     primary_key=True
+    )
+    _marker_key = db.Column(db.Integer, 
+                     mgi_fk("mrk_marker._marker_key"), 
+                     primary_key=True
+    )
+    
     
 class MarkerDetailClipNoteChunk(db.Model,MGIModel):
     __tablename__ = "mrk_notes"
@@ -173,6 +185,13 @@ class Marker(db.Model,MGIModel):
         primaryjoin= "MarkerDetailClipNoteChunk._marker_key==Marker._marker_key",
         order_by="MarkerDetailClipNoteChunk.sequencenum",
         foreign_keys="[MarkerDetailClipNoteChunk._marker_key]")
+    
+    current_markers = db.relationship("Marker",
+        secondary=CurrentMarkerAssoc.__table__,
+        primaryjoin="and_(Marker._marker_key==CurrentMarkerAssoc._marker_key)",
+        secondaryjoin="CurrentMarkerAssoc._current_key==Marker._marker_key",
+        foreign_keys="[Marker._marker_key]"
+     )
     
     # only direct references via mgi_reference_assoc
     explicit_references = db.relationship("Reference",

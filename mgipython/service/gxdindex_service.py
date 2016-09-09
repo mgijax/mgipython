@@ -27,6 +27,10 @@ class GxdIndexService():
         return convert_models(gxdindex_record, IndexRecordDomain)
     
     
+    def get_total_count(self):
+        return self.gxdindex_dao.get_total_count()
+    
+    
     def search(self, search_query):
         """
         Search using a SearchQuery
@@ -35,12 +39,8 @@ class GxdIndexService():
         
         # load data to be displayed
         gxdindex_records = search_results.items
-        batchLoadAttribute(gxdindex_records, 'indexstages')
-        batchLoadAttribute(gxdindex_records, 'reference')
+        
         batchLoadAttribute(gxdindex_records, 'reference.citation_cache')
-        batchLoadAttribute(gxdindex_records, 'marker')
-        batchLoadAttribute(gxdindex_records, 'createdby')
-        batchLoadAttribute(gxdindex_records, 'modifiedby')
         
         
         # convert results to gxd index domain objects

@@ -32,7 +32,7 @@ class VocTermDAO(BaseDAO):
             if "sequencenum" in search_query.sorts:
                 query = query.order_by(VocTerm.sequencenum)
         else:
-            query = query.order_by(VocTerm.term)
+            query = query.order_by(VocTerm.sequencenum)
 
         return query
         

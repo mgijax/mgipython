@@ -74,26 +74,40 @@ class Serializer(object):
 
             value = self.get_model_value(model, field)
 
-            if value:
+            if value != None:
                 setattr(self, field.field_name, value)
 
 
     def get_model_value(self, model, field):
 
         # first check if we defined a getter
-        value = self.get_field_value_from_getter(model, field)
+        value = None
+        if self.has_field_override_getter(model, field):
+            value = self.get_field_value_from_getter(model, field)
 
         # second check for value from model attribute
-        if not value:
+        else:
             value = self.get_field_value_from_attr(model, field)
 
 
         # third check if value needs to be converted to a conversion_class
-        if value and field.conversion_class:
+        if value != None and field.conversion_class:
             value = self.convert_value_to_class(value, field.conversion_class)
 
-
         return value
+    
+    
+    def has_field_override_getter(self, model, field):
+        """
+        Look for method with the format
+        get_field_name
+
+        These override the default behavior of loading from
+            the model attribute 
+        """
+        getter_attr = "get_" + field.field_name
+        return hasattr(self, getter_attr)
+    
 
 
     def get_field_value_from_getter(self, model, field):
@@ -104,13 +118,11 @@ class Serializer(object):
         These override the default behavior of loading from
             the model attribute
 
-        returns None if there is none
+        throws error if does not exist
         """
 
         getter_attr = "get_" + field.field_name
-        value = None
-        if hasattr(self, getter_attr):
-            value = getattr(self, getter_attr)(model)
+        value = getattr(self, getter_attr)(model)
         return value
 
     def get_field_value_from_attr(self, model, field):

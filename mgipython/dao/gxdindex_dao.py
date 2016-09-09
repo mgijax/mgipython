@@ -33,22 +33,44 @@ class GxdIndexDAO(BaseDAO):
         # also for query
         query = query.join(GxdIndexRecord.reference)
         
-        if search_query.has_valid_param('_refs_key'):
+        hasRefsKeySearch = search_query.has_valid_param('_refs_key')
+        if hasRefsKeySearch:
             _refs_key = search_query.get_value('_refs_key')
             query = query.filter(GxdIndexRecord._refs_key==_refs_key)
             
-        if search_query.has_valid_param('short_citation'):
-            short_citation = search_query.get_value('short_citation')
-            short_citation = short_citation.lower()
             
-            query = query.join(Reference.citation_cache)
-            query = query.filter(
-                db.func.lower(ReferenceCitationCache.short_citation).like(short_citation)
-            )
+        if not hasRefsKeySearch:
             
-        if search_query.has_valid_param('_marker_key'):
+            # reference-related searches only need to occur if we did not 
+            #  also search a specific _Refs_key
+            
+            if search_query.has_valid_param('short_citation'):
+                short_citation = search_query.get_value('short_citation')
+                short_citation = short_citation.lower()
+                
+                query = query.join(Reference.citation_cache)
+                query = query.filter(
+                    db.func.lower(ReferenceCitationCache.short_citation).like(short_citation)
+                )
+            
+        hasMarkerKeySearch = search_query.has_valid_param('_marker_key')
+        if hasMarkerKeySearch:
             _marker_key = search_query.get_value('_marker_key')
             query = query.filter(GxdIndexRecord._marker_key==_marker_key)
+            
+            
+        if not hasMarkerKeySearch:
+            
+            # marker-related searches only needs to occur if we did not
+            #  also search a specific _marker_key
+            
+            if search_query.has_valid_param('marker_symbol'):
+                marker_symbol = search_query.get_value('marker_symbol')
+                marker_symbol = marker_symbol.lower()
+                
+                query = query.filter(
+                    db.func.lower(Marker.symbol).like(marker_symbol)
+                )
             
         if search_query.has_valid_param('_priority_key'):
             _priority_key = search_query.get_value('_priority_key')
