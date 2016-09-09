@@ -1,6 +1,6 @@
 from mgipython.dao.marker_dao import MarkerDAO
 from mgipython.model import Marker
-from mgipython.model.query import batchLoadAttributeExists
+from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from mgipython.domain.marker_domains import SmallMarker
@@ -33,8 +33,13 @@ class MarkerService():
         
         search_results = self.marker_dao.search(search_query)
         
+        markers = search_results.items
+        
+        batchLoadAttribute(markers, 'current_markers')
+        batchLoadAttribute(markers, 'featuretype_vocterms')
+        
         # convert db models to domain objects
-        search_results.items = convert_models(search_results.items, SmallMarker)
+        search_results.items = convert_models(markers, SmallMarker)
         
         return search_results
   
