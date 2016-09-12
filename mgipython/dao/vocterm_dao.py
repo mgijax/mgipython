@@ -34,8 +34,9 @@ class VocTermDAO(BaseDAO):
             vocab_name = search_query.get_value("vocab_name")
             vocab_name = vocab_name.lower()
             
-            query = query.join(VocTerm.vocab)
-            query = query.filter(lower(Vocab.name) == vocab_name)
+            vocab_alias = db.aliased(Vocab)
+            query = query.join(vocab_alias, VocTerm.vocab)
+            query = query.filter(db.func.lower(vocab_alias.name)==vocab_name)
 
 
         # handle sorts
