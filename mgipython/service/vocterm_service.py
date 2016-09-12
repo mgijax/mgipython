@@ -4,7 +4,6 @@ from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from mgipython.model.query import batchLoadAttribute
 from mgipython.service_schema.search import SearchQuery
-from mgipython.domain.vocab_domains import VocTermChoiceList
 from mgipython.domain.voc_domains import VocTermDomain
 from mgipython.domain import convert_models
 import logging
