@@ -1074,7 +1074,11 @@ class GxdHTExperiment(db.Model, MGIModel):
     createdby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._createdby_key==MGIUser._user_key", uselist=False)
     modifiedby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._modifiedby_key==MGIUser._user_key", uselist=False)
 
+    # Type GXD HT Experiment
     _mgitype_key = 42
+    # Add constraint for logical db for GEO only ids
+    # Logicial Db Key GEO
+    _logicaldb_key = 130
 
     notes = db.relationship("Note", primaryjoin="and_(GxdHTExperiment._experiment_key==Note._object_key,"
         "Note._mgitype_key==%d)" % _mgitype_key, foreign_keys="[Note._object_key]"
@@ -1104,10 +1108,10 @@ class GxdHTExperiment(db.Model, MGIModel):
         foreign_keys="[Accession._object_key]",
         uselist=False)
 
-    secondaryids = db.relationship("Accession",
+    secondaryid_objects = db.relationship("Accession",
         primaryjoin="and_(Accession._object_key==GxdHTExperiment._experiment_key,"
-                    "Accession._mgitype_key==%d,"
-                    "Accession.preferred==0)" % _mgitype_key,
+                    "Accession._mgitype_key==%d,Accession._logicaldb_key==%d,"
+                    "Accession.preferred==0)" % (_mgitype_key, _logicaldb_key),
         foreign_keys="[Accession._object_key]"
     )
     
