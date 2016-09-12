@@ -27,6 +27,15 @@ class VocTermDAO(BaseDAO):
 
         if search_query.has_valid_param("_term_key"):
             query = query.filter(VocTerm._term_key==search_query.get_value("_term_key"))
+            
+            
+        if search_query.has_valid_param("vocab_name"):
+        
+            vocab_name = search_query.get_value("vocab_name")
+            vocab_name = vocab_name.lower()
+            
+            query = query.join(VocTerm.vocab)
+            query = query.filter(lower(Vocab.name) == vocab_name)
 
 
         # handle sorts
