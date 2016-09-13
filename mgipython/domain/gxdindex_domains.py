@@ -46,7 +46,7 @@ class IndexRecordDomain(Serializer):
         return record.reference.jnumid
     
     def get_short_citation(self, record):
-        return record.reference.citation_cache.short_citation
+        return record.reference.short_citation
     
     def get_marker_symbol(self, record):
         return record.marker.symbol
@@ -76,7 +76,7 @@ class IndexRecordSearchResultDomain(Serializer):
         return record.reference.jnumid
     
     def get_short_citation(self, record):
-        return record.reference.citation_cache.short_citation
+        return record.reference.short_citation
     
     def get_marker_symbol(self, record):
         return record.marker.symbol

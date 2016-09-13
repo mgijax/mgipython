@@ -19,6 +19,8 @@ from model import edit_clipboard_tests
 
 from parse import parser_tests
 
+from service.helpers import sort_helper_tests
+
 from service_schema import search_schema_tests
 
 from util import gxdindex_aggregator_tests
@@ -34,6 +36,7 @@ def master_suite():
     suites.append(search_schema_tests.suite())
     suites.append(serializer_tests.suite())
     suites.append(sort_tests.suite())
+    suites.append(sort_helper_tests.suite())
 
     master_suite = unittest.TestSuite(suites)
     return master_suite

@@ -40,9 +40,6 @@ class GxdIndexService():
         # load data to be displayed
         gxdindex_records = search_results.items
         
-        batchLoadAttribute(gxdindex_records, 'reference.citation_cache')
-        
-        
         # convert results to gxd index domain objects
         search_results.items = convert_models(gxdindex_records, IndexRecordSearchResultDomain)
         
@@ -127,44 +124,6 @@ class GxdIndexService():
         logger.debug("nulling out createdby fields")
         self.gxdindex_dao.delete(gxdindex_record)
         
-        
-    @cache.memoize()
-    def get_conditionalmutants_choices(self):
-        """
-        Get all possible conditionalmutants choices
-        """
-        conditionalmutants_vocab_key = 74
-        return self.vocterm_service \
-            .get_term_choices_by_vocab_key(GxdIndexRecord._conditionalmutants_vocab_key)
-            
-    
-    @cache.memoize()
-    def get_indexassay_choices(self):
-        """
-        Get all possible indexassay choices
-        """
-        return self.vocterm_service \
-            .get_term_choices_by_vocab_key(GxdIndexStage._indexassay_vocab_key)
-            
-    
-    @cache.memoize()
-    def get_priority_choices(self):
-        """
-        Get all possible priority choices
-        """
-        return self.vocterm_service \
-            .get_term_choices_by_vocab_key(GxdIndexRecord._priority_vocab_key)
-            
-            
-    @cache.memoize()
-    def get_stageid_choices(self):
-        """
-        Get all possible stageid choices
-        """
-        return self.vocterm_service \
-            .get_term_choices_by_vocab_key(GxdIndexStage._stageid_vocab_key)
-    
-    
     
         
         
