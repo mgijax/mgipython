@@ -1044,41 +1044,42 @@ class GxdHTExperiment(db.Model, MGIModel):
 
     name = db.Column(db.String())
     description = db.Column(db.String())
-    arraydesign = db.Column(db.String())
-
-    release_date = db.Column(db.DateTime)
-    lastupdate_date = db.Column(db.DateTime, onupdate=datetime.now)
 
     evaluated_date = db.Column(db.DateTime)
-    curated_date = db.Column(db.DateTime)
+    initial_curated_date = db.Column(db.DateTime)
+    last_curated_date = db.Column(db.DateTime)
+    release_date = db.Column(db.DateTime)
+    lastupdate_date = db.Column(db.DateTime)
+
+    modification_date = db.Column(db.DateTime)
     creation_date = db.Column(db.DateTime)
-    modification_date = db.Column(db.DateTime, onupdate=datetime.now)
 
     _source_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
-    _triagestate_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    _evaluationstate_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
     _curationstate_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
     _studytype_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    _experimenttype_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
 
     source_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==GxdHTExperiment._source_key", uselist=False)
-    triagestate_object = db.relationship("VocTerm", primaryjoin="GxdHTExperiment._triagestate_key==VocTerm._term_key", uselist=False)
+    evaluationstate_object = db.relationship("VocTerm", primaryjoin="GxdHTExperiment._evaluationstate_key==VocTerm._term_key", uselist=False)
     curationstate_object = db.relationship("VocTerm", primaryjoin="GxdHTExperiment._curationstate_key==VocTerm._term_key", uselist=False)
     studytype_object = db.relationship("VocTerm", primaryjoin="GxdHTExperiment._studytype_key==VocTerm._term_key", uselist=False)
+    experimenttype_object = db.relationship("VocTerm", primaryjoin="GxdHTExperiment._experimenttype_key==VocTerm._term_key", uselist=False)
 
     _evaluatedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
-    _curatedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    _initialcuratedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    _lastcuratedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
     _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
     _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
 
     evaluatedby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._evaluatedby_key==MGIUser._user_key", uselist=False)
-    curatedby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._curatedby_key==MGIUser._user_key", uselist=False)
+    initialcuratedby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._initialcuratedby_key==MGIUser._user_key", uselist=False)
+    lastcuratedby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._lastcuratedby_key==MGIUser._user_key", uselist=False)
     createdby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._createdby_key==MGIUser._user_key", uselist=False)
     modifiedby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._modifiedby_key==MGIUser._user_key", uselist=False)
 
     # Type GXD HT Experiment
     _mgitype_key = 42
-    # Add constraint for logical db for GEO only ids
-    # Logicial Db Key GEO
-    _logicaldb_key = 130
 
     notes = db.relationship("Note", primaryjoin="and_(GxdHTExperiment._experiment_key==Note._object_key,"
         "Note._mgitype_key==%d)" % _mgitype_key, foreign_keys="[Note._object_key]"
@@ -1107,6 +1108,10 @@ class GxdHTExperiment(db.Model, MGIModel):
                     "Accession._mgitype_key==%d)" % _mgitype_key,
         foreign_keys="[Accession._object_key]",
         uselist=False)
+
+    # Add constraint for logical db for GEO only ids
+    # Logicial Db Key GEO
+    _logicaldb_key = 190
 
     secondaryid_objects = db.relationship("Accession",
         primaryjoin="and_(Accession._object_key==GxdHTExperiment._experiment_key,"

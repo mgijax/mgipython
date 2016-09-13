@@ -20,14 +20,14 @@ class GxdHTExperimentDomain(Serializer):
         # Keys
         Field("_experiment_key"),
         Field("_studytype_key"),
-        Field("_triagestate_key"),
+        Field("_evaluationstate_key"),
         Field("_curationstate_key"),
+        Field("_experimenttype_key"),
 
         # Text Fields
         Field("primaryid"),
         Field("name"),
         Field("description"),
-        Field("arraydesign"),
 
         # Properties
         Field("assay_count"),
@@ -40,18 +40,22 @@ class GxdHTExperimentDomain(Serializer):
  
         # Date
         Field("evaluated_date"),
-        Field("curated_date"),
-        Field("modification_date"),
+        Field("initial_curated_date"),
+        Field("last_curated_date"),
         Field("release_date"),
-        Field("creation_date"),
         Field("lastupdate_date"),
+
+        Field("modification_date"),
+        Field("creation_date"),
 
         Field("source_object", conversion_class=VocTermDomain),
         Field("notes", conversion_class=NoteDomain),
 
         # User Objects
         Field("evaluatedby_object", conversion_class=UserDomain),
-        Field("curatedby_object", conversion_class=UserDomain),
+        Field("initialcuratedby_object", conversion_class=UserDomain),
+        Field("lastcuratedby_object", conversion_class=UserDomain),
+
         Field("createdby_object", conversion_class=UserDomain),
         Field("modifiedby_object", conversion_class=UserDomain),
 
