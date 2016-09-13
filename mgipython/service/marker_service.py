@@ -6,6 +6,7 @@ from mgipython.modelconfig import cache
 from mgipython.domain.marker_domains import SmallMarker
 from mgipython.domain import convert_models
 from mgipython.service_schema.search import SearchQuery
+from helpers.sort_helper import ValidMarkerSortHelper
 
 class MarkerService():
     
@@ -38,8 +39,7 @@ class MarkerService():
         batchLoadAttribute(markers, 'current_markers')
         batchLoadAttribute(markers, 'featuretype_vocterms')
         
-        # put current protein coding genes first
-        markers.sort(key = lambda x: x._marker_type_key)
+        ValidMarkerSortHelper().sort(markers)
         
         # convert db models to domain objects
         search_results.items = convert_models(markers, SmallMarker)
