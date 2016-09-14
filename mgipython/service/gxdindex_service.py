@@ -63,18 +63,20 @@ class GxdIndexService():
         gxdindex_record._createdby_key = current_user._user_key
         gxdindex_record._modifiedby_key = current_user._user_key
         
-        # add the GxdIndexStage(s)
-        gxdindex_record.indexstages = []
-        for indexstage_input in indexrecord_domain.indexstages:
+        if indexrecord_domain.indexstages:
             
-            indexstage = GxdIndexStage()
-            indexstage._index_key = gxdindex_record._index_key
-            indexstage._indexassay_key = indexstage_input._indexassay_key
-            indexstage._stageid_key = indexstage_input._stageid_key
-            indexstage._createdby_key = current_user._user_key
-            indexstage._modifiedby_key = current_user._user_key
-            
-            gxdindex_record.indexstages.append(indexstage)
+            # add the GxdIndexStage(s)
+            gxdindex_record.indexstages = []
+            for indexstage_input in indexrecord_domain.indexstages:
+                
+                indexstage = GxdIndexStage()
+                indexstage._index_key = gxdindex_record._index_key
+                indexstage._indexassay_key = indexstage_input._indexassay_key
+                indexstage._stageid_key = indexstage_input._stageid_key
+                indexstage._createdby_key = current_user._user_key
+                indexstage._modifiedby_key = current_user._user_key
+                
+                gxdindex_record.indexstages.append(indexstage)
         
         self.gxdindex_dao.save(gxdindex_record)
         
