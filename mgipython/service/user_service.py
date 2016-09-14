@@ -1,8 +1,12 @@
 from mgipython.dao.user_dao import UserDAO
 from mgipython.dao.vocterm_dao import VocTermDAO
 from mgipython.model import MGIUser
+from mgipython.domain.mgi_domains import UserDomain
+from mgipython.domain.gxd_domains import *
+from flask_login import current_user
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
+from mgipython.domain import convert_models
 from vocterm_service import VocTermService
 
 class UserService():
@@ -15,17 +19,14 @@ class UserService():
         user = self.user_dao.get_by_key(_user_key)
         if not user:
             raise NotFoundError("No MGIUser for _user_key=%d" % _user_key)
-        return user
-    
+        return convert_models(user, UserDomain)
     
     def search(self, search_query):
         """
         Search using a SearchQuery
         """
-        users = self.user_dao.search(search_query)
-        return users
-    
-    
+        search_result = self.user_dao.search(search_query)
+        return search_result
         
     def create(self, args):
         """
@@ -43,8 +44,7 @@ class UserService():
         #user._createdby_key = current_user._user_key
         #user._modifiedby_key = current_user._modifiedby_key
         self.user_dao.save(user)
-        
-        return user
+        return convert_models(user, UserDomain)
         
         
     def edit(self, key, args):
@@ -59,9 +59,8 @@ class UserService():
         user._usertype_key = args['_usertype_key']
         user._userstatus_key = args['_userstatus_key']
         #user._modifiedby_key = current_user._modifiedby_key
-        
-        self.user_dao.save()
-        return user
+        self.user_dao.save(user)
+        return convert_models(user, UserDomain)
         
         
     def delete(self, _user_key):
@@ -72,29 +71,7 @@ class UserService():
         if not user:
             raise NotFoundError("No MGIUser for _user_key=%d" % _user_key)
         self.user_dao.delete(user)
-        
-    
-    @cache.memoize()
-    def get_user_status_choices(self):
-        """
-        Get all possible userstatus choices
-        return format is
-        { 'choices': [{'term', '_term_key'}] }
-        """
-        
-        user_status_vocab_key = 22
-        return self.vocterm_service \
-            .get_term_choices_by_vocab_key(user_status_vocab_key)
-    
-    @cache.memoize()
-    def get_user_type_choices(self):
-        """
-        Get all possible usertype choices
-        return format is
-        { 'choices': [{'term', '_term_key'}] }
-        """
-        user_type_vocab_key = 23
-        return self.vocterm_service \
-            .get_term_choices_by_vocab_key(user_type_vocab_key)
-        
-        
+        return convert_models(user, UserDomain)
+
+    def current_user(self):
+        return convert_models(current_user, UserDomain)

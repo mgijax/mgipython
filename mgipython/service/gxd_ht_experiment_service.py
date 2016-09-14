@@ -1,3 +1,4 @@
+from flask_login import current_user
 from mgipython.dao.gxd_ht_experiment_dao import GxdHTExperimentDAO
 from mgipython.model import GxdHTExperiment
 from mgipython.model.query import batchLoadAttribute
@@ -7,6 +8,7 @@ from mgipython.service_schema.search import SearchResults
 from mgipython.domain.gxd_domains import *
 from mgipython.modelconfig import cache
 from dateutil import parser
+from datetime import datetime
 
 class GxdHTExperimentService():
     
@@ -67,7 +69,12 @@ class GxdHTExperimentService():
 
         experiment.name = args["name"]
         experiment.description = args["description"]
-        experiment._evaluationstate_key = args["_evaluationstate_key"]
+        print experiment._evaluationstate_key
+        print args["_evaluationstate_key"]
+        if experiment._evaluationstate_key != args["_evaluationstate_key"]:
+            experiment._evaluationstate_key = args["_evaluationstate_key"]
+            experiment._evaluatedby_key = current_user._user_key
+            experiment.evaluated_date = datetime.now()
 
         self.gxd_dao.save(experiment)
         ret_experiment = GxdHTExperimentDomain()
