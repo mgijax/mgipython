@@ -64,9 +64,10 @@ class GxdHTExperimentService():
         experiment = self.gxd_dao.get_by_key(key)
         if not experiment:
             raise NotFoundError("No GxdHTExperiment for _experiment_key=%d" % key)
-        #experiment.name = args["name"]
-        experiment._triagestate_key = args["_triagestate_key"]
-        #experiment.description = args["description"]
+
+        experiment.name = args["name"]
+        experiment.description = args["description"]
+        experiment._evaluationstate_key = args["_evaluationstate_key"]
 
         self.gxd_dao.save(experiment)
         ret_experiment = GxdHTExperimentDomain()
