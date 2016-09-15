@@ -1,5 +1,7 @@
 from mgipython.service.helpers.date_helper import DateHelper
 from mgipython.model import GxdHTExperiment
+from mgipython.model import Accession
+from mgipython.model import MGIUser
 from mgipython.model import db
 from base_dao import BaseDAO
 
@@ -52,8 +54,38 @@ class GxdHTExperimentDAO(BaseDAO):
             experiment_key = search_query.get_value("_experiment_key")
             query = query.filter(GxdHTExperiment._experiment_key == int(experiment_key))
 
+        if search_query.has_valid_param("_curationstate_key"):
+            curationstate_key = search_query.get_value("_curationstate_key")
+            query = query.filter(GxdHTExperiment._curationstate_key == int(curationstate_key))
+
         if search_query.has_valid_param("primaryid"):
-            primaryid = search_query.get_value("primaryid")
-            query = query.filter(GxdHTExperiment.primaryid == primaryid)
+            primaryid = search_query.get_value("primaryid").lower()
+            query = query.filter(db.func.lower(GxdHTExperiment.primaryid).like(primaryid))
+
+        if search_query.has_valid_param("secondaryid"):
+            accession = db.aliased(Accession)
+            secondaryid = search_query.get_value("secondaryid").lower()
+            query = query.join(accession, GxdHTExperiment.secondaryid_objects).filter(db.func.lower(accession.accid).like(secondaryid))
+
+        if search_query.has_valid_param("evaluatedby_object"):
+            user = db.aliased(MGIUser)
+            evaluatedby_object = search_query.get_value("evaluatedby_object")
+            login = evaluatedby_object["login"].lower()
+            if len(login) > 0:
+                query = query.join(user, GxdHTExperiment.evaluatedby_object).filter(db.func.lower(user.login).like(login))
+
+        if search_query.has_valid_param("createdby_object"):
+            user = db.aliased(MGIUser)
+            createdby_object = search_query.get_value("createdby_object")
+            login = createdby_object["login"].lower()
+            if len(login) > 0:
+                query = query.join(user, GxdHTExperiment.createdby_object).filter(db.func.lower(user.login).like(login))
+
+        if search_query.has_valid_param("curatedby_object"):
+            user = db.aliased(MGIUser)
+            curatedby_object = search_query.get_value("curatedby_object")
+            login = curatedby_object["login"].lower()
+            if len(login) > 0:
+                query = query.join(user, GxdHTExperiment.curatedby_object).filter(db.func.lower(user.login).like(login))
 
         return query

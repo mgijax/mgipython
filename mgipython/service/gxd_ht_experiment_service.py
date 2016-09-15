@@ -3,6 +3,7 @@ from mgipython.model import GxdHTExperiment
 from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
 from mgipython.service.helpers.date_helper import DateHelper
+from mgipython.service_schema.search import SearchResults
 from mgipython.domain.gxd_domains import *
 from mgipython.modelconfig import cache
 from dateutil import parser
@@ -51,20 +52,26 @@ class GxdHTExperimentService():
     # Read
     def get(self, key):
         experiment = self.gxd_dao.get_by_key(key)
-        self.loadAttributes([experiment])
         if not experiment:
             raise NotFoundError("No GxdHTExperiment for _experiment_key=%d" % key)
-        return GxdHTExperimentDomain(experiment)
+
+        ret_experiment = GxdHTExperimentDomain()
+        ret_experiment.load_from_model(experiment)
+        return ret_experiment
  
     # Update
     def save(self, key, args):
         experiment = self.gxd_dao.get_by_key(key)
         if not experiment:
             raise NotFoundError("No GxdHTExperiment for _experiment_key=%d" % key)
-        experiment.name = args["name"]
-        experiment.description = args["description"]
+        #experiment.name = args["name"]
+        experiment._triagestate_key = args["_triagestate_key"]
+        #experiment.description = args["description"]
+
         self.gxd_dao.save(experiment)
-        return GxdHTExperimentDomain(experiment)
+        ret_experiment = GxdHTExperimentDomain()
+        ret_experiment.load_from_model(experiment)
+        return ret_experiment
 
     def delete(self, key):
         experiment = self.gxd_dao.get_by_key(key)

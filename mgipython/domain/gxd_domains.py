@@ -56,7 +56,7 @@ class GxdHTExperimentDomain(Serializer):
         Field("modifiedby_object", conversion_class=UserDomain),
 
         # Accession
-        Field("secondaryids", conversion_class=AccessionDomain),
+        Field("secondaryid_objects", conversion_class=AccessionDomain),
     ]
 
     def get_assay_count(self, experiment):
