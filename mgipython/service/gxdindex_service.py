@@ -1,11 +1,11 @@
 from mgipython.dao.gxdindex_dao import GxdIndexDAO
-from mgipython.dao.vocterm_dao import VocTermDAO
 from mgipython.model import GxdIndexRecord, GxdIndexStage
 from mgipython.model.query import batchLoadAttribute
-from mgipython.error import NotFoundError
+from mgipython.error import NotFoundError, ValidationError
 from mgipython.modelconfig import cache
 from mgipython.domain import convert_models
 from mgipython.domain.gxdindex_domains import IndexRecordDomain, IndexRecordSearchResultDomain
+from mgipython.service_schema.search import SearchQuery
 from vocterm_service import VocTermService
 import logging
 
@@ -14,7 +14,6 @@ logger = logging.getLogger("mgipython.service")
 class GxdIndexService():
     
     gxdindex_dao = GxdIndexDAO()
-    vocterm_dao = VocTermDAO()
     vocterm_service = VocTermService()
     
     def get_by_key(self, _index_key):
@@ -51,6 +50,8 @@ class GxdIndexService():
         """
         Create GxdIndexRecord with an argument object
         """
+        self.validate_input(indexrecord_domain)
+        
         gxdindex_record = GxdIndexRecord()
         # get the next primary key
         gxdindex_record._index_key = self.gxdindex_dao.get_next_key()
@@ -91,6 +92,8 @@ class GxdIndexService():
         if not gxdindex_record:
             raise NotFoundError("No GxdIndexRecord for _index_key=%d" % key)
         
+        self.validate_input(indexrecord_domain)
+        
         # set GxdIndexRecord values
         gxdindex_record._refs_key = indexrecord_domain._refs_key
         gxdindex_record._marker_key = indexrecord_domain._marker_key
@@ -126,6 +129,45 @@ class GxdIndexService():
         logger.debug("nulling out createdby fields")
         self.gxdindex_dao.delete(gxdindex_record)
         
+        
+    def validate_input(self, indexrecord_domain):
+        """
+        Validate incoming IndexRecordDomain object
+        
+        throws ValidationError if not valid to save
+        """
+        if not indexrecord_domain._refs_key:
+            raise ValidationError("Please select a Reference")
+        
+        if not indexrecord_domain._marker_key:
+            raise ValidationError("Please select a Marker")
+        
+        if not indexrecord_domain._priority_key:
+            raise ValidationError("Please select a Priority value")
+        
+        if not indexrecord_domain._conditionalmutants_key:
+            
+            logger.info("_conditionalmutants_key not set. Using 'Not Applicable'")
+            # set default value of 'Not Applicable'
+            not_applicable = self._get_not_applicable_term()
+            indexrecord_domain._conditionalmutants_key = not_applicable._term_key
+            
+        return indexrecord_domain
+        
+    
+    @cache.memoize()
+    def _get_not_applicable_term(self):
+        """
+        Retrieve the Conditional Mutants value
+            'Not Applicable'
+        """
+        search_query = SearchQuery()
+        search_query.set_params({
+            'vocab_name': 'GXD Conditional Mutants',
+            'term': 'Not Applicable'
+        })
+        results = self.vocterm_service.search(search_query)
+        return results.items[0]
     
         
         

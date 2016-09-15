@@ -12,6 +12,12 @@ class InvalidPermissionError(Exception):
     Thrown when user does not have permission to perform an operation
     or to access a resource
     """    
+    
+    
+class ValidationError(Exception):
+    """
+    Thrown when user input is invalid
+    """
 
     
     
