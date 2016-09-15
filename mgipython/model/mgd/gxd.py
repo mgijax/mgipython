@@ -1087,6 +1087,7 @@ class GxdHTExperiment(db.Model, MGIModel):
 
     experiment_variables = db.relationship("GxdHTExperimentVariable", primaryjoin="GxdHTExperiment._experiment_key == GxdHTExperimentVariable._experiment_key", foreign_keys="[GxdHTExperimentVariable._experiment_key]")
 
+    samples = db.relationship("GxdHTSample", primaryjoin="GxdHTSample._experiment_key == GxdHTExperiment._experiment_key", foreign_keys="[GxdHTSample._experiment_key]")
 	# Raw Fields
 
     all_properties = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
@@ -1119,7 +1120,39 @@ class GxdHTExperiment(db.Model, MGIModel):
                     "Accession.preferred==0)" % (_mgitype_key, _logicaldb_key),
         foreign_keys="[Accession._object_key]"
     )
+
+class GxdHTSample(db.Model, MGIModel):
+    __tablename__ = "gxd_htsample"
+    _sample_key = db.Column(db.Integer, primary_key=True)
+    _experiment_key = db.Column(db.Integer, mgi_fk("gxd_htexperiment._experiment_key"))
     
+    name = db.Column(db.String())
+    description = db.Column(db.String())
+    age = db.Column(db.String())
+    agemin = db.Column(db.Numeric)
+    agemax = db.Column(db.Numeric)
+
+    _organism_key = db.Column(db.Integer, mgi_fk("mgi_organism._organism_key"))
+    _sex_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    _emapa_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
+    _stage_key = db.Column(db.Integer, mgi_fk("gxd_theilerstage._stage_key"))
+    _genotype_key = db.Column(db.Integer, mgi_fk("gxd_genotype._genotype_key"))
+
+    organism_object = db.relationship("Organism", primaryjoin="Organism._organism_key==GxdHTSample._organism_key", uselist=False)
+    sex_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==GxdHTSample._sex_key", uselist=False)
+    emapa_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==GxdHTSample._emapa_key", uselist=False)
+    stage_object = db.relationship("TheilerStage", primaryjoin="TheilerStage._stage_key==GxdHTSample._stage_key", uselist=False)
+    genotype_object = db.relationship("Genotype", primaryjoin="Genotype._genotype_key==GxdHTSample._genotype_key", uselist=False)
+
+    _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
+
+    createdby_object = db.relationship("MGIUser", primaryjoin="GxdHTSample._createdby_key==MGIUser._user_key", uselist=False)
+    modifiedby_object = db.relationship("MGIUser", primaryjoin="GxdHTSample._modifiedby_key==MGIUser._user_key", uselist=False)
+
+    modification_date = db.Column(db.DateTime)
+    creation_date = db.Column(db.DateTime)
+
 class GxdHTExperimentVariable(db.Model, MGIModel):
     __tablename__ = "gxd_htexperimentvariable"
     _experimentvariable_key = db.Column(db.Integer, primary_key=True)

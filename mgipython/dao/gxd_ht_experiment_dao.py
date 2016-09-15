@@ -92,8 +92,6 @@ class GxdHTExperimentDAO(BaseDAO):
             if len(login) > 0:
                 query = query.join(user, GxdHTExperiment.lastcuratedby_object).filter(db.func.lower(user.login).like(login))
 
-
-
         if search_query.has_valid_param("primaryid"):
             primaryid = search_query.get_value("primaryid").lower()
             query = query.filter(db.func.lower(GxdHTExperiment.primaryid).like(primaryid))
@@ -102,6 +100,5 @@ class GxdHTExperimentDAO(BaseDAO):
             accession = db.aliased(Accession)
             secondaryid = search_query.get_value("secondaryid").lower()
             query = query.join(accession, GxdHTExperiment.secondaryid_objects).filter(db.func.lower(accession.accid).like(secondaryid))
-
 
         return query

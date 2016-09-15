@@ -14,6 +14,41 @@ class GxdHTExperimentSummaryDomain(Serializer):
         Field("primaryid"),
     ]
 
+class GxdHTRawSampleDomain(Serializer):
+    __fields__ = [
+        Field("assay"),
+        Field("characteristic"),
+
+        Field("extract"),
+        Field("file"),
+        Field("labeled-extract"),
+        Field("scan"),
+        Field("source"),
+
+        Field("variable"),
+    ]
+
+class GxdHTSampleDomain(Serializer):
+    __fields__ = [
+        Field("_sample_key"),
+        Field("_experiment_key"),
+
+        Field("name"),
+        Field("description"),
+        Field("age"),
+        Field("agemin"),
+        Field("agemax"),
+
+        Field("_organism_key"),
+        Field("_sex_key"),
+        Field("_emapa_key"),
+        Field("_stage_key"),
+        Field("_genotype_key"),
+
+        Field("raw_sample", conversion_class=GxdHTRawSampleDomain),
+
+    ]
+
 class GxdHTExperimentDomain(Serializer):
 
     __fields__ = [
@@ -50,6 +85,7 @@ class GxdHTExperimentDomain(Serializer):
 
         Field("source_object", conversion_class=VocTermDomain),
         Field("notes", conversion_class=NoteDomain),
+        Field("samples", conversion_class=GxdHTSampleDomain),
 
         # User Objects
         Field("evaluatedby_object", conversion_class=UserDomain),
