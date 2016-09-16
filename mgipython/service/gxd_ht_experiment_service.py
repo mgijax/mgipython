@@ -84,8 +84,8 @@ class GxdHTExperimentService():
                 domain_sample = GxdHTSampleDomain()
                 raw_domain_sample = GxdHTRawSampleDomain()
                 raw_domain_sample.load_from_dict(sample)
-                domain_sample.raw_sample = raw_domain_sample
-                newItems.append(domain_sample)
+                raw_domain_sample.domain_sample = domain_sample
+                newItems.append(raw_domain_sample)
             search_result.items = newItems
 
         return search_result

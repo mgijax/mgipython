@@ -14,20 +14,6 @@ class GxdHTExperimentSummaryDomain(Serializer):
         Field("primaryid"),
     ]
 
-class GxdHTRawSampleDomain(Serializer):
-    __fields__ = [
-        Field("assay"),
-        Field("characteristic"),
-
-        Field("extract"),
-        Field("file"),
-        Field("labeled-extract"),
-        Field("scan"),
-        Field("source"),
-
-        Field("variable"),
-    ]
-
 class GxdHTSampleDomain(Serializer):
     __fields__ = [
         Field("_sample_key"),
@@ -45,8 +31,23 @@ class GxdHTSampleDomain(Serializer):
         Field("_stage_key"),
         Field("_genotype_key"),
 
-        Field("raw_sample", conversion_class=GxdHTRawSampleDomain),
 
+    ]
+
+class GxdHTRawSampleDomain(Serializer):
+    __fields__ = [
+        Field("assay"),
+        Field("characteristic"),
+
+        Field("extract"),
+        Field("file"),
+        Field("labeled-extract"),
+        Field("scan"),
+        Field("source"),
+
+        Field("variable"),
+
+        Field("domain_sample", conversion_class=GxdHTSampleDomain),
     ]
 
 class GxdHTExperimentDomain(Serializer):
