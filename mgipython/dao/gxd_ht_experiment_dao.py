@@ -52,7 +52,7 @@ class GxdHTExperimentDAO(BaseDAO):
 
         if search_query.has_valid_param("_evaluationstate_key"):
             evaluationstate_key = search_query.get_value("_evaluationstate_key")
-            query = query.filter(GxdHTExperiment._evaluationstate_key == int(_evaluationstate_key))
+            query = query.filter(GxdHTExperiment._evaluationstate_key == int(evaluationstate_key))
 
         if search_query.has_valid_param("_experiment_key"):
             experiment_key = search_query.get_value("_experiment_key")
