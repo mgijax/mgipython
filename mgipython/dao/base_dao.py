@@ -46,15 +46,22 @@ class BaseDAO():
         """
         return self.model_class.query.count()
     
-    
-    def save(self, object=None):
+    def create(self, object=None):
         """
-        Save object to the database
-        flushes database changes
+        Creates new object in the database
+        and flushes database changes
         """
         if object:
             db.session.add(object)
         db.session.flush()
+    
+    def update(self, object=None):
+        """
+        Update all modified sqa objects to the database
+        by flushing database changes
+        """
+        if object:
+            db.session.flush()
         
     def save_all(self, objects=[]):
         """

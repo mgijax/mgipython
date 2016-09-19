@@ -110,7 +110,7 @@ class GxdHTExperimentService():
             experiment._evaluatedby_key = current_user._user_key
             experiment.evaluated_date = datetime.now()
 
-        self.gxd_dao.save(experiment)
+        self.gxd_dao.update(experiment)
         ret_experiment = GxdHTExperimentDomain()
         ret_experiment.load_from_model(experiment)
         return ret_experiment
