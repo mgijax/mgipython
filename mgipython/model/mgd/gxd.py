@@ -437,8 +437,7 @@ class GxdIndexRecord(db.Model, MGIModel):
     
     fully_coded = db.column_property(
         db.exists().where(
-            db.and_(Result._marker_key==_marker_key,
-             Result._refs_key==_refs_key)
+            db.and_(Result._refs_key==_refs_key)
         )
     )
     
