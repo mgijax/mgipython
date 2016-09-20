@@ -142,16 +142,19 @@ class GxdIndexService():
         if not indexrecord_domain._marker_key:
             raise ValidationError("Please select a Marker")
         
-        if not indexrecord_domain._priority_key:
-            raise ValidationError("Please select a Priority value")
-        
-        if not indexrecord_domain._conditionalmutants_key:
+	#
+	# note: 'null' priority, conditionalmutatnt will be handled by database trigger
+	#
+        #if not indexrecord_domain._priority_key:
+        #    raise ValidationError("Please select a Priority value")
+
+        #if not indexrecord_domain._conditionalmutants_key:
             
-            logger.info("_conditionalmutants_key not set. Using 'Not Applicable'")
+        #    logger.info("_conditionalmutants_key not set. Using 'Not Applicable'")
             # set default value of 'Not Applicable'
-            not_applicable = self._get_not_applicable_term()
-            indexrecord_domain._conditionalmutants_key = not_applicable._term_key
-            
+        #    not_applicable = self._get_not_applicable_term()
+        #    indexrecord_domain._conditionalmutants_key = not_applicable._term_key
+
         return indexrecord_domain
         
     
