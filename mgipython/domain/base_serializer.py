@@ -106,7 +106,7 @@ class Serializer(object):
             the model attribute 
         """
         getter_attr = "get_" + field.field_name
-        return hasattr(self, getter_attr)
+        return self.check_attr(self, getter_attr)
     
 
 
@@ -127,10 +127,21 @@ class Serializer(object):
 
     def get_field_value_from_attr(self, model, field):
         value = None
-        if hasattr(model, field.field_name):
+        if self.check_attr(model, field.field_name):
             value = getattr(model, field.field_name)
 
         return value
+
+    def check_attr(self, obj, attr_name):
+        """
+        used instead of hasattr to ensure sqlalchemy errors bubble up
+        hasattr will hide an sqlalchemy error if the model schema is incorrectly defined
+        """
+        try:
+            getattr(obj, attr_name)
+        except AttributeError:
+            return False
+        return True
 
     def convert_value_to_class(self, value, conversion_class):
 
