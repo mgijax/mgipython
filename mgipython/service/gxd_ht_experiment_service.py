@@ -86,6 +86,7 @@ class GxdHTExperimentService():
                 raw_domain_sample.load_from_dict(sample)
                 raw_domain_sample.domain_sample = domain_sample
                 raw_domain_sample.domain_sample._experiment_key = int(key)
+                raw_domain_sample.domain_sample.name = raw_domain_sample.source["name"]
                 newItems.append(raw_domain_sample)
             search_result.items = newItems
 
