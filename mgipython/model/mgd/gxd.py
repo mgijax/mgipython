@@ -1127,7 +1127,6 @@ class GxdHTSample(db.Model, MGIModel):
     _experiment_key = db.Column(db.Integer, mgi_fk("gxd_htexperiment._experiment_key"))
     
     name = db.Column(db.String())
-    description = db.Column(db.String())
     age = db.Column(db.String())
     agemin = db.Column(db.Numeric)
     agemax = db.Column(db.Numeric)
