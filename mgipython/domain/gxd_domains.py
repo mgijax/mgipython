@@ -14,20 +14,56 @@ class GxdHTExperimentSummaryDomain(Serializer):
         Field("primaryid"),
     ]
 
+class GxdHTSampleDomain(Serializer):
+    __fields__ = [
+        Field("_sample_key"),
+        Field("_experiment_key"),
+
+        Field("name"),
+        Field("description"),
+        Field("age"),
+        Field("agemin"),
+        Field("agemax"),
+
+        Field("_organism_key"),
+        Field("_sex_key"),
+        Field("_emapa_key"),
+        Field("_stage_key"),
+        Field("_genotype_key"),
+
+
+    ]
+
+class GxdHTRawSampleDomain(Serializer):
+    __fields__ = [
+        Field("assay"),
+        Field("characteristic"),
+
+        Field("extract"),
+        Field("file"),
+        Field("labeled-extract"),
+        Field("scan"),
+        Field("source"),
+
+        Field("variable"),
+
+        Field("domain_sample", conversion_class=GxdHTSampleDomain),
+    ]
+
 class GxdHTExperimentDomain(Serializer):
 
     __fields__ = [
         # Keys
         Field("_experiment_key"),
         Field("_studytype_key"),
-        Field("_triagestate_key"),
+        Field("_evaluationstate_key"),
         Field("_curationstate_key"),
+        Field("_experimenttype_key"),
 
         # Text Fields
         Field("primaryid"),
         Field("name"),
         Field("description"),
-        Field("arraydesign"),
 
         # Properties
         Field("assay_count"),
@@ -40,18 +76,23 @@ class GxdHTExperimentDomain(Serializer):
  
         # Date
         Field("evaluated_date"),
-        Field("curated_date"),
-        Field("modification_date"),
+        Field("initial_curated_date"),
+        Field("last_curated_date"),
         Field("release_date"),
-        Field("creation_date"),
         Field("lastupdate_date"),
+
+        Field("modification_date"),
+        Field("creation_date"),
 
         Field("source_object", conversion_class=VocTermDomain),
         Field("notes", conversion_class=NoteDomain),
+        Field("samples", conversion_class=GxdHTSampleDomain),
 
         # User Objects
         Field("evaluatedby_object", conversion_class=UserDomain),
-        Field("curatedby_object", conversion_class=UserDomain),
+        Field("initialcuratedby_object", conversion_class=UserDomain),
+        Field("lastcuratedby_object", conversion_class=UserDomain),
+
         Field("createdby_object", conversion_class=UserDomain),
         Field("modifiedby_object", conversion_class=UserDomain),
 
