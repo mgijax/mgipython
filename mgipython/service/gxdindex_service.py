@@ -135,42 +135,16 @@ class GxdIndexService():
         Validate incoming IndexRecordDomain object
         
         throws ValidationError if not valid to save
+
+        Note: 'null' priority, conditionalmutant will be handled by 
+            database trigger
         """
         if not indexrecord_domain._refs_key:
             raise ValidationError("Please select a Reference")
         
         if not indexrecord_domain._marker_key:
             raise ValidationError("Please select a Marker")
-        
-	#
-	# note: 'null' priority, conditionalmutatnt will be handled by database trigger
-	#
-        #if not indexrecord_domain._priority_key:
-        #    raise ValidationError("Please select a Priority value")
-
-        #if not indexrecord_domain._conditionalmutants_key:
-            
-        #    logger.info("_conditionalmutants_key not set. Using 'Not Applicable'")
-            # set default value of 'Not Applicable'
-        #    not_applicable = self._get_not_applicable_term()
-        #    indexrecord_domain._conditionalmutants_key = not_applicable._term_key
-
+	
         return indexrecord_domain
-        
-    
-    @cache.memoize()
-    def _get_not_applicable_term(self):
-        """
-        Retrieve the Conditional Mutants value
-            'Not Applicable'
-        """
-        search_query = SearchQuery()
-        search_query.set_params({
-            'vocab_name': 'GXD Conditional Mutants',
-            'term': 'Not Applicable'
-        })
-        results = self.vocterm_service.search(search_query)
-        return results.items[0]
-    
         
         
