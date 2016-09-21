@@ -79,7 +79,7 @@ class GxdIndexService():
                 
                 gxdindex_record.indexstages.append(indexstage)
         
-        self.gxdindex_dao.save(gxdindex_record)
+        self.gxdindex_dao.create(gxdindex_record)
         
         return convert_models(gxdindex_record, IndexRecordDomain)
         
@@ -114,7 +114,7 @@ class GxdIndexService():
             
             gxdindex_record.indexstages.append(indexstage)
         
-        self.gxdindex_dao.save()
+        self.gxdindex_dao.update()
         return convert_models(gxdindex_record, IndexRecordDomain)
         
         

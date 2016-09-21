@@ -116,7 +116,7 @@ class EMAPAClipboardService():
         # add EMAPA to set member
         set_member.emapa = set_memberEMAPA
         
-        self.clipboard_dao.save(set_member)
+        self.clipboard_dao.create(set_member)
         
         return set_member
     
