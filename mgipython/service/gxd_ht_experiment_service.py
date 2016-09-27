@@ -110,7 +110,7 @@ class GxdHTExperimentService():
 
         if len(args["experiment_variables"]) > 0:
             variables = []
-            first_key = GxdHTExperimentVariable().get_next_key()
+            first_key = self.gxd_var_dao.get_next_key()
             for var in args["experiment_variables"]:
                 if var["_term_key"] != "Not Curated":
                     newvar = GxdHTExperimentVariable()
