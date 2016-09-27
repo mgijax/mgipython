@@ -1,5 +1,6 @@
 from mgipython.service.helpers.date_helper import DateHelper
 from mgipython.model import GxdHTExperiment
+from mgipython.model import GxdHTExperimentVariable
 from mgipython.model import Accession
 from mgipython.model import MGIUser
 from mgipython.model import db
@@ -70,7 +71,6 @@ class GxdHTExperimentDAO(BaseDAO):
             experimenttype_key = search_query.get_value("_experimenttype_key")
             query = query.filter(GxdHTExperiment._experimenttype_key == int(experimenttype_key))
 
-
         if search_query.has_valid_param("evaluatedby_object"):
             user = db.aliased(MGIUser)
             evaluatedby_object = search_query.get_value("evaluatedby_object")
@@ -100,5 +100,12 @@ class GxdHTExperimentDAO(BaseDAO):
             accession = db.aliased(Accession)
             secondaryid = search_query.get_value("secondaryid").lower()
             query = query.join(accession, GxdHTExperiment.secondaryid_objects).filter(db.func.lower(accession.accid).like(secondaryid))
+
+        if search_query.has_valid_param("experiment_variables"):
+            experiment_variables = search_query.get_value("experiment_variables")
+            search_list = []
+            for var in experiment_variables:
+                search_list.append(var["_term_key"]) 
+            query = query.join(GxdHTExperimentVariable, GxdHTExperiment.experiment_variables).filter(GxdHTExperimentVariable._term_key.in_(search_list))
 
         return query

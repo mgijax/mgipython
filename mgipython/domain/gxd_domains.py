@@ -34,6 +34,15 @@ class GxdHTSampleDomain(Serializer):
 
     ]
 
+class GxdHTVariableDomain(Serializer):
+    __fields__ = [
+        # Keys
+        Field("_experimentvariable_key"),
+        Field("_experiment_key"),
+        Field("_term_key"),
+        Field("term_object", conversion_class=VocTermDomain),
+    ]
+
 class GxdHTRawSampleDomain(Serializer):
     __fields__ = [
         Field("assay"),
@@ -98,6 +107,7 @@ class GxdHTExperimentDomain(Serializer):
 
         # Accession
         Field("secondaryid_objects", conversion_class=AccessionDomain),
+        Field("experiment_variables", conversion_class=GxdHTVariableDomain),
     ]
 
     def get_assay_count(self, experiment):
@@ -144,3 +154,5 @@ class GxdHTExperimentDomain(Serializer):
             if prop.term_object.term == "raw experiment type":
                 list.append(prop.value)
         return list
+
+

@@ -1,6 +1,8 @@
 from flask_login import current_user
 from mgipython.dao.gxd_ht_experiment_dao import GxdHTExperimentDAO
+from mgipython.dao.gxd_ht_experiment_variable_dao import GxdHTExperimentVariableDAO
 from mgipython.model import GxdHTExperiment
+from mgipython.model import GxdHTExperimentVariable
 from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
 from mgipython.service.helpers.date_helper import DateHelper
@@ -15,6 +17,7 @@ from datetime import datetime
 class GxdHTExperimentService():
     
     gxd_dao = GxdHTExperimentDAO()
+    gxd_var_dao = GxdHTExperimentVariableDAO();
     sample_dao = GxdHTSampleDAO()
     raw_sample_dao = GxdHTRawSampleDAO()
     
@@ -102,6 +105,23 @@ class GxdHTExperimentService():
         experiment.description = args["description"]
         experiment._studytype_key = args["_studytype_key"]
         experiment._experimenttype_key = args["_experimenttype_key"]
+
+        #gxd_var_dao.save(args["experiment_variables"])
+
+        if len(args["experiment_variables"]) > 0:
+            variables = []
+            first_key = GxdHTExperimentVariable().get_next_key()
+            for var in args["experiment_variables"]:
+                if var["_term_key"] != "Not Curated":
+                    newvar = GxdHTExperimentVariable()
+                    newvar._experimentvariable_key = first_key
+                    first_key = first_key + 1
+                    newvar._experiment_key = experiment._experiment_key
+                    newvar._term_key = var["_term_key"]
+                    variables.append(newvar)
+            experiment.experiment_variables = variables
+        else:
+            pass
 
         experiment._modifiedby_key = current_user._user_key
         experiment.modification_date = datetime.now()

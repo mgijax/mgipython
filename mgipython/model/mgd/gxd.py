@@ -1084,10 +1084,12 @@ class GxdHTExperiment(db.Model, MGIModel):
         "Note._mgitype_key==%d)" % _mgitype_key, foreign_keys="[Note._object_key]"
     )
 
-    experiment_variables = db.relationship("GxdHTExperimentVariable", primaryjoin="GxdHTExperiment._experiment_key == GxdHTExperimentVariable._experiment_key", foreign_keys="[GxdHTExperimentVariable._experiment_key]")
+    experiment_variables = db.relationship("GxdHTExperimentVariable",
+        primaryjoin="GxdHTExperimentVariable._experiment_key==GxdHTExperiment._experiment_key",
+        foreign_keys="[GxdHTExperiment._experiment_key]", uselist=True)
 
     samples = db.relationship("GxdHTSample", primaryjoin="GxdHTSample._experiment_key == GxdHTExperiment._experiment_key", foreign_keys="[GxdHTSample._experiment_key]")
-	# Raw Fields
+    # Raw Fields
 
     all_properties = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
         "Property._mgitype_key==%d)" % _mgitype_key, foreign_keys="[Property._object_key]"
@@ -1154,6 +1156,6 @@ class GxdHTSample(db.Model, MGIModel):
 class GxdHTExperimentVariable(db.Model, MGIModel):
     __tablename__ = "gxd_htexperimentvariable"
     _experimentvariable_key = db.Column(db.Integer, primary_key=True)
-    _experiment_key = db.Column(db.Integer, mgi_fk("GxdHTExperiment._experiment_key"))
+    _experiment_key = db.Column(db.Integer, mgi_fk("gxd_htexperiment._experiment_key"))
     _term_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
     term_object = db.relationship("VocTerm", primaryjoin="GxdHTExperimentVariable._term_key == VocTerm._term_key", uselist=False)
