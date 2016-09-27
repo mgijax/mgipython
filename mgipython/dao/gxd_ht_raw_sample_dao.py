@@ -11,7 +11,6 @@ class GxdHTRawSampleDAO():
 
         url = 'http://www.ebi.ac.uk/arrayexpress/json/v3/experiments/%s/samples' % experiment_primaryid
         urlreader = UrlReader()
-        print url
         logger.debug("Preparing to read: %s" % url)
 
         response = urlreader.get(url)

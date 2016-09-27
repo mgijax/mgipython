@@ -43,13 +43,13 @@ class UserService():
         
         #user._createdby_key = current_user._user_key
         #user._modifiedby_key = current_user._modifiedby_key
-        self.user_dao.save(user)
+        self.user_dao.create(user)
         return convert_models(user, UserDomain)
         
         
-    def edit(self, key, args):
+    def update(self, key, args):
         """
-        Edit user with and argument object
+        update user with and argument object
         """
         user = self.user_dao.get_by_key(key)
         if not user:
@@ -59,7 +59,7 @@ class UserService():
         user._usertype_key = args['_usertype_key']
         user._userstatus_key = args['_userstatus_key']
         #user._modifiedby_key = current_user._modifiedby_key
-        self.user_dao.save(user)
+        self.user_dao.update(user)
         return convert_models(user, UserDomain)
         
         
