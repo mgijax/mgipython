@@ -9,5 +9,6 @@ class VocTermDomain(Serializer):
     """    
     __fields__ = [
       Field("_term_key"),
+      Field("abbreviation"),
       Field("term")
     ]
