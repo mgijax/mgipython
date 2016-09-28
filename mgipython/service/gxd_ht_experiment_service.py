@@ -109,6 +109,9 @@ class GxdHTExperimentService():
         #gxd_var_dao.save(args["experiment_variables"])
 
         if len(args["experiment_variables"]) > 0:
+            for var in experiment.experiment_variables:
+                self.gxd_var_dao.delete(var)
+
             variables = []
             first_key = self.gxd_var_dao.get_next_key()
             for var in args["experiment_variables"]:

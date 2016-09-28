@@ -101,11 +101,22 @@ class GxdHTExperimentDAO(BaseDAO):
             secondaryid = search_query.get_value("secondaryid").lower()
             query = query.join(accession, GxdHTExperiment.secondaryid_objects).filter(db.func.lower(accession.accid).like(secondaryid))
 
+        # The next portition of code will break if aliasing of gxd_experiment is used
         if search_query.has_valid_param("experiment_variables"):
             experiment_variables = search_query.get_value("experiment_variables")
-            search_list = []
+
+            # Or query
+            #search_list = []
+            #for var in experiment_variables:
+            #    search_list.append(var["_term_key"]) 
+            #    query = query.join(GxdHTExperimentVariable, GxdHTExperiment.experiment_variables).filter(GxdHTExperimentVariable._term_key.in_(search_list))
+
+            # And Query
             for var in experiment_variables:
-                search_list.append(var["_term_key"]) 
-            query = query.join(GxdHTExperimentVariable, GxdHTExperiment.experiment_variables).filter(GxdHTExperimentVariable._term_key.in_(search_list))
+                sq = db.session.query(GxdHTExperimentVariable)
+                sq = sq.filter(GxdHTExperimentVariable._term_key == var["_term_key"])
+                sq = sq.filter(GxdHTExperimentVariable._experiment_key == GxdHTExperiment._experiment_key)
+                sq = sq.correlate(GxdHTExperiment)
+                query = query.filter(sq.exists())
 
         return query
