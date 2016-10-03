@@ -7,6 +7,7 @@ from mgipython.domain import convert_models
 from mgipython.domain.gxdindex_domains import IndexRecordDomain, IndexRecordSearchResultDomain
 from mgipython.service_schema.search import SearchQuery
 from vocterm_service import VocTermService
+from datetime import datetime
 import logging
 
 logger = logging.getLogger("mgipython.service")
@@ -102,6 +103,9 @@ class GxdIndexService():
         gxdindex_record.comments = indexrecord_domain.comments
         gxdindex_record._modifiedby_key = current_user._user_key
         
+        # TODO(kstone): get SQLAlchemy to do this automatically
+        gxdindex_record.modification_date = datetime.now()
+        
         gxdindex_record.indexstages = []
         for indexstage_input in indexrecord_domain.indexstages:
             
@@ -114,7 +118,8 @@ class GxdIndexService():
             
             gxdindex_record.indexstages.append(indexstage)
         
-        self.gxdindex_dao.update()
+        self.gxdindex_dao.update(gxdindex_record)
+        
         return convert_models(gxdindex_record, IndexRecordDomain)
         
         

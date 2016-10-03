@@ -4,6 +4,7 @@ from mgipython.model import GxdIndexRecord, GxdIndexStage, \
 
 from mgipython.model import db
 from base_dao import BaseDAO
+from mgipython.service.helpers.date_helper import DateHelper
 import logging
 
 logger = logging.getLogger('mgipython.dao')
@@ -93,13 +94,21 @@ class GxdIndexDAO(BaseDAO):
             query = query.filter(GxdIndexRecord._conditionalmutants_key==_conditionalmutants_key)
             
             
-        if search_query.has_valid_param('_modifiedby_key'):
-            _modifiedby_key = search_query.get_value('_modifiedby_key')
-            query = query.filter(GxdIndexRecord._modifiedby_key==_modifiedby_key)
+        if search_query.has_valid_param('_createdby_key'):
+            _createdby_key = search_query.get_value('_createdby_key')
+            query = query.filter(GxdIndexRecord._createdby_key==_createdby_key)
         
         if search_query.has_valid_param('_modifiedby_key'):
             _modifiedby_key = search_query.get_value('_modifiedby_key')
             query = query.filter(GxdIndexRecord._modifiedby_key==_modifiedby_key)
+            
+        if search_query.has_valid_param('creation_date'):
+            creation_date = search_query.get_value('creation_date')
+            query = DateHelper().build_query_with_date(query, GxdIndexRecord.creation_date, creation_date)
+
+        if search_query.has_valid_param('modification_date'):
+            modification_date = search_query.get_value('modification_date')
+            query = DateHelper().build_query_with_date(query, GxdIndexRecord.modification_date, modification_date)
 
         
         
