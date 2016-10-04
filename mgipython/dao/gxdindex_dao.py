@@ -1,5 +1,5 @@
 from mgipython.model import GxdIndexRecord, GxdIndexStage, \
-                    Marker, Reference, ReferenceCitationCache, \
+                    Marker, MGIUser, Reference, ReferenceCitationCache, \
                     Result
 
 from mgipython.model import db
@@ -97,10 +97,24 @@ class GxdIndexDAO(BaseDAO):
         if search_query.has_valid_param('_createdby_key'):
             _createdby_key = search_query.get_value('_createdby_key')
             query = query.filter(GxdIndexRecord._createdby_key==_createdby_key)
+            
+        if search_query.has_valid_param('createdby_login'):
+            login = search_query.get_value('createdby_login')
+            login = login.lower()
+            createdby_alias = db.aliased(MGIUser)
+            query = query.join(createdby_alias, GxdIndexRecord.createdby)
+            query = query.filter(db.func.lower(createdby_alias.login).like(login))
         
         if search_query.has_valid_param('_modifiedby_key'):
             _modifiedby_key = search_query.get_value('_modifiedby_key')
             query = query.filter(GxdIndexRecord._modifiedby_key==_modifiedby_key)
+            
+        if search_query.has_valid_param('modifiedby_login'):
+            login = search_query.get_value('modifiedby_login')
+            login = login.lower()
+            modifiedby_alias = db.aliased(MGIUser)
+            query = query.join(modifiedby_alias, GxdIndexRecord.modifiedby)
+            query = query.filter(db.func.lower(modifiedby_alias.login).like(login))
             
         if search_query.has_valid_param('creation_date'):
             creation_date = search_query.get_value('creation_date')
@@ -109,6 +123,40 @@ class GxdIndexDAO(BaseDAO):
         if search_query.has_valid_param('modification_date'):
             modification_date = search_query.get_value('modification_date')
             query = DateHelper().build_query_with_date(query, GxdIndexRecord.modification_date, modification_date)
+            
+            
+        if search_query.has_valid_param('indexstages'):
+            indexstages = search_query.get_value('indexstages')
+            
+            # AND the stages together
+#             logger.debug("Querying indexstages = %s" % indexstages)
+#             for indexstage in indexstages:
+#                 sub_indexrecord = db.aliased(GxdIndexRecord)
+#                 sub_indexstage = db.aliased(GxdIndexStage)
+#                 sq = db.session.query(sub_indexrecord)
+#                 sq = sq.join(sub_indexstage, sub_indexrecord.indexstages)
+#                 sq = sq.filter(sub_indexstage._stageid_key==indexstage['_stageid_key'])
+#                 sq = sq.filter(sub_indexstage._indexassay_key==indexstage['_indexassay_key'])
+#                 sq = sq.filter(sub_indexrecord._index_key==GxdIndexRecord._index_key)
+#                 sq.correlate(GxdIndexRecord)
+#                 
+#                 query = query.filter(sq.exists())
+                
+            # OR the stages together
+            sqs = []
+            for indexstage in indexstages:
+                sub_indexrecord = db.aliased(GxdIndexRecord)
+                sub_indexstage = db.aliased(GxdIndexStage)
+                sq = db.session.query(sub_indexrecord)
+                sq = sq.join(sub_indexstage, sub_indexrecord.indexstages)
+                sq = sq.filter(sub_indexstage._stageid_key==indexstage['_stageid_key'])
+                sq = sq.filter(sub_indexstage._indexassay_key==indexstage['_indexassay_key'])
+                sq = sq.filter(sub_indexrecord._index_key==GxdIndexRecord._index_key)
+                sq.correlate(GxdIndexRecord)
+                
+                sqs.append(sq.exists())
+                
+            query = query.filter(db.or_(*sqs))
 
         
         
