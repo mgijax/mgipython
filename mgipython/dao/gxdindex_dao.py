@@ -129,7 +129,21 @@ class GxdIndexDAO(BaseDAO):
             indexstages = search_query.get_value('indexstages')
             
             # AND the stages together
-#             logger.debug("Querying indexstages = %s" % indexstages)
+            logger.debug("Querying indexstages = %s" % indexstages)
+            for indexstage in indexstages:
+                sub_indexrecord = db.aliased(GxdIndexRecord)
+                sub_indexstage = db.aliased(GxdIndexStage)
+                sq = db.session.query(sub_indexrecord)
+                sq = sq.join(sub_indexstage, sub_indexrecord.indexstages)
+                sq = sq.filter(sub_indexstage._stageid_key==indexstage['_stageid_key'])
+                sq = sq.filter(sub_indexstage._indexassay_key==indexstage['_indexassay_key'])
+                sq = sq.filter(sub_indexrecord._index_key==GxdIndexRecord._index_key)
+                sq.correlate(GxdIndexRecord)
+                 
+                query = query.filter(sq.exists())
+                
+            # OR the stages together
+#             sqs = []
 #             for indexstage in indexstages:
 #                 sub_indexrecord = db.aliased(GxdIndexRecord)
 #                 sub_indexstage = db.aliased(GxdIndexStage)
@@ -140,23 +154,9 @@ class GxdIndexDAO(BaseDAO):
 #                 sq = sq.filter(sub_indexrecord._index_key==GxdIndexRecord._index_key)
 #                 sq.correlate(GxdIndexRecord)
 #                 
-#                 query = query.filter(sq.exists())
-                
-            # OR the stages together
-            sqs = []
-            for indexstage in indexstages:
-                sub_indexrecord = db.aliased(GxdIndexRecord)
-                sub_indexstage = db.aliased(GxdIndexStage)
-                sq = db.session.query(sub_indexrecord)
-                sq = sq.join(sub_indexstage, sub_indexrecord.indexstages)
-                sq = sq.filter(sub_indexstage._stageid_key==indexstage['_stageid_key'])
-                sq = sq.filter(sub_indexstage._indexassay_key==indexstage['_indexassay_key'])
-                sq = sq.filter(sub_indexrecord._index_key==GxdIndexRecord._index_key)
-                sq.correlate(GxdIndexRecord)
-                
-                sqs.append(sq.exists())
-                
-            query = query.filter(db.or_(*sqs))
+#                 sqs.append(sq.exists())
+#                 
+#             query = query.filter(db.or_(*sqs))
 
         
         
