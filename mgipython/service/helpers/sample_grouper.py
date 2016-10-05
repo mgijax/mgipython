@@ -35,15 +35,26 @@ class SampleGrouper:
         if "comment" not in source_object.source:
             source_object.source["comment"] = []
   
-        for source in target_object.source["comment"]:
+        print target_object.serialize()
+        if type(target_object.source["comment"]) is list:
+            for source in target_object.source["comment"]:
+                if source["name"] not in source_hash:
+                    source_hash[source["name"]] = source
+        else:
+            source = target_object.source["comment"]
             if source["name"] not in source_hash:
                 source_hash[source["name"]] = source
 
-        for source in source_object.source["comment"]:
-            if source["name"] in source_hash:
-                if source_hash[source["name"]]["value"] != source["value"]:
-                    source_hash[source["name"]]["value"] = source_hash[source["name"]]["value"] + source["value"]
-            else:
+        if type(source_object.source["comment"]) is list:
+            for source in source_object.source["comment"]:
+                if source["name"] in source_hash:
+                    if source_hash[source["name"]]["value"] != source["value"]:
+                        source_hash[source["name"]]["value"] = source_hash[source["name"]]["value"] + source["value"]
+                else:
+                    source_hash[source["name"]] = source
+        else:
+            source = source_object.source["comment"]
+            if source["name"] not in source_hash:
                 source_hash[source["name"]] = source
 
         var_hash = {}
