@@ -6,6 +6,7 @@ from mgipython.model import GxdHTExperimentVariable
 from mgipython.model.query import batchLoadAttribute
 from mgipython.error import NotFoundError
 from mgipython.service.helpers.date_helper import DateHelper
+from mgipython.service.helpers.sample_grouper import SampleGrouper
 from mgipython.service_schema.search import SearchResults
 from mgipython.dao.gxd_ht_sample_dao import GxdHTSampleDAO
 from mgipython.dao.gxd_ht_raw_sample_dao import GxdHTRawSampleDAO
@@ -82,6 +83,7 @@ class GxdHTExperimentService():
             pass
         else:
             search_result = self.raw_sample_dao.download_raw_samples(experiment.primaryid)
+
             newItems = []
             for sample in search_result.items:
                 domain_sample = GxdHTSampleDomain()
@@ -91,7 +93,8 @@ class GxdHTExperimentService():
                 raw_domain_sample.domain_sample._experiment_key = int(key)
                 raw_domain_sample.domain_sample.name = raw_domain_sample.source["name"]
                 newItems.append(raw_domain_sample)
-            search_result.items = newItems
+
+            search_result.items = SampleGrouper().group_samples(newItems)
 
         return search_result
 
