@@ -35,7 +35,6 @@ class SampleGrouper:
         if "comment" not in source_object.source:
             source_object.source["comment"] = []
   
-        print target_object.serialize()
         if type(target_object.source["comment"]) is list:
             for source in target_object.source["comment"]:
                 if source["name"] not in source_hash:
