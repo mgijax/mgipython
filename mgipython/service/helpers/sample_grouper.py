@@ -24,6 +24,10 @@ class SampleGrouper:
 
         for char in source_object.characteristic:
             if char["category"] in char_hash:
+                if char_hash[char["category"]]["value"] == None:
+                    char_hash[char["category"]]["value"] = ""
+                if char["value"] == None:
+                    char["value"] = ""
                 if char_hash[char["category"]]["value"] != char["value"]:
                     char_hash[char["category"]]["value"] = char_hash[char["category"]]["value"] + char["value"]
             else:
@@ -47,6 +51,10 @@ class SampleGrouper:
         if type(source_object.source["comment"]) is list:
             for source in source_object.source["comment"]:
                 if source["name"] in source_hash:
+                    if source_hash[source["name"]]["value"] == None:
+                        source_hash[source["name"]]["value"] = ""
+                    if source["value"] == None:
+                        source["value"] = ""
                     if source_hash[source["name"]]["value"] != source["value"]:
                         source_hash[source["name"]]["value"] = source_hash[source["name"]]["value"] + source["value"]
                 else:
@@ -65,6 +73,10 @@ class SampleGrouper:
         if source_object.variable:
             for var in source_object.variable:
                 if var["name"] in var_hash:
+                    if var_hash[var["name"]]["value"] == None:
+                        var_hash[var["name"]]["value"] = ""
+                    if var["value"] == None:
+                        var["value"] = ""
                     if var_hash[var["name"]]["value"] != var["value"]:
                         var_hash[var["name"]]["value"] = var_hash[var["name"]]["value"] + var["value"]
                 else:
