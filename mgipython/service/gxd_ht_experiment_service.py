@@ -1,17 +1,11 @@
 from flask_login import current_user
-from mgipython.dao.gxd_ht_experiment_dao import GxdHTExperimentDAO
-from mgipython.dao.gxd_ht_experiment_variable_dao import GxdHTExperimentVariableDAO
-from mgipython.model import GxdHTExperiment
-from mgipython.model import GxdHTExperimentVariable
 from mgipython.model.query import batchLoadAttribute
-from mgipython.error import NotFoundError
-from mgipython.service.helpers.date_helper import DateHelper
-from mgipython.service.helpers.sample_grouper import SampleGrouper
-from mgipython.service_schema.search import SearchResults
-from mgipython.dao.gxd_ht_sample_dao import GxdHTSampleDAO
-from mgipython.dao.gxd_ht_raw_sample_dao import GxdHTRawSampleDAO
-from mgipython.domain.gxd_domains import *
-from mgipython.modelconfig import cache
+from mgipython.service_schema import *
+from mgipython.service.helpers import *
+from mgipython.model import *
+from mgipython.dao import *
+from mgipython.domain import *
+from mgipython.error import *
 from dateutil import parser
 from datetime import datetime
 
@@ -21,6 +15,7 @@ class GxdHTExperimentService():
     gxd_var_dao = GxdHTExperimentVariableDAO();
     sample_dao = GxdHTSampleDAO()
     raw_sample_dao = GxdHTRawSampleDAO()
+    vocterm_dao = VocTermDAO()
     
     def search(self, search_query):
 
@@ -118,13 +113,12 @@ class GxdHTExperimentService():
             variables = []
             first_key = self.gxd_var_dao.get_next_key()
             for var in args["experiment_variables"]:
-                if var["_term_key"] != "Not Curated":
-                    newvar = GxdHTExperimentVariable()
-                    newvar._experimentvariable_key = first_key
-                    first_key = first_key + 1
-                    newvar._experiment_key = experiment._experiment_key
-                    newvar._term_key = var["_term_key"]
-                    variables.append(newvar)
+                newvar = GxdHTExperimentVariable()
+                newvar._experimentvariable_key = first_key
+                first_key = first_key + 1
+                newvar._experiment_key = experiment._experiment_key
+                newvar._term_key = var["_term_key"]
+                variables.append(newvar)
             experiment.experiment_variables = variables
         else:
             pass
@@ -133,6 +127,23 @@ class GxdHTExperimentService():
         experiment.modification_date = datetime.now()
 
         if experiment._evaluationstate_key != args["_evaluationstate_key"]:
+            search_query1 = SearchQuery()
+            search_query1.set_param('vocab_name', "GXD HT Evaluation State")
+            search_result1 = self.vocterm_dao.search(search_query1)
+            search_query2 = SearchQuery()
+            search_query2.set_param('vocab_name', "GXD HT Curation State")
+            search_result2 = self.vocterm_dao.search(search_query2)
+
+            for es in search_result1.items:
+                 if es._term_key == args["_evaluationstate_key"] and es.term == "No":
+                     for cs in search_result2.items:
+                         if cs.term == "Not Applicable":
+                             experiment._curationstate_key = cs._term_key
+                 if es._term_key == args["_evaluationstate_key"] and es.term != "No":
+                     for cs in search_result2.items:
+                         if cs.term == "Not Done":
+                             experiment._curationstate_key = cs._term_key
+
             experiment._evaluationstate_key = args["_evaluationstate_key"]
             experiment._evaluatedby_key = current_user._user_key
             experiment.evaluated_date = datetime.now()

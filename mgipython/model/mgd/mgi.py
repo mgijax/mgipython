@@ -93,6 +93,11 @@ class Organism(db.Model,MGIModel):
     __tablename__="mgi_organism"
     _organism_key = db.Column(db.Integer,primary_key=True)
     commonname = db.Column(db.String())
+
+#class OrganismType(db.Model,MGIModel):
+#    __tablename__="mgi_organism_mgitype"
+#    _organism_key=db.Column(db.Integer)
+#    _mgitype_key=db.Column(db.Integer)
     
 
 class ReferenceAssoc(db.Model, MGIModel):

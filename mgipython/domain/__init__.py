@@ -1,2 +1,9 @@
 # expose Base classes for all
-from base_serializer import Field, Serializer, convert_models
+from acc_domains import *
+from base_serializer import *
+from gxd_domains import *
+from gxdindex_domains import *
+from marker_domains import *
+from mgi_domains import *
+from reference_domains import *
+from voc_domains import *

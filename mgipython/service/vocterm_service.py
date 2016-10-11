@@ -1,5 +1,4 @@
 from mgipython.dao.vocterm_dao import VocTermDAO
-from mgipython.dao.vocvocab_dao import VocVocabDAO
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from mgipython.model.query import batchLoadAttribute
