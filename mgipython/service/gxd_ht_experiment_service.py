@@ -16,6 +16,21 @@ class GxdHTExperimentService():
     sample_dao = GxdHTSampleDAO()
     raw_sample_dao = GxdHTRawSampleDAO()
     vocterm_dao = VocTermDAO()
+    genotype_dao = GenotypeDAO()
+    mgitype_dao = MGITypeDAO()
+
+    evaluation_state_no_term = None
+    relevance_term_non_mouse = None
+    relevance_term_yes = None
+    curation_state_na_term = None
+    curation_state_notdone_term = None
+    organism_mouse = None
+    gender_ns = None
+    gender_na = None
+    age_term_ns = None
+    age_term_na = None
+    genotype_na = None
+    genotype_ns = None
     
     def search(self, search_query):
 
@@ -127,28 +142,94 @@ class GxdHTExperimentService():
         experiment.modification_date = datetime.now()
 
         if experiment._evaluationstate_key != args["_evaluationstate_key"]:
-            search_query1 = SearchQuery()
-            search_query1.set_param('vocab_name', "GXD HT Evaluation State")
-            search_result1 = self.vocterm_dao.search(search_query1)
-            search_query2 = SearchQuery()
-            search_query2.set_param('vocab_name', "GXD HT Curation State")
-            search_result2 = self.vocterm_dao.search(search_query2)
+            self.loadEvaluationStates()
+            self.loadCurationStates()
 
-            for es in search_result1.items:
-                 if es._term_key == args["_evaluationstate_key"] and es.term == "No":
-                     for cs in search_result2.items:
-                         if cs.term == "Not Applicable":
-                             experiment._curationstate_key = cs._term_key
-                 if es._term_key == args["_evaluationstate_key"] and es.term != "No":
-                     for cs in search_result2.items:
-                         if cs.term == "Not Done":
-                             experiment._curationstate_key = cs._term_key
+            if args["_evaluationstate_key"] == self.evaluation_state_no_term._term_key:
+                experiment._curationstate_key = self.curation_state_na_term._term_key
+            else:
+                experiment._curationstate_key = self.curation_state_notdone_term._term_key
 
             experiment._evaluationstate_key = args["_evaluationstate_key"]
             experiment._evaluatedby_key = current_user._user_key
             experiment.evaluated_date = datetime.now()
 
+        print "Samples: "
+        if len(experiment.samples) == 0:
+            self.loadRelevances()
+            if len(args["samples"]) > 0:
+                print "Creating new samples to save"
+                first_key = self.sample_dao.get_next_key()
+                for sample in args["samples"]:
+                    sample_domain = GxdHTSampleDomain()
+                    sample_domain.load_from_dict(sample["domain_sample"])
+
+                    newsample = GxdHTSample()
+                    newsample._sample_key = first_key
+                    first_key = first_key + 1
+
+                    if sample_domain._organism_key == None:
+                        self.loadOrganisms()
+                        newsample._organism_key = self.organism_mouse._organism_key
+                    else:
+                        newsample._organism_key = sample_domain._organism_key
+
+                    if sample_domain._relevance_key == None:
+                        self.loadRelevances()
+                        if newsample._organism_key == self.organism_mouse._organism_key:
+                            newsample._relevance_key = self.relevance_term_yes._term_key
+                        else:
+                            newsample._relevance_key = self.relevance_term_non_mouse._term_key
+                    else:
+                        newsample._relevance_key = sample_domain._relevance_key
+
+                    if sample_domain.age == None:
+                        #self.loadAgeTerms()
+                        if newsample._relevance_key == self.relevance_term_yes._term_key:
+                            #newsample.age = self.age_term_ns.term
+                            newsample.age = "Not Specified"
+                        else:
+                            #newsample.age = self.age_term_na.term
+                            newsample.age = "Not Applicable"
+                    else:
+                        newsample.age = sample_domain.age
+
+                    if sample_domain._sex_key == None:
+                        self.loadGenders()
+                        if newsample._relevance_key == self.relevance_term_yes._term_key:
+                            newsample._sex_key = self.gender_ns._term_key
+                        else:
+                            newsample._sex_key = self.gender_na._term_key
+                    else:
+                        newsample._sex_key = sample_domain._sex_key
+
+                    if sample_domain._genotype_key == None:
+                        self.loadGenotypes()
+                        if newsample._relevance_key == self.relevance_term_yes._term_key:
+                            newsample._genotype_key = self.genotype_ns._genotype_key
+                        else:
+                            newsample._genotype_key = self.genotype_na._genotype_key
+                    else:
+                        newsample._genotype_key = sample_domain._genotype_key
+
+                    newsample._emapa_key = sample_domain._emapa_key
+                    newsample._stage_key = sample_domain._stage_key
+                    newsample._createdby_key = current_user._user_key
+                    newsample.creation_date = datetime.now()
+                    newsample._modifiedby_key = current_user._user_key
+                    newsample.modification_date = datetime.now()
+                    experiment.samples.append(newsample)
+
+            else:
+                print "No samples to save"
+        else:
+            print args["samples"]
+            print "Merge Samples"
+
+        print "Running update on experiment"
         self.gxd_dao.update(experiment)
+        print "Finished update on experiment"
+
         ret_experiment = GxdHTExperimentDomain()
         ret_experiment.load_from_model(experiment)
         return ret_experiment
@@ -158,3 +239,91 @@ class GxdHTExperimentService():
         if not experiment:
             raise NotFoundError("No GXD HT Experiment for _experiment_key=%d" % key)
         self.gxd_dao.delete(experiment)
+
+    def loadEvaluationStates(self):
+        if self.evaluation_state_no_term != None:
+            return
+
+        evaluation_state_search_query = SearchQuery()
+        evaluation_state_search_query.set_param('vocab_name', "GXD HT Evaluation State")
+        evaluation_state_search_result = self.vocterm_dao.search(evaluation_state_search_query)
+        for evaluation_state in evaluation_state_search_result.items:
+            if evaluation_state.term == "No":
+                self.evaluation_state_no_term = evaluation_state
+                break
+
+    def loadCurationStates(self):
+        if self.curation_state_na_term != None and self.curation_state_notdone_term != None:
+            return
+        curation_state_search_query = SearchQuery()
+        curation_state_search_query.set_param('vocab_name', "GXD HT Curation State")
+        curation_state_search_result = self.vocterm_dao.search(curation_state_search_query)
+        for curation_state in curation_state_search_result.items:
+            if curation_state.term == "Not Applicable":
+                self.curation_state_na_term = curation_state
+            if cs.term == "Not Done":
+                self.curation_state_notdone_term = curation_state
+
+    def loadRelevances(self):
+        if self.relevance_term_non_mouse != None and self.relevance_term_yes != None:
+            return
+        relevance_search_query = SearchQuery()
+        relevance_search_query.set_param('vocab_name', "GXD HT Relevance")
+        relevance_search_result = self.vocterm_dao.search(relevance_search_query)
+
+        for relevance in relevance_search_result.items:
+            if relevance.term == "Non-mouse sample; no data stored":
+                self.relevance_term_non_mouse = relevance
+            if relevance.term == "Yes":
+                self.relevance_term_yes = relevance
+
+    def loadGenders(self):
+        if self.gender_ns != None and self.gender_na != None:
+            return
+        gender_search_query = SearchQuery()
+        gender_search_query.set_param('vocab_name', "Gender")
+        gender_search_result = self.vocterm_dao.search(gender_search_query)
+
+        for gender in gender_search_result.items:
+            if gender.term == "Not Specified":
+                self.gender_ns = gender
+            if gender.term == "Not Applicable":
+                self.gender_na = gender
+
+    def loadAgeTerms(self):
+        age_search_query = SearchQuery()
+        age_search_query.set_param('vocab_name', "GXD HT Ages")
+        age_search_result = self.vocterm_dao.search(age_search_query)
+
+        for age in age_search_result.items:
+            if age.term == "Not Specified":
+                self.age_term_ns = age
+            if age.term == "Not Applicable":
+                self.age_term_na = age
+
+    def loadOrganisms(self):
+        if self.organism_mouse != None:
+            return
+        mgitype_search_query = SearchQuery()
+        mgitype_search_query.set_param('name', "GXD HT Sample")
+        mgitype_search_result = self.mgitype_dao.search(mgitype_search_query)
+
+        for organism in mgitype_search_result.items[0].organisms:
+            if organism.commonname == "mouse, laboratory":
+                self.organism_mouse = organism
+
+    def loadGenotypes(self):
+        if self.genotype_ns != None and self.genotype_na != None:
+            return
+        genotype_search_query = SearchQuery()
+        genotype_search_query.set_param('mgiid', "MGI:2166310")
+        genotype_search_result = self.genotype_dao.search(genotype_search_query)
+        self.genotype_ns = genotype_search_result.items[0]
+        print self.genotype_ns._genotype_key
+
+        genotype_search_query = SearchQuery()
+        genotype_search_query.set_param('mgiid', "MGI:2166309")
+        genotype_search_result = self.genotype_dao.search(genotype_search_query)
+        self.genotype_na = genotype_search_result.items[0]
+        print self.genotype_na._genotype_key
+

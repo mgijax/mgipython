@@ -103,8 +103,11 @@ class BaseDAO():
             
         pkName = pkNames[0]
         
-        next_key = db.session.query(db.func.max(getattr(model_class, pkName)).label("max_key")) \
-                .one().max_key + 1
+        next_key = db.session.query(db.func.max(getattr(model_class, pkName)).label("max_key")).one().max_key
+        if next_key == None:
+            next_key = 1
+        else:
+            next_key = next_key + 1
         return next_key
     
     

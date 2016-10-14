@@ -20,17 +20,14 @@ class GxdHTSampleDomain(Serializer):
         Field("_experiment_key"),
 
         Field("name"),
-        Field("description"),
         Field("age"),
-        Field("agemin"),
-        Field("agemax"),
 
         Field("_organism_key"),
         Field("_sex_key"),
         Field("_emapa_key"),
         Field("_stage_key"),
         Field("_genotype_key"),
-
+        Field("_relevance_key"),
 
     ]
 
@@ -47,6 +44,8 @@ class GxdHTRawSampleDomain(Serializer):
     __fields__ = [
         Field("assay"),
         Field("characteristic"),
+
+        Field("name"),
 
         Field("extract"),
         Field("file"),

@@ -88,17 +88,16 @@ class NoteChunk(db.Model,MGIModel):
     def __repr__(self):
         return self.note
 
+class MGITypeOrganism(db.Model,MGIModel):
+    __tablename__ = "mgi_organism_mgitype"
+    _mgitype_key = db.Column(db.Integer, mgi_fk("acc_mgitype._mgitype_key"), primary_key=True)
+    _organism_key = db.Column(db.Integer, mgi_fk("mgi_organism._organism_key"), primary_key=True)
 
 class Organism(db.Model,MGIModel):
     __tablename__="mgi_organism"
     _organism_key = db.Column(db.Integer,primary_key=True)
     commonname = db.Column(db.String())
-
-#class OrganismType(db.Model,MGIModel):
-#    __tablename__="mgi_organism_mgitype"
-#    _organism_key=db.Column(db.Integer)
-#    _mgitype_key=db.Column(db.Integer)
-    
+    mgitypes = db.relationship("MGIType", secondary=MGITypeOrganism.__table__, backref="organisms")
 
 class ReferenceAssoc(db.Model, MGIModel):
     __tablename__ = "mgi_reference_assoc"
