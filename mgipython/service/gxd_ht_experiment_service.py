@@ -19,18 +19,20 @@ class GxdHTExperimentService():
     genotype_dao = GenotypeDAO()
     mgitype_dao = MGITypeDAO()
 
-    evaluation_state_no_term = None
-    relevance_term_non_mouse = None
-    relevance_term_yes = None
-    curation_state_na_term = None
-    curation_state_notdone_term = None
-    organism_mouse = None
-    gender_ns = None
-    gender_na = None
-    age_term_ns = None
-    age_term_na = None
-    genotype_na = None
-    genotype_ns = None
+    def __init__(self):
+
+        self.evaluation_state_no_term = None
+        self.relevance_term_non_mouse = None
+        self.relevance_term_yes = None
+        self.curation_state_na_term = None
+        self.curation_state_notdone_term = None
+        self.organism_mouse = None
+        self.gender_ns = None
+        self.gender_na = None
+        self.age_term_ns = None
+        self.age_term_na = None
+        self.genotype_na = None
+        self.genotype_ns = None
     
     def search(self, search_query):
 
@@ -239,6 +241,7 @@ class GxdHTExperimentService():
 
         ret_experiment = GxdHTExperimentDomain()
         ret_experiment.load_from_model(experiment)
+        self.__init__()
         return ret_experiment
 
     def delete(self, key):
