@@ -21,3 +21,10 @@ class NoteDomain(Serializer):
       Field("_note_key"),
       Field("text"),
     ]
+
+class MGIOrganism(Serializer):
+    __fields__ = [
+        Field("_organism_key"),
+        Field("commonname"),
+        Field("latinname"),
+    ]

@@ -165,6 +165,11 @@ class GxdHTExperimentService():
                     sample_domain.load_from_dict(sample["domain_sample"])
 
                     newsample = GxdHTSample()
+                    # if sample_domain has key
+                    #     do lookup
+                    # else:
+                    #     newsample._sample_key = first_key
+                    #     first_key = first_key + 1
                     newsample._sample_key = first_key
                     first_key = first_key + 1
 
@@ -223,7 +228,7 @@ class GxdHTExperimentService():
             else:
                 print "No samples to save"
         else:
-            print args["samples"]
+            #print args["samples"]
             print "Merge Samples"
 
         print "Running update on experiment"
@@ -319,11 +324,9 @@ class GxdHTExperimentService():
         genotype_search_query.set_param('mgiid', "MGI:2166310")
         genotype_search_result = self.genotype_dao.search(genotype_search_query)
         self.genotype_ns = genotype_search_result.items[0]
-        print self.genotype_ns._genotype_key
 
         genotype_search_query = SearchQuery()
         genotype_search_query.set_param('mgiid', "MGI:2166309")
         genotype_search_result = self.genotype_dao.search(genotype_search_query)
         self.genotype_na = genotype_search_result.items[0]
-        print self.genotype_na._genotype_key
 
