@@ -173,8 +173,9 @@ class GxdHTExperimentService():
                     newsample._sample_key = first_key
                     first_key = first_key + 1
 
+                    self.loadOrganisms()
+
                     if sample_domain._organism_key == None:
-                        self.loadOrganisms()
                         newsample._organism_key = self.organism_mouse._organism_key
                     else:
                         newsample._organism_key = sample_domain._organism_key
@@ -217,6 +218,7 @@ class GxdHTExperimentService():
                     else:
                         newsample._genotype_key = sample_domain._genotype_key
 
+                    newsample.name = sample_domain.name
                     newsample._emapa_key = sample_domain._emapa_key
                     newsample._stage_key = sample_domain._stage_key
                     newsample._createdby_key = current_user._user_key
