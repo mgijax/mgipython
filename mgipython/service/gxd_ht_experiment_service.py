@@ -271,7 +271,7 @@ class GxdHTExperimentService():
         for curation_state in curation_state_search_result.items:
             if curation_state.term == "Not Applicable":
                 self.curation_state_na_term = curation_state
-            if cs.term == "Not Done":
+            if curation_state.term == "Not Done":
                 self.curation_state_notdone_term = curation_state
 
     def loadRelevances(self):
