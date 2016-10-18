@@ -26,6 +26,11 @@ class UserService():
         Search using a SearchQuery
         """
         search_result = self.user_dao.search(search_query)
+        
+        # convert results to domain objects
+        users = search_result.items
+        search_result.items = convert_models(users, UserDomain)
+        
         return search_result
         
     def create(self, args):

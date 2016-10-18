@@ -8,6 +8,8 @@ class UserDomain(Serializer):
       Field("_user_key"),
       Field("login"),
       Field("name"),
+      Field("_usertype_key"),
+      Field("_userstatus_key")
     ]
 class PropertyDomain(Serializer):
     __fields__ = [
