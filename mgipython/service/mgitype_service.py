@@ -27,3 +27,4 @@ class MGITypeService():
         search_result.items = convert_models(search_result.items, MGITypeDomain)
         
         return search_result
+
