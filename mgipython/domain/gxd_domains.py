@@ -31,6 +31,9 @@ class GxdHTSampleDomain(Serializer):
 
     ]
 
+    def getKey(self):
+        return self.name
+
 class GxdHTVariableDomain(Serializer):
     __fields__ = [
         # Keys
@@ -65,6 +68,12 @@ class GxdHTSampleCollection(Serializer):
        Field("raw_sample", conversion_class=GxdHTRawSampleDomain),
        Field("sample_domain", conversion_class=GxdHTSampleDomain),
     ]
+
+    def getKey(self):
+        if self.raw_sample:
+            return self.raw_sample.getKey()
+        if self.sample_domain:
+            return self.sample_domain.getKey()
 
 class GxdHTExperimentDomain(Serializer):
 

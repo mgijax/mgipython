@@ -1,11 +1,11 @@
 
 class SampleGrouper:
 
-    def group_samples(self, samples):
+    def group_raw_samples(self, samples):
         sample_hash = {}
         for row in samples:
             if row.getKey() in sample_hash:
-                self.mergeRawSample(sample_hash[row.getKey()], row)
+                self.mergeRawSample(sample_hash[row.getKey()].raw_sample, row.raw_sample)
             else:
                 sample_hash[row.getKey()] = row
         keylist = sample_hash.keys()

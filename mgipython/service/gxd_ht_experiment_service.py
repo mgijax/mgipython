@@ -108,8 +108,8 @@ class GxdHTExperimentService():
             collection.name = raw_domain_sample.source["name"]
             newItems.append(collection)
 
-        search_result.items = newItems
-        #search_result.items = SampleGrouper().group_samples(newItems)
+        #search_result.items = newItems
+        search_result.items = SampleGrouper().group_raw_samples(newItems)
 
         return search_result
 
