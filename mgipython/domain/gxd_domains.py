@@ -54,11 +54,17 @@ class GxdHTRawSampleDomain(Serializer):
         Field("source"),
 
         Field("variable"),
-        Field("domain_sample", conversion_class=GxdHTSampleDomain),
     ]
 
     def getKey(self):
         return self.source["name"]
+
+class GxdHTSampleCollection(Serializer):
+    __fields__ = [
+       Field("name"),
+       Field("raw_sample", conversion_class=GxdHTRawSampleDomain),
+       Field("sample_domain", conversion_class=GxdHTSampleDomain),
+    ]
 
 class GxdHTExperimentDomain(Serializer):
 
