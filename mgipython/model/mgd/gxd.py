@@ -1088,7 +1088,7 @@ class GxdHTExperiment(db.Model, MGIModel):
         primaryjoin="GxdHTExperimentVariable._experiment_key==GxdHTExperiment._experiment_key",
         foreign_keys="[GxdHTExperiment._experiment_key]", uselist=True)
 
-    samples = db.relationship("GxdHTSample", primaryjoin="GxdHTSample._experiment_key == GxdHTExperiment._experiment_key", foreign_keys="[GxdHTSample._experiment_key]")
+    samples = db.relationship("GxdHTSample", primaryjoin="GxdHTSample._experiment_key == GxdHTExperiment._experiment_key", foreign_keys="[GxdHTSample._experiment_key]", order_by="GxdHTSample.name")
     # Raw Fields
 
     all_properties = db.relationship("Property", primaryjoin="and_(GxdHTExperiment._experiment_key==Property._object_key,"
