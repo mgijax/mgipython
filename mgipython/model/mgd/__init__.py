@@ -8,7 +8,6 @@ from img import *
 from mgi import *
 from mld import *
 from mrk import *
-from nom import *
 from prb import *
 from seq import *
 from voc import *
