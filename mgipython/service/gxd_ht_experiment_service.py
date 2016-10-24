@@ -160,73 +160,83 @@ class GxdHTExperimentService():
             experiment.evaluated_date = datetime.now()
 
         if len(args["samples"]) > 0:
+
+            if len(experiment.samples) == 0:
+                experiment._initialcuratedby_key = current_user._user_key
+                experiment.initial_curated_date = datetime.now()
+            if len(experiment.samples) >= 0:
+                experiment._lastcuratedby_key = current_user._user_key
+                experiment.last_curated_date = datetime.now()
+
             self.loadRelevances()
             first_key = self.sample_dao.get_next_key()
             for sample in args["samples"]:
                 sample_collection = GxdHTSampleCollection()
                 sample_collection.load_from_dict(sample)
 
-                if sample_collection.sample_domain._sample_key != None:
-                    newsample = self.sample_dao.get_by_key(sample_collection.sample_domain._sample_key)
-                else:
-                    newsample = GxdHTSample()
-                    newsample._sample_key = first_key
-                    first_key = first_key + 1
-
                 if sample_collection.sample_domain != None:
-                    self.loadOrganisms()
 
-                    if sample_collection.sample_domain._organism_key == None:
-                        newsample._organism_key = self.organism_mouse._organism_key
+                    if sample_collection.sample_domain._sample_key != None:
+                        newsample = self.sample_dao.get_by_key(sample_collection.sample_domain._sample_key)
                     else:
-                        newsample._organism_key = sample_collection.sample_domain._organism_key
+                        newsample = GxdHTSample()
+                        newsample._sample_key = first_key
+                        first_key = first_key + 1
 
-                    if sample_collection.sample_domain._relevance_key == None:
-                        self.loadRelevances()
-                        if newsample._organism_key == self.organism_mouse._organism_key:
-                            newsample._relevance_key = self.relevance_term_yes._term_key
+                    if sample_collection.sample_domain != None:
+                        self.loadOrganisms()
+
+                        if sample_collection.sample_domain._organism_key == None:
+                            newsample._organism_key = self.organism_mouse._organism_key
                         else:
-                            newsample._relevance_key = self.relevance_term_non_mouse._term_key
-                    else:
-                        newsample._relevance_key = sample_collection.sample_domain._relevance_key
+                            newsample._organism_key = sample_collection.sample_domain._organism_key
 
-                    if sample_collection.sample_domain.age == None:
-                        #self.loadAgeTerms()
-                        if newsample._relevance_key == self.relevance_term_yes._term_key:
-                            #newsample.age = self.age_term_ns.term
-                            newsample.age = "Not Specified"
+                        if sample_collection.sample_domain._relevance_key == None:
+                            self.loadRelevances()
+                            if newsample._organism_key == self.organism_mouse._organism_key:
+                                newsample._relevance_key = self.relevance_term_yes._term_key
+                            else:
+                                newsample._relevance_key = self.relevance_term_non_mouse._term_key
                         else:
-                            #newsample.age = self.age_term_na.term
-                            newsample.age = "Not Applicable"
-                    else:
-                        newsample.age = sample_collection.sample_domain.age
+                            newsample._relevance_key = sample_collection.sample_domain._relevance_key
 
-                    if sample_collection.sample_domain._sex_key == None:
-                        self.loadGenders()
-                        if newsample._relevance_key == self.relevance_term_yes._term_key:
-                            newsample._sex_key = self.gender_ns._term_key
+                        if sample_collection.sample_domain.age == None:
+                            #self.loadAgeTerms()
+                            if newsample._relevance_key == self.relevance_term_yes._term_key:
+                                #newsample.age = self.age_term_ns.term
+                                newsample.age = "Not Specified"
+                            else:
+                                #newsample.age = self.age_term_na.term
+                                newsample.age = "Not Applicable"
                         else:
-                            newsample._sex_key = self.gender_na._term_key
-                    else:
-                        newsample._sex_key = sample_collection.sample_domain._sex_key
+                            newsample.age = sample_collection.sample_domain.age
 
-                    if sample_collection.sample_domain._genotype_key == None:
-                        self.loadGenotypes()
-                        if newsample._relevance_key == self.relevance_term_yes._term_key:
-                            newsample._genotype_key = self.genotype_ns._genotype_key
+                        if sample_collection.sample_domain._sex_key == None:
+                            self.loadGenders()
+                            if newsample._relevance_key == self.relevance_term_yes._term_key:
+                                newsample._sex_key = self.gender_ns._term_key
+                            else:
+                                newsample._sex_key = self.gender_na._term_key
                         else:
-                            newsample._genotype_key = self.genotype_na._genotype_key
-                    else:
-                        newsample._genotype_key = sample_collection.sample_domain._genotype_key
+                            newsample._sex_key = sample_collection.sample_domain._sex_key
 
-                    newsample.name = sample_collection.sample_domain.name
-                    newsample._emapa_key = sample_collection.sample_domain._emapa_key
-                    newsample._stage_key = sample_collection.sample_domain._stage_key
-                    newsample._createdby_key = current_user._user_key
-                    newsample.creation_date = datetime.now()
-                    newsample._modifiedby_key = current_user._user_key
-                    newsample.modification_date = datetime.now()
-                    experiment.samples.append(newsample)
+                        if sample_collection.sample_domain._genotype_key == None:
+                            self.loadGenotypes()
+                            if newsample._relevance_key == self.relevance_term_yes._term_key:
+                                newsample._genotype_key = self.genotype_ns._genotype_key
+                            else:
+                                newsample._genotype_key = self.genotype_na._genotype_key
+                        else:
+                            newsample._genotype_key = sample_collection.sample_domain._genotype_key
+
+                        newsample.name = sample_collection.sample_domain.name
+                        newsample._emapa_key = sample_collection.sample_domain._emapa_key
+                        newsample._stage_key = sample_collection.sample_domain._stage_key
+                        newsample._createdby_key = current_user._user_key
+                        newsample.creation_date = datetime.now()
+                        newsample._modifiedby_key = current_user._user_key
+                        newsample.modification_date = datetime.now()
+                        experiment.samples.append(newsample)
 
         print "Running update on experiment"
         self.gxd_dao.update(experiment)
