@@ -66,6 +66,9 @@ easy_install cherrypy==6.2.0
 printf "\nMake sure jsonschema is up to date \n"
 pip install --upgrade jsonschema
 
+printf "\nInstalling natsort for sorting \"Smart Alpha\"\n"
+easy_install natsort
+
 printf "\nInstalling watchdog for dev file monitoring \n"
 easy_install watchdog
 

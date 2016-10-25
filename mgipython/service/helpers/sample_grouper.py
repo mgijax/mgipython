@@ -1,3 +1,4 @@
+from natsort import natsorted, ns
 
 class SampleGrouper:
 
@@ -8,8 +9,7 @@ class SampleGrouper:
                 self.mergeRawSample(sample_hash[row.getKey()].raw_sample, row.raw_sample)
             else:
                 sample_hash[row.getKey()] = row
-        keylist = sample_hash.keys()
-        keylist.sort()
+        keylist = natsorted(sample_hash.keys(), key=lambda y: y.lower())
         retlist = []
         for key in keylist:
             retlist.append(sample_hash[key])

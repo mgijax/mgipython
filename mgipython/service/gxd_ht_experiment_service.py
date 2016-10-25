@@ -21,19 +21,19 @@ class GxdHTExperimentService():
 
     def __init__(self):
 
-        self.evaluation_state_no_term = None
-        self.relevance_term_non_mouse = None
-        self.relevance_term_yes = None
-        self.curation_state_na_term = None
-        self.curation_state_notdone_term = None
-        self.curation_state_done_term = None
-        self.organism_mouse = None
-        self.gender_ns = None
-        self.gender_na = None
-        self.age_term_ns = None
-        self.age_term_na = None
-        self.genotype_na = None
-        self.genotype_ns = None
+        self.evaluation_state_no_term_key = None
+        self.relevance_term_non_mouse_key = None
+        self.relevance_term_yes_key = None
+        self.curation_state_na_term_key = None
+        self.curation_state_notdone_term_key = None
+        self.curation_state_done_term_key = None
+        self.organism_mouse_key = None
+        self.gender_ns_key = None
+        self.gender_na_key = None
+        self.age_term_ns_term = None
+        self.age_term_na_term = None
+        self.genotype_na_key = None
+        self.genotype_ns_key = None
     
     def search(self, search_query):
 
@@ -111,6 +111,7 @@ class GxdHTExperimentService():
 
         #search_result.items = newItems
         search_result.items = SampleGrouper().group_raw_samples(newItems)
+        search_result.total_count = len(newItems)
 
         return search_result
 
@@ -151,10 +152,10 @@ class GxdHTExperimentService():
             self.loadEvaluationStates()
             self.loadCurationStates()
 
-            if args["_evaluationstate_key"] == self.evaluation_state_no_term._term_key:
-                experiment._curationstate_key = self.curation_state_na_term._term_key
+            if args["_evaluationstate_key"] == self.evaluation_state_no_term_key:
+                experiment._curationstate_key = self.curation_state_na_term_key
             else:
-                experiment._curationstate_key = self.curation_state_notdone_term._term_key
+                experiment._curationstate_key = self.curation_state_notdone_term_key
 
             experiment._evaluationstate_key = args["_evaluationstate_key"]
             experiment._evaluatedby_key = current_user._user_key
@@ -183,45 +184,43 @@ class GxdHTExperimentService():
                         self.loadOrganisms()
 
                         if sample_collection.sample_domain._organism_key == None:
-                            newsample._organism_key = self.organism_mouse._organism_key
+                            newsample._organism_key = self.organism_mouse_key
                         else:
                             newsample._organism_key = sample_collection.sample_domain._organism_key
 
                         if sample_collection.sample_domain._relevance_key == None:
                             self.loadRelevances()
-                            if newsample._organism_key == self.organism_mouse._organism_key:
-                                newsample._relevance_key = self.relevance_term_yes._term_key
+                            if newsample._organism_key == self.organism_mouse_key:
+                                newsample._relevance_key = self.relevance_term_yes_key
                             else:
-                                newsample._relevance_key = self.relevance_term_non_mouse._term_key
+                                newsample._relevance_key = self.relevance_term_non_mouse_key
                         else:
                             newsample._relevance_key = sample_collection.sample_domain._relevance_key
 
                         if sample_collection.sample_domain.age == None:
-                            #self.loadAgeTerms()
-                            if newsample._relevance_key == self.relevance_term_yes._term_key:
-                                #newsample.age = self.age_term_ns.term
-                                newsample.age = "Not Specified"
+                            self.loadAgeTerms()
+                            if newsample._relevance_key == self.relevance_term_yes_key:
+                                newsample.age = self.age_term_ns_term
                             else:
-                                #newsample.age = self.age_term_na.term
-                                newsample.age = "Not Applicable"
+                                newsample.age = self.age_term_na_term
                         else:
                             newsample.age = sample_collection.sample_domain.age
 
                         if sample_collection.sample_domain._sex_key == None:
                             self.loadGenders()
-                            if newsample._relevance_key == self.relevance_term_yes._term_key:
-                                newsample._sex_key = self.gender_ns._term_key
+                            if newsample._relevance_key == self.relevance_term_yes_key:
+                                newsample._sex_key = self.gender_ns_key
                             else:
-                                newsample._sex_key = self.gender_na._term_key
+                                newsample._sex_key = self.gender_na_key
                         else:
                             newsample._sex_key = sample_collection.sample_domain._sex_key
 
                         if sample_collection.sample_domain._genotype_key == None:
                             self.loadGenotypes()
-                            if newsample._relevance_key == self.relevance_term_yes._term_key:
-                                newsample._genotype_key = self.genotype_ns._genotype_key
+                            if newsample._relevance_key == self.relevance_term_yes_key:
+                                newsample._genotype_key = self.genotype_ns_key
                             else:
-                                newsample._genotype_key = self.genotype_na._genotype_key
+                                newsample._genotype_key = self.genotype_na_key
                         else:
                             newsample._genotype_key = sample_collection.sample_domain._genotype_key
 
@@ -235,9 +234,10 @@ class GxdHTExperimentService():
                         experiment.samples.append(newsample)
 
         if experiment_sample_count == 0 and len(experiment.samples) > 0:
+            self.loadCurationStates()
             experiment._initialcuratedby_key = current_user._user_key
             experiment.initial_curated_date = datetime.now()
-            experiment._curationstate_key = self.curation_state_done_term._term_key
+            experiment._curationstate_key = self.curation_state_done_term_key
         if len(experiment.samples) > 0:
             experiment._lastcuratedby_key = current_user._user_key
             experiment.last_curated_date = datetime.now()
@@ -258,7 +258,7 @@ class GxdHTExperimentService():
         self.gxd_dao.delete(experiment)
 
     def loadEvaluationStates(self):
-        if self.evaluation_state_no_term != None:
+        if self.evaluation_state_no_term_key != None:
             return
 
         evaluation_state_search_query = SearchQuery()
@@ -266,25 +266,25 @@ class GxdHTExperimentService():
         evaluation_state_search_result = self.vocterm_dao.search(evaluation_state_search_query)
         for evaluation_state in evaluation_state_search_result.items:
             if evaluation_state.term == "No":
-                self.evaluation_state_no_term = evaluation_state
+                self.evaluation_state_no_term_key = evaluation_state._term_key
                 break
 
     def loadCurationStates(self):
-        if self.curation_state_na_term != None and self.curation_state_notdone_term != None:
+        if self.curation_state_na_term_key != None and self.curation_state_notdone_term_key != None:
             return
         curation_state_search_query = SearchQuery()
         curation_state_search_query.set_param('vocab_name', "GXD HT Curation State")
         curation_state_search_result = self.vocterm_dao.search(curation_state_search_query)
         for curation_state in curation_state_search_result.items:
             if curation_state.term == "Not Applicable":
-                self.curation_state_na_term = curation_state
+                self.curation_state_na_term_key = curation_state._term_key
             if curation_state.term == "Not Done":
-                self.curation_state_notdone_term = curation_state
+                self.curation_state_notdone_term_key = curation_state._term_key
             if curation_state.term == "Done":
-                self.curation_state_done_term = curation_state
+                self.curation_state_done_term_key = curation_state._term_key
 
     def loadRelevances(self):
-        if self.relevance_term_non_mouse != None and self.relevance_term_yes != None:
+        if self.relevance_term_non_mouse_key != None and self.relevance_term_yes_key != None:
             return
         relevance_search_query = SearchQuery()
         relevance_search_query.set_param('vocab_name', "GXD HT Relevance")
@@ -292,12 +292,12 @@ class GxdHTExperimentService():
 
         for relevance in relevance_search_result.items:
             if relevance.term == "Non-mouse sample; no data stored":
-                self.relevance_term_non_mouse = relevance
+                self.relevance_term_non_mouse_key = relevance._term_key
             if relevance.term == "Yes":
-                self.relevance_term_yes = relevance
+                self.relevance_term_yes_key = relevance._term_key
 
     def loadGenders(self):
-        if self.gender_ns != None and self.gender_na != None:
+        if self.gender_ns_key != None and self.gender_na_key != None:
             return
         gender_search_query = SearchQuery()
         gender_search_query.set_param('vocab_name', "Gender")
@@ -305,9 +305,9 @@ class GxdHTExperimentService():
 
         for gender in gender_search_result.items:
             if gender.term == "Not Specified":
-                self.gender_ns = gender
+                self.gender_ns_key = gender._term_key
             if gender.term == "Not Applicable":
-                self.gender_na = gender
+                self.gender_na_key = gender._term_key
 
     def loadAgeTerms(self):
         age_search_query = SearchQuery()
@@ -316,12 +316,12 @@ class GxdHTExperimentService():
 
         for age in age_search_result.items:
             if age.term == "Not Specified":
-                self.age_term_ns = age
+                self.age_term_ns_term = age.term
             if age.term == "Not Applicable":
-                self.age_term_na = age
+                self.age_term_na_term = age.term
 
     def loadOrganisms(self):
-        if self.organism_mouse != None:
+        if self.organism_mouse_key != None:
             return
         mgitype_search_query = SearchQuery()
         mgitype_search_query.set_param('name', "GXD HT Sample")
@@ -329,18 +329,18 @@ class GxdHTExperimentService():
 
         for organism in mgitype_search_result.items[0].organisms:
             if organism.commonname == "mouse, laboratory":
-                self.organism_mouse = organism
+                self.organism_mouse_key = organism._organism_key
 
     def loadGenotypes(self):
-        if self.genotype_ns != None and self.genotype_na != None:
+        if self.genotype_ns_key != None and self.genotype_na_key != None:
             return
         genotype_search_query = SearchQuery()
         genotype_search_query.set_param('mgiid', "MGI:2166310")
         genotype_search_result = self.genotype_dao.search(genotype_search_query)
-        self.genotype_ns = genotype_search_result.items[0]
+        self.genotype_ns_key = genotype_search_result.items[0]._genotype_key
 
         genotype_search_query = SearchQuery()
         genotype_search_query.set_param('mgiid', "MGI:2166309")
         genotype_search_result = self.genotype_dao.search(genotype_search_query)
-        self.genotype_na = genotype_search_result.items[0]
+        self.genotype_na_key = genotype_search_result.items[0]._genotype_key
 
