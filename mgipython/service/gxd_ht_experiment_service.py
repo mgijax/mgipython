@@ -26,6 +26,7 @@ class GxdHTExperimentService():
         self.relevance_term_yes = None
         self.curation_state_na_term = None
         self.curation_state_notdone_term = None
+        self.curation_state_done_term = None
         self.organism_mouse = None
         self.gender_ns = None
         self.gender_na = None
@@ -236,6 +237,7 @@ class GxdHTExperimentService():
         if experiment_sample_count == 0 and len(experiment.samples) > 0:
             experiment._initialcuratedby_key = current_user._user_key
             experiment.initial_curated_date = datetime.now()
+            experiment._curationstate_key = self.curation_state_done_term._term_key
         if len(experiment.samples) > 0:
             experiment._lastcuratedby_key = current_user._user_key
             experiment.last_curated_date = datetime.now()
@@ -278,6 +280,8 @@ class GxdHTExperimentService():
                 self.curation_state_na_term = curation_state
             if curation_state.term == "Not Done":
                 self.curation_state_notdone_term = curation_state
+            if curation_state.term == "Done":
+                self.curation_state_done_term = curation_state
 
     def loadRelevances(self):
         if self.relevance_term_non_mouse != None and self.relevance_term_yes != None:
