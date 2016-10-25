@@ -159,14 +159,9 @@ class GxdHTExperimentService():
             experiment._evaluatedby_key = current_user._user_key
             experiment.evaluated_date = datetime.now()
 
-        if len(args["samples"]) > 0:
+        experiment_sample_count = len(experiment.samples)
 
-            if len(experiment.samples) == 0:
-                experiment._initialcuratedby_key = current_user._user_key
-                experiment.initial_curated_date = datetime.now()
-            if len(experiment.samples) >= 0:
-                experiment._lastcuratedby_key = current_user._user_key
-                experiment.last_curated_date = datetime.now()
+        if len(args["samples"]) > 0:
 
             self.loadRelevances()
             first_key = self.sample_dao.get_next_key()
@@ -237,6 +232,13 @@ class GxdHTExperimentService():
                         newsample._modifiedby_key = current_user._user_key
                         newsample.modification_date = datetime.now()
                         experiment.samples.append(newsample)
+
+        if experiment_sample_count == 0 and len(experiment.samples) > 0:
+            experiment._initialcuratedby_key = current_user._user_key
+            experiment.initial_curated_date = datetime.now()
+        if len(experiment.samples) > 0:
+            experiment._lastcuratedby_key = current_user._user_key
+            experiment.last_curated_date = datetime.now()
 
         print "Running update on experiment"
         self.gxd_dao.update(experiment)
