@@ -9,7 +9,7 @@ class SampleGrouper:
                 self.mergeRawSample(sample_hash[row.getKey()].raw_sample, row.raw_sample)
             else:
                 sample_hash[row.getKey()] = row
-        keylist = natsorted(sample_hash.keys(), key=lambda y: y.lower())
+        keylist = natsorted(sample_hash.keys(), key=lambda y: str(y).lower())
         retlist = []
         for key in keylist:
             retlist.append(sample_hash[key])
