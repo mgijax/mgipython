@@ -1,7 +1,8 @@
 from base_serializer import Field, Serializer
-from mgipython.domain.acc_domains import AccessionDomain
-from mgipython.domain.voc_domains import VocTermDomain
+from mgipython.domain.acc_domains import *
+from mgipython.domain.voc_domains import *
 from mgipython.domain.mgi_domains import *
+from mgipython.domain.prb_domains import *
 #from Property import PropertyDomain
 #from Accession import AccessionDomain
 #from User import UserDomain
@@ -12,6 +13,14 @@ class GxdHTExperimentSummaryDomain(Serializer):
     __fields__ = [
         Field("_experiment_key"),
         Field("primaryid"),
+    ]
+
+class GxdGenotypeDomain(Serializer):
+    __fields__ = [
+        Field("_genotype_key"),
+        Field("_strain_key"),
+        Field("mgiid"),
+        Field("geneticbackground"),
     ]
 
 class GxdHTSampleDomain(Serializer):
@@ -28,6 +37,7 @@ class GxdHTSampleDomain(Serializer):
         Field("_stage_key"),
         Field("_genotype_key"),
         Field("_relevance_key"),
+        Field("genotype_object", conversion_class=GxdGenotypeDomain),
 
     ]
 

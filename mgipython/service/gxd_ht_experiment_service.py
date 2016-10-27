@@ -222,7 +222,14 @@ class GxdHTExperimentService():
                             else:
                                 newsample._genotype_key = self.genotype_na_key
                         else:
-                            newsample._genotype_key = sample_collection.sample_domain._genotype_key
+                            genotype_object = self.lookupGenotype(sample_collection.sample_domain._genotype_key)
+                            if(genotype_object != None):
+                                newsample._genotype_key = genotype_object._genotype_key
+                            else:
+                                if newsample._relevance_key == self.relevance_term_yes_key:
+                                    newsample._genotype_key = self.genotype_ns_key
+                                else:
+                                    newsample._genotype_key = self.genotype_na_key
 
                         newsample.name = sample_collection.sample_domain.name
                         newsample._emapa_key = sample_collection.sample_domain._emapa_key
@@ -256,6 +263,15 @@ class GxdHTExperimentService():
         if not experiment:
             raise NotFoundError("No GXD HT Experiment for _experiment_key=%d" % key)
         self.gxd_dao.delete(experiment)
+
+    def lookupGenotype(self, mgiid):
+        genotype_search_query = SearchQuery()
+        genotype_search_query.set_param('mgiid', mgiid)
+        genotype_search_result = self.genotype_dao.search(genotype_search_query)
+        if len(genotype_search_result.items) > 0:
+            return genotype_search_result.items[0]
+        else:
+            return None
 
     def loadEvaluationStates(self):
         if self.evaluation_state_no_term_key != None:
@@ -334,13 +350,5 @@ class GxdHTExperimentService():
     def loadGenotypes(self):
         if self.genotype_ns_key != None and self.genotype_na_key != None:
             return
-        genotype_search_query = SearchQuery()
-        genotype_search_query.set_param('mgiid', "MGI:2166310")
-        genotype_search_result = self.genotype_dao.search(genotype_search_query)
-        self.genotype_ns_key = genotype_search_result.items[0]._genotype_key
-
-        genotype_search_query = SearchQuery()
-        genotype_search_query.set_param('mgiid', "MGI:2166309")
-        genotype_search_result = self.genotype_dao.search(genotype_search_query)
-        self.genotype_na_key = genotype_search_result.items[0]._genotype_key
-
+        self.genotype_ns_key = self.lookupGenotype("MGI:2166310")._genotype_key
+        self.genotype_na_key = self.lookupGenotype("MGI:2166309")._genotype_key
