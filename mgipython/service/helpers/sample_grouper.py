@@ -29,7 +29,7 @@ class SampleGrouper:
                 if char["value"] == None:
                     char["value"] = ""
                 if char_hash[char["category"]]["value"] != char["value"]:
-                    char_hash[char["category"]]["value"] = char_hash[char["category"]]["value"] + char["value"]
+                    char_hash[char["category"]]["value"] = char_hash[char["category"]]["value"] + " " + char["value"]
             else:
                 char_hash[char["category"]] = char
 
@@ -56,7 +56,7 @@ class SampleGrouper:
                     if source["value"] == None:
                         source["value"] = ""
                     if source_hash[source["name"]]["value"] != source["value"]:
-                        source_hash[source["name"]]["value"] = source_hash[source["name"]]["value"] + source["value"]
+                        source_hash[source["name"]]["value"] = source_hash[source["name"]]["value"] + " " + source["value"]
                 else:
                     source_hash[source["name"]] = source
         else:
@@ -78,6 +78,6 @@ class SampleGrouper:
                     if var["value"] == None:
                         var["value"] = ""
                     if var_hash[var["name"]]["value"] != var["value"]:
-                        var_hash[var["name"]]["value"] = var_hash[var["name"]]["value"] + var["value"]
+                        var_hash[var["name"]]["value"] = var_hash[var["name"]]["value"] + " " + var["value"]
                 else:
                     var_hash[var["name"]] = var
