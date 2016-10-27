@@ -78,6 +78,6 @@ class SampleGrouper:
                     if var["value"] == None:
                         var["value"] = ""
                     if var_hash[var["name"]]["value"] != var["value"]:
-                        var_hash[var["name"]]["value"] = var_hash[var["name"]]["value"] + " " + var["value"]
+                        var_hash[var["name"]]["value"] = str(var_hash[var["name"]]["value"]) + " " + str(var["value"])
                 else:
                     var_hash[var["name"]] = var
