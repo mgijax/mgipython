@@ -174,9 +174,9 @@ class Serializer(object):
 
         populates attributes if they match __fields__ configuration
         """
+        if json_dict == None: return
 
         for field in self.__fields__:
-
             if field.field_name in json_dict:
 
                 value = json_dict[field.field_name]
