@@ -1,5 +1,6 @@
 from base_dao import *
 from emapa_clipboard_dao import *
+from acc_accession_dao import *
 from gxd_genotype_dao import *
 from gxd_ht_sample_dao import *
 from gxd_ht_experiment_dao import *
