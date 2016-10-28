@@ -30,6 +30,8 @@ class GxdHTSampleDomain(Serializer):
 
         Field("name"),
         Field("age"),
+        Field("ageunit"),
+        Field("agerange"),
 
         Field("_organism_key"),
         Field("_sex_key"),

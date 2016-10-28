@@ -18,6 +18,7 @@ class GxdHTExperimentService():
     vocterm_dao = VocTermDAO()
     genotype_dao = GenotypeDAO()
     mgitype_dao = MGITypeDAO()
+    accession_dao = AccessionDAO()
 
     def __init__(self):
 
@@ -30,10 +31,10 @@ class GxdHTExperimentService():
         self.organism_mouse_key = None
         self.gender_ns_key = None
         self.gender_na_key = None
-        self.age_term_ns_term = None
         self.age_term_na_term = None
         self.genotype_na_key = None
         self.genotype_ns_key = None
+        self.accession_key_cache = {}
     
     def search(self, search_query):
 
@@ -197,14 +198,13 @@ class GxdHTExperimentService():
                         else:
                             newsample._relevance_key = sample_collection.sample_domain._relevance_key
 
-                        if sample_collection.sample_domain.age == None:
+                        if sample_collection.sample_domain.ageunit == None:
                             self.loadAgeTerms()
-                            if newsample._relevance_key == self.relevance_term_yes_key:
-                                newsample.age = self.age_term_ns_term
-                            else:
-                                newsample.age = self.age_term_na_term
+                            newsample.age = self.age_term_na_term
                         else:
-                            newsample.age = sample_collection.sample_domain.age
+                            newsample.age = str(sample_collection.sample_domain.ageunit)
+                            if sample_collection.sample_domain.agerange != None:
+                                newsample.age = newsample.age + " " + str(sample_collection.sample_domain.agerange)
 
                         if sample_collection.sample_domain._sex_key == None:
                             self.loadGenders()
@@ -215,16 +215,16 @@ class GxdHTExperimentService():
                         else:
                             newsample._sex_key = sample_collection.sample_domain._sex_key
 
+                        self.loadGenotypes()
                         if sample_collection.sample_domain._genotype_key == None:
-                            self.loadGenotypes()
                             if newsample._relevance_key == self.relevance_term_yes_key:
                                 newsample._genotype_key = self.genotype_ns_key
                             else:
                                 newsample._genotype_key = self.genotype_na_key
                         else:
-                            genotype_object = self.lookupGenotype(sample_collection.sample_domain._genotype_key)
-                            if(genotype_object != None):
-                                newsample._genotype_key = genotype_object._genotype_key
+                            accession_object_key = self.lookupAccessionKey(sample_collection.sample_domain._genotype_key)
+                            if(accession_object_key != None):
+                                newsample._genotype_key = accession_object_key
                             else:
                                 if newsample._relevance_key == self.relevance_term_yes_key:
                                     newsample._genotype_key = self.genotype_ns_key
@@ -264,14 +264,21 @@ class GxdHTExperimentService():
             raise NotFoundError("No GXD HT Experiment for _experiment_key=%d" % key)
         self.gxd_dao.delete(experiment)
 
-    def lookupGenotype(self, mgiid):
-        genotype_search_query = SearchQuery()
-        genotype_search_query.set_param('mgiid', mgiid)
-        genotype_search_result = self.genotype_dao.search(genotype_search_query)
-        if len(genotype_search_result.items) > 0:
-            return genotype_search_result.items[0]
+    def lookupAccessionKey(self, mgiid):
+        if mgiid in self.accession_key_cache:
+            return self.accession_key_cache[mgiid]
         else:
-            return None
+            genotype_search_query = SearchQuery()
+            genotype_search_query.set_param('accid', mgiid)
+            genotype_search_query.set_param('preferred', 1)
+            genotype_search_query.set_param('_mgitype_key', 12)
+            genotype_search_query.set_param('_logicaldb_key', 1)
+            genotype_search_result = self.accession_dao.search(genotype_search_query)
+            if len(genotype_search_result.items) > 0:
+                self.accession_key_cache[mgiid] = genotype_search_result.items[0]._object_key
+                return self.accession_key_cache[mgiid]
+            else:
+                return None
 
     def loadEvaluationStates(self):
         if self.evaluation_state_no_term_key != None:
@@ -286,7 +293,7 @@ class GxdHTExperimentService():
                 break
 
     def loadCurationStates(self):
-        if self.curation_state_na_term_key != None and self.curation_state_notdone_term_key != None:
+        if self.curation_state_na_term_key != None and self.curation_state_notdone_term_key != None and self.curation_state_done_term_key != None:
             return
         curation_state_search_query = SearchQuery()
         curation_state_search_query.set_param('vocab_name', "GXD HT Curation State")
@@ -326,13 +333,15 @@ class GxdHTExperimentService():
                 self.gender_na_key = gender._term_key
 
     def loadAgeTerms(self):
-        age_search_query = SearchQuery()
-        age_search_query.set_param('vocab_name', "GXD HT Ages")
-        age_search_result = self.vocterm_dao.search(age_search_query)
+        if self.age_term_na_term != None:
+            return
+        print "Loading Age Terms"
+        print self.age_term_na_term
 
+        age_search_query = SearchQuery()
+        age_search_query.set_param('vocab_name', "GXD HT Age")
+        age_search_result = self.vocterm_dao.search(age_search_query)
         for age in age_search_result.items:
-            if age.term == "Not Specified":
-                self.age_term_ns_term = age.term
             if age.term == "Not Applicable":
                 self.age_term_na_term = age.term
 
@@ -350,5 +359,5 @@ class GxdHTExperimentService():
     def loadGenotypes(self):
         if self.genotype_ns_key != None and self.genotype_na_key != None:
             return
-        self.genotype_ns_key = self.lookupGenotype("MGI:2166310")._genotype_key
-        self.genotype_na_key = self.lookupGenotype("MGI:2166309")._genotype_key
+        self.genotype_ns_key = self.lookupAccessionKey("MGI:2166310")
+        self.genotype_na_key = self.lookupAccessionKey("MGI:2166309")

@@ -1141,7 +1141,7 @@ class GxdHTSample(db.Model, MGIModel):
     sex_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==GxdHTSample._sex_key", uselist=False)
     emapa_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==GxdHTSample._emapa_key", uselist=False)
     stage_object = db.relationship("TheilerStage", primaryjoin="TheilerStage._stage_key==GxdHTSample._stage_key", uselist=False)
-    genotype_object = db.relationship("Genotype", primaryjoin="Genotype._genotype_key==GxdHTSample._genotype_key", uselist=False)
+    genotype_object = db.relationship("Genotype", primaryjoin="Genotype._genotype_key==GxdHTSample._genotype_key", foreign_keys="[Genotype._genotype_key]", uselist=False)
     relevance_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==GxdHTSample._relevance_key", uselist=False)
 
     _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
