@@ -8,6 +8,7 @@ from mgipython.domain import *
 from mgipython.error import *
 from dateutil import parser
 from datetime import datetime
+import re
 
 class GxdHTExperimentService():
     
@@ -265,6 +266,9 @@ class GxdHTExperimentService():
         self.gxd_dao.delete(experiment)
 
     def lookupAccessionKey(self, mgiid):
+        pattern = re.compile(re.escape('mgi:'), re.IGNORECASE)
+        mgiid = pattern.sub('', mgiid)
+        mgiid = "MGI:" + mgiid
         if mgiid in self.accession_key_cache:
             return self.accession_key_cache[mgiid]
         else:
