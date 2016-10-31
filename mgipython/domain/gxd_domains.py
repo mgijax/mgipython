@@ -15,12 +15,13 @@ class GxdHTExperimentSummaryDomain(Serializer):
         Field("primaryid"),
     ]
 
-class GxdGenotypeDomain(Serializer):
+class GenotypeDomain(Serializer):
     __fields__ = [
         Field("_genotype_key"),
         Field("_strain_key"),
         Field("mgiid"),
         Field("geneticbackground"),
+        Field("combination1_cache"),
     ]
 
 class GxdHTSampleDomain(Serializer):
@@ -39,7 +40,7 @@ class GxdHTSampleDomain(Serializer):
         Field("_stage_key"),
         Field("_genotype_key"),
         Field("_relevance_key"),
-        Field("genotype_object", conversion_class=GxdGenotypeDomain),
+        Field("genotype_object", conversion_class=GenotypeDomain),
 
     ]
 
