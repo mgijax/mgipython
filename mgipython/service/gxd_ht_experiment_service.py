@@ -249,6 +249,7 @@ class GxdHTExperimentService():
         if len(experiment.samples) > 0:
             experiment._lastcuratedby_key = current_user._user_key
             experiment.last_curated_date = datetime.now()
+            experiment._curationstate_key = self.curation_state_done_term_key
 
         print "Running update on experiment"
         self.gxd_dao.update(experiment)
