@@ -123,6 +123,21 @@ class BaseDAO():
         return search_results
     
     
+    def get_search_count(self, search_query):
+        """
+        Takes SearchQuery
+            build query,
+            runs count on query
+        Return count as integer
+        """
+        sqa_query = self._build_search_query(search_query)
+    
+        sqa_query = sqa_query.statement.with_only_columns([db.func.count()]).order_by(None)
+        count = db.session.execute(sqa_query).scalar()
+        
+        return count
+    
+    
     def _build_search_query(self, search_query):
         """
         Method to override for building SQLAlchemy query
