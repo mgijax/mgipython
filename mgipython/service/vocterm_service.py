@@ -1,4 +1,5 @@
 from mgipython.dao.vocterm_dao import VocTermDAO
+from mgipython.dao.gxdresult_dao import GxdResultDAO
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from mgipython.model.query import batchLoadAttribute, batchLoadAttributeCount
@@ -17,6 +18,7 @@ logger = logging.getLogger('mgipython.service')
 class VocTermService():
     
     vocterm_dao = VocTermDAO()
+    gxdresult_dao = GxdResultDAO()
     
     def get_by_key(self, _term_key):
         term = self.vocterm_dao.get_by_key(_term_key)
@@ -34,15 +36,22 @@ class VocTermService():
     def get_emapa_term(self, id):
         term = self.get_by_primary_id(id)
         
-        batchLoadAttributeCount([term], "results")
-        
         term = convert_models(term, EMAPADetailDomain)
+        
+        # get results count for structure_id
+        term.results_count = self._get_emapa_term_results_count(term.primaryid)
         
         # sort parent_nodes by edge_label, term
         term.parent_nodes.sort(key=lambda x: (x.edge_label, x.term))
         
         return term
     
+    def _get_emapa_term_results_count(self, term_id):
+        search_query = SearchQuery()
+        search_query.set_param("direct_structure_id", term_id)
+        count = self.gxdresult_dao.get_search_count(search_query)
+        
+        return count
     
     
     def search(self, search_query):
@@ -81,7 +90,6 @@ class VocTermService():
         search_result.items = convert_models(terms, EMAPATermDomain)
         
         return search_result
-    
     
     def _add_emapa_highlights(self, terms, termSearch):
         """

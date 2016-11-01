@@ -1,0 +1,161 @@
+from mgipython.model import Accession, Result, Marker, Reference, Assay, VocTerm, Specimen
+#from accession_hunter import getModelByMGIID
+
+from mgipython.model import db
+from base_dao import BaseDAO
+import logging
+
+logger = logging.getLogger('mgipython.dao')
+
+
+class GxdResultDAO(BaseDAO):
+    
+    model_class = Result
+    
+    def _build_search_query(self, search_query):
+        """
+        Search Result by fields:
+            marker_id
+            refs_id
+            direct_structure_id
+        """
+        query = Result.query
+
+        query = query.join(Result.marker)
+        query = query.join(Result.assay)
+        emapa_structure = db.aliased(VocTerm)
+        query = query.join(emapa_structure, Result.structure)
+    
+        if search_query.has_valid_param("marker_id"):
+            
+            marker_id = search_query.get_value("marker_id")
+            
+            marker_accession = db.aliased(Accession)
+            sub_result = db.aliased(Result)
+            sq = db.session.query(sub_result) \
+                    .join(sub_result.marker) \
+                    .join(marker_accession, Marker.mgiid_object) \
+                    .filter(marker_accession.accid==marker_id) \
+                    .filter(sub_result._expression_key==Result._expression_key) \
+                    .correlate(Result)
+                
+            query = query.filter(
+                    sq.exists()
+            )
+    
+        has_refs_id_query = search_query.has_valid_param("refs_id")
+        if has_refs_id_query:
+            
+            search_query.get_value("refs_id")
+            
+            reference_accession = db.aliased(Accession)
+            sub_result = db.aliased(Result)
+            sq = db.session.query(sub_result) \
+                    .join(sub_result.reference) \
+                    .join(reference_accession, Reference.jnumid_object) \
+                    .filter(reference_accession.accid==refs_id) \
+                    .filter(sub_result._expression_key==Result._expression_key) \
+                    .correlate(Result)
+                
+            query = query.filter(
+                    sq.exists()
+            )
+            
+        if search_query.has_valid_param("direct_structure_id"):
+            
+            direct_structure_id = search_query.get_value("direct_structure_id")
+            
+            # I.e. an EMAPA ID
+            
+            if "EMAPS" in direct_structure_id:
+                
+                # convert EMAPS to EMAPA + stage
+                stage = int(direct_structure_id[-2:])
+                direct_structure_id = direct_structure_id[:-2].replace("EMAPS","EMAPA")
+                
+                query = query.filter(Result._stage_key==stage)
+            
+            structure_accession = db.aliased(Accession)
+            sub_result = db.aliased(Result)
+            sq = db.session.query(sub_result) \
+                    .join(sub_result.structure) \
+                    .join(structure_accession, VocTerm.primaryid_object) \
+                    .filter(structure_accession.accid==direct_structure_id) \
+                    .filter(sub_result._expression_key==Result._expression_key) \
+                    .correlate(Result)
+                
+            query = query.filter(
+                    sq.exists()
+            )
+    
+    
+        # specific sorts requested by GXD
+        if has_refs_id_query:
+                # sort for reference summary
+                # 1) Structure by TS then alpha
+                # 2) Gene symbol
+                # 3) assay type
+                # 4) assay MGI ID
+                # 5) Specimen label
+                query = query.outerjoin(Result.specimen)
+                query = query.order_by(Result.isrecombinase,
+                                       Result._stage_key,
+                                       emapa_structure.term,
+                                       Marker.symbol,
+                                       Assay.assaytype_seq,
+                                       Assay.mgiid,
+                                       Specimen.specimenlabel
+                                       )
+        else:
+                # default sort for all other types of summaries
+                query = query.order_by(Result.isrecombinase, 
+                               Marker.symbol, 
+                               Assay.assaytype_seq,
+                               Result._stage_key, 
+                               emapa_structure.term, 
+                               Result.expressed)
+        
+        return query
+        
+        
+        
+        
+        
+def searchResults(marker_id=None, 
+                  refs_id=None, 
+                  direct_structure_id=None,
+                  page_size=1,
+                  page_num=1):
+
+    # results to be returned
+    results = []
+
+    query = _buildResultQuery(marker_id, 
+                              refs_id, 
+                              direct_structure_id)
+                    
+
+    results = query.paginate(page_num, page_size, False)
+    
+    batchLoadAttribute(results.items, 'marker')
+    batchLoadAttribute(results.items, 'structure')
+    batchLoadAttribute(results.items, 'reference')
+    batchLoadAttribute(results.items, 'assay')
+    batchLoadAttribute(results.items, 'genotype')
+    batchLoadAttribute(results.items, 'specimen')
+
+    return results
+
+
+def getResultCount(direct_structure_id):
+    """
+    Get count of results for the direct_structure_id
+    """
+
+    query = _buildResultQuery(direct_structure_id=direct_structure_id)
+    
+    query = query.statement.with_only_columns([db.func.count()]).order_by(None)
+    count = db.session.execute(query).scalar()
+    return count
+    
+    

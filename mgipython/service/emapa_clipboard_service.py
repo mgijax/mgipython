@@ -32,7 +32,7 @@ class EMAPAClipboardService():
         result.items = convert_models(result.items, EMAPAClipboardItem)
         
         return result
-    
+
     
     def add_items(self, _user_key, emapa_id, stages_to_add):
         """
