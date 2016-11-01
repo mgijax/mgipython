@@ -1,10 +1,14 @@
 from mgipython.dao.vocterm_dao import VocTermDAO
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
-from mgipython.model.query import batchLoadAttribute
+from mgipython.model.query import batchLoadAttribute, batchLoadAttributeCount
 from mgipython.service_schema.search import SearchQuery
-from mgipython.domain.voc_domains import VocTermDomain
+from mgipython.domain.voc_domains import VocTermDomain, EMAPATermDomain, EMAPADetailDomain
 from mgipython.domain import convert_models
+
+from mgipython.parse import splitSemicolonInput
+from mgipython.parse.highlight import highlightEMAPA
+
 import logging
 
 logger = logging.getLogger('mgipython.service')
@@ -27,6 +31,19 @@ class VocTermService():
         return term
     
     
+    def get_emapa_term(self, id):
+        term = self.get_by_primary_id(id)
+        
+        batchLoadAttributeCount([term], "results")
+        
+        term = convert_models(term, EMAPADetailDomain)
+        
+        # sort parent_nodes by edge_label, term
+        term.parent_nodes.sort(key=lambda x: (x.edge_label, x.term))
+        
+        return term
+    
+    
     
     def search(self, search_query):
         
@@ -34,28 +51,67 @@ class VocTermService():
         
         # convert results to domain objects
         search_result.items = convert_models(search_result.items, VocTermDomain)
+
+        return search_result
+    
+    def search_emapa_terms(self, search_query):
+        """
+        Search specifically for EMAPA vocterm objects
+        """
+        
+        # don't search obsolete terms by default
+        if not search_query.has_valid_param('isobsolete'):
+            search_query.set_param('isobsolete', 0)
+            
+        search_query.set_param('vocab_name', 'EMAPA')
+        
+        search_result = self.vocterm_dao.search(search_query)
+        
+        terms = search_result.items
+        
+        # batch load necessary attributes
+        batchLoadAttribute(terms, "emapa_info")
+        batchLoadAttribute(terms, "synonyms")
+        
+        # add term highlights if termSearch
+        if search_query.has_valid_param('termSearch'):
+            self._add_emapa_highlights(terms, search_query.get_value('termSearch'))
+        
+        
+        search_result.items = convert_models(terms, EMAPATermDomain)
         
         return search_result
     
     
-    def search_emapa_terms(self,
-                         termSearch="",
-                         stageSearch="",
-                         isobsolete=0,
-                         limit=None):
+    def _add_emapa_highlights(self, terms, termSearch):
         """
-        Search specifically for EMAPA vocterm objects
+        add term_highlight and synonym_highlight to each term in terms
         """
-        terms = self.vocterm_dao.search_emapa_terms(
-             termSearch=termSearch,
-             stageSearch=stageSearch,
-             isobsolete=isobsolete,
-             limit=limit
-        )
         
-        # batch load necessary attributes
-        batchLoadAttribute(terms, "emapa_info")
-        
-        return terms
+        # prepare search tokens for highlighting
+        termSearchTokens = splitSemicolonInput(termSearch)
+                    
+        # prepare term_highlight and synonym_highlight
+        #    only set synonym_highlight if there is no highlight
+        #    on the term
+        for term in terms:
+            setattr(term, "term_highlight", "")
+            setattr(term, "synonym_highlight", "")
+            
+            term.term_highlight = highlightEMAPA(term.term, termSearchTokens)
+            
+            # if term could not be highlighted, try synonyms
+            if '<mark>' not in term.term_highlight:
+                for synonym in term.synonyms:
+                
+                    # try to highlight each synonym
+                    synonym_highlight = highlightEMAPA(synonym.synonym, termSearchTokens)
+                    
+                    if '<mark>' in synonym_highlight:
+                        # set first synonym match and exit
+                        term.synonym_highlight = synonym_highlight
+                        break
+    
+    
     
     
