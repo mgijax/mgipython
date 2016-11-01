@@ -339,8 +339,6 @@ class GxdHTExperimentService():
     def loadAgeTerms(self):
         if self.age_term_na_term != None:
             return
-        print "Loading Age Terms"
-        print self.age_term_na_term
 
         age_search_query = SearchQuery()
         age_search_query.set_param('vocab_name', "GXD HT Age")
