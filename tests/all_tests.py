@@ -18,6 +18,7 @@ from domain import serializer_tests
 from model import edit_clipboard_tests
 
 from parse import parser_tests
+from parse import highlight_tests
 
 from service.helpers import sort_helper_tests
 
@@ -33,6 +34,7 @@ def master_suite():
     suites.append(edit_clipboard_tests.suite())
     suites.append(gxdindex_aggregator_tests.suite())
     suites.append(parser_tests.suite())
+    suites.append(highlight_tests.suite())
     suites.append(search_schema_tests.suite())
     suites.append(serializer_tests.suite())
     suites.append(sort_tests.suite())

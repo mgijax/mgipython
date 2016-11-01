@@ -6,6 +6,8 @@ from mgipython.model.query import batchLoadAttribute
 from mgipython.model import SetMember, SetMemberEMAPA
 from mgipython.dao.emapa_clipboard_dao import EMAPAClipboardDAO
 from mgipython.dao.vocterm_dao import VocTermDAO
+from mgipython.domain import convert_models
+from mgipython.domain.clipboard_domains import EMAPAClipboardItem
 
 import logging
 logger = logging.getLogger('mgipython.service')
@@ -24,8 +26,12 @@ class EMAPAClipboardService():
     
     
     def get_clipboard_items(self, _user_key):
-        set_members = self.clipboard_dao.get_clipboard_items(_user_key)
-        return set_members
+        result = self.clipboard_dao.get_clipboard_items(_user_key)
+        
+        # convert to domain object
+        result.items = convert_models(result.items, EMAPAClipboardItem)
+        
+        return result
     
     
     def add_items(self, _user_key, emapa_id, stages_to_add):
@@ -121,52 +127,21 @@ class EMAPAClipboardService():
         return set_member
     
     
-    def edit_clipboard(self,
-                      user, 
-                      args):
+    def delete_all_items(self, _user_key):
         """
-        Perform actual add / delete to clipboard
-        """
-        
-        _user_key = user._user_key
-        set_members = []
-        
-        # perform add
-        if args.stagesToAdd and args.emapaId:
-            set_members = self.add_items(user._user_key, 
-                        args.emapaId,
-                        args.stagesToAdd
-            )
-        
-        if args.keysToDelete:
-            self.delete_items(user._user_key,
-                    args.keysToDelete
-            )
-        
-        return set_members
-        
-    
-    def delete_items(self, _user_key, keys_to_delete):
-        """
-        Deletes all _setmember_keys in keys_to_delete,
+        Deletes all _setmember_keys,
             for the given _user_key
         """
         
-        _setmember_keys = splitCommaInput(keys_to_delete)
+        result = self.get_clipboard_items(_user_key)
         
-        deletedItems = False
         
-        for _setmember_key in _setmember_keys:
+        for setmember in result.items:
+            _setmember_key = setmember._setmember_key
             
             self.delete_item(_setmember_key, _user_key=_user_key)
-            deletedItems = True
-    
-        if deletedItems:
-            # deleting items can cause sequencenums to have gaps
-            #    so we normalize them here
-            #    This is necessary, because EI requires sequencenums without gaps
-            self.clipboard_dao.normalize_sequencenums(_user_key)
             
+        
             
     def delete_item(self, _setmember_key, _user_key=None):
         """
@@ -188,6 +163,12 @@ class EMAPAClipboardService():
         # perform delete
         set_member._object_key = None
         self.clipboard_dao.delete(set_member)
+        
+        # HACK (kstone):
+        # deleting items can cause gaps in sequencenums. 
+        # teluse EI requires no gap in sequencenums, 
+        # so we normalize them here
+        self.clipboard_dao.normalize_sequencenums(_user_key)
     
     
     def sort_clipboard(self, _user_key):
@@ -198,7 +179,8 @@ class EMAPAClipboardService():
         Sort is by stage, then alpha on term
         """
             
-        set_members = self.clipboard_dao.get_clipboard_items(_user_key)
+        result = self.clipboard_dao.get_clipboard_items(_user_key)
+        set_members = result.items
             
         batchLoadAttribute(set_members, "emapa")
         batchLoadAttribute(set_members, "emapa_term")

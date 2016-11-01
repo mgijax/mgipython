@@ -1,6 +1,7 @@
 from mgipython.model import db
 from mgipython.model import SetMember, SetMemberEMAPA
 from mgipython.model.query import performQuery
+from mgipython.service_schema.search import SearchResults
 from base_dao import BaseDAO
 
 
@@ -40,11 +41,15 @@ class EMAPAClipboardDAO(BaseDAO):
         """
         Returns all EMAPA clipboard SetMembers for the given user
         """
+        search_results = SearchResults()
         items = SetMember.query.filter_by(_set_key=self.emapa_clipboard_set_key) \
             .filter_by(_createdby_key=_user_key) \
             .order_by(SetMember.sequencenum) \
             .all()
-        return items
+            
+        search_results.items = items
+        search_results.total_count = len(items)
+        return search_results
     
         
     def normalize_sequencenums(self, _user_key):

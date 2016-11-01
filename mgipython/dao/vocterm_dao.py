@@ -45,50 +45,13 @@ class VocTermDAO(BaseDAO):
             vocab_alias = db.aliased(Vocab)
             query = query.join(vocab_alias, VocTerm.vocab)
             query = query.filter(db.func.lower(vocab_alias.name)==vocab_name)
-
-
-        # handle sorts
-        sorts = []
-        if len(search_query.sorts) > 0:
             
-            for sort_name in search_query.sorts:
-                
-                if sort_name == "sequencenum":
-                    sorts.append(VocTerm.sequencenum.asc())
-                    
-                elif sort_name == "term":
-                    sorts.append(VocTerm.term.asc())
-                    
-        else:
-            sorts.append(VocTerm.sequencenum.asc())
             
-        query = query.order_by(*sorts)
-
-        return query
-        
-    def search_emapa_terms(self,
-                         termSearch="",
-                         stageSearch="",
-                         isobsolete=0,
-                         limit=None):
-        """
-        Default is to ignore obsolete terms
-        """
-        
-        
-        emapaVocabName = "EMAPA"
-        
-        query = VocTerm.query
-        
-        if isobsolete != None:
-            query = query.filter(VocTerm.isobsolete==isobsolete)
-        
-        # Filter only EMAPA terms
-        vocab_alias = db.aliased(Vocab)
-        query = query.join(vocab_alias, VocTerm.vocab).filter(vocab_alias.name==emapaVocabName)
-        
-        if stageSearch:
             
+        # Specific to EMAPA Browser stage searching
+        if search_query.has_valid_param('stageSearch'):
+            
+            stageSearch = search_query.get_value('stageSearch')
             stages = emapaStageParser(stageSearch)
             
             if stages:
@@ -109,10 +72,10 @@ class VocTermDAO(BaseDAO):
                 query = query.filter(sq.exists())
         
         
-        if termSearch:
+        # Specific to EMAPA Browser term searching
+        if search_query.has_valid_param('termSearch'):
             
-            # do something
-            
+            termSearch = search_query.get_value('termSearch')
             termSearch = termSearch.lower()
             termsToSearch = splitSemicolonInput(termSearch)
             
@@ -154,16 +117,25 @@ class VocTermDAO(BaseDAO):
             query2 = query.filter(term_sq.exists())
             query3 = query.filter(synonym_sq.exists())
             query = query1.union(query2).union(query3)
-            #query = query2
-        
-        # setting sort
-        query = query.order_by(VocTerm.term.asc())
+
+
+        # handle sorts
+        sorts = []
+        if len(search_query.sorts) > 0:
             
-        # setting limit on number of returned references
-        if limit:
-            query = query.limit(limit) 
-                       
-        terms = query.all()
+            for sort_name in search_query.sorts:
+                
+                if sort_name == "sequencenum":
+                    sorts.append(VocTerm.sequencenum.asc())
+                    
+                elif sort_name == "term":
+                    sorts.append(VocTerm.term.asc())
+                    
+        else:
+            sorts.append(VocTerm.sequencenum.asc())
+            
+        query = query.order_by(*sorts)
+
+        return query
         
-        return terms
-    
+        
