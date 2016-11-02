@@ -241,16 +241,14 @@ class GxdHTExperimentService():
                         newsample.modification_date = datetime.now()
                         experiment.samples.append(newsample)
 
-        if experiment_sample_count == 0 and len(experiment.samples) > 0:
-            self.loadCurationStates()
-            experiment._initialcuratedby_key = current_user._user_key
-            experiment.initial_curated_date = datetime.now()
-            experiment._curationstate_key = self.curation_state_done_term_key
         if len(experiment.samples) > 0:
             self.loadCurationStates()
+            experiment._curationstate_key = self.curation_state_done_term_key
             experiment._lastcuratedby_key = current_user._user_key
             experiment.last_curated_date = datetime.now()
-            experiment._curationstate_key = self.curation_state_done_term_key
+            if experiment_sample_count == 0:
+                experiment._initialcuratedby_key = current_user._user_key
+                experiment.initial_curated_date = datetime.now()
 
         print "Running update on experiment"
         self.gxd_dao.update(experiment)
