@@ -20,6 +20,7 @@ class GxdHTExperimentService():
     genotype_dao = GenotypeDAO()
     mgitype_dao = MGITypeDAO()
     accession_dao = AccessionDAO()
+    emaps_dao = VocTermEMAPSDAO()
 
     def __init__(self):
 
@@ -233,8 +234,16 @@ class GxdHTExperimentService():
                                     newsample._genotype_key = self.genotype_na_key
 
                         newsample.name = sample_collection.sample_domain.name
-                        newsample._emapa_key = sample_collection.sample_domain._emapa_key
-                        newsample._stage_key = sample_collection.sample_domain._stage_key
+
+                        if sample_collection.sample_domain._emapa_key:
+                            emaps_object = self.lookupEMAPSObject(sample_collection.sample_domain._emapa_key)
+                            if emaps_object != None:
+                                newsample._emapa_key = emaps_object._emapa_term_key
+                                newsample._stage_key = emaps_object._stage_key
+                            else:
+                                newsample._emapa_key = None
+                                newsample._stage_key = None
+
                         newsample._createdby_key = current_user._user_key
                         newsample.creation_date = datetime.now()
                         newsample._modifiedby_key = current_user._user_key
@@ -283,6 +292,15 @@ class GxdHTExperimentService():
                 return self.accession_key_cache[mgiid]
             else:
                 return None
+
+    def lookupEMAPSObject(self, emapsid):
+        emaps_search_query = SearchQuery()
+        emaps_search_query.set_param('emapsid', emapsid)
+        emaps_search_result = self.emaps_dao.search(emaps_search_query)
+        if len(emaps_search_result.items) > 0:
+            return emaps_search_result.items[0]
+        else:
+            return None
 
     def loadEvaluationStates(self):
         if self.evaluation_state_no_term_key != None:

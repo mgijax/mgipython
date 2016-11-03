@@ -55,7 +55,14 @@ class VocTermEMAPS(db.Model,MGIModel):
     
     # vocterm
     # defined in VocTerm
-    
+    primaryid = db.column_property(
+        db.select([Accession.accid]).
+        where(db.and_(Accession._mgitype_key==13,
+            Accession.preferred==1,
+            Accession.private==0, 
+            Accession._object_key==_term_key)) 
+    )
+ 
     emapa_term = db.relationship("VocTerm",
                 primaryjoin = "and_(VocTerm._term_key==VocTermEMAPS._emapa_term_key)",
                 foreign_keys = "[VocTerm._term_key]",

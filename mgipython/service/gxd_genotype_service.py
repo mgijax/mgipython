@@ -15,12 +15,6 @@ class GxdGenotypeService():
     genotype_dao = GenotypeDAO()
 
     def search(self, search_query):
-
         search_result = self.genotype_dao.search(search_query)
-        newitems = []
-        for item in search_result.items:
-            newitem = GenotypeDomain()
-            newitem.load_from_model(item)
-            newitems.append(newitem)
-        search_result.items = newitems
+        search_result.items = convert_models(search_result.items, GenotypeDomain)
         return search_result

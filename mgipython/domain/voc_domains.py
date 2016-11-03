@@ -13,6 +13,14 @@ class VocTermDomain(Serializer):
       Field("term")
     ]
 
+class VocTermEMAPSDomain(Serializer):
+    __fields__ = [
+      Field("_term_key"),
+      Field("_emapa_term_key"),
+      Field("_stage_key"),
+      Field("emapa_term", conversion_class=VocTermDomain),
+      Field("primaryid")
+    ]
 
 class EMAPATermDomain(Serializer):
     """

@@ -6,6 +6,7 @@ from gxd_ht_sample_dao import *
 from gxd_ht_experiment_dao import *
 from gxd_ht_raw_sample_dao import *
 from gxd_ht_experiment_variable_dao import *
+from gxdresult_dao import *
 from gxdindex_dao import *
 from marker_dao import *
 from mgitype_dao import *
@@ -13,3 +14,4 @@ from reference_dao import *
 from user_dao import *
 from vocterm_dao import *
 from vocvocab_dao import *
+from vocterm_emaps_dao import *

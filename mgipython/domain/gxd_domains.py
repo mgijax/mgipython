@@ -41,6 +41,7 @@ class GxdHTSampleDomain(Serializer):
         Field("_genotype_key"),
         Field("_relevance_key"),
         Field("genotype_object", conversion_class=GenotypeDomain),
+        Field("emaps_object", conversion_class=VocTermEMAPSDomain),
 
     ]
 

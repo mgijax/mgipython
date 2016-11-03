@@ -1,11 +1,9 @@
-from mgipython.dao.vocterm_dao import VocTermDAO
-from mgipython.dao.gxdresult_dao import GxdResultDAO
+from mgipython.dao import *
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from mgipython.model.query import batchLoadAttribute, batchLoadAttributeCount
 from mgipython.service_schema.search import SearchQuery
-from mgipython.domain.voc_domains import VocTermDomain, EMAPATermDomain, EMAPADetailDomain
-from mgipython.domain import convert_models
+from mgipython.domain import *
 
 from mgipython.parse import splitSemicolonInput
 from mgipython.parse.highlight import highlightEMAPA
@@ -19,6 +17,7 @@ class VocTermService():
     
     vocterm_dao = VocTermDAO()
     gxdresult_dao = GxdResultDAO()
+    vocterm_emaps_dao = VocTermEMAPSDAO()
     
     def get_by_key(self, _term_key):
         term = self.vocterm_dao.get_by_key(_term_key)
@@ -61,6 +60,11 @@ class VocTermService():
         # convert results to domain objects
         search_result.items = convert_models(search_result.items, VocTermDomain)
 
+        return search_result
+
+    def search_emaps_terms(self, search_query):
+        search_result = self.vocterm_emaps_dao.search(search_query)
+        search_result.items = convert_models(search_result.items, VocTermEMAPSDomain)
         return search_result
     
     def search_emapa_terms(self, search_query):
