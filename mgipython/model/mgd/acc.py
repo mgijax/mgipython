@@ -1,5 +1,6 @@
 # All models for the acc_* tables
 from mgipython.modelconfig import db
+from mgi import *
 from ..core import *
 
 class ActualDb(db.Model,MGIModel):
@@ -91,6 +92,7 @@ class MGIType(db.Model,MGIModel):
     name = db.Column(db.String())
     tablename = db.Column(db.String())
     primarykeyname = db.Column(db.String())
+    organisms = db.relationship("Organism", secondary=MGITypeOrganism.__table__, order_by=lambda: MGITypeOrganism.sequencenum)
     
 class AccessionMax(db.Model,MGIModel):
     __tablename__ = "acc_accessionmax"

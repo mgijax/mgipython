@@ -1,5 +1,4 @@
-from mgipython.model import MGIType
-from mgipython.model import db
+from mgipython.model import *
 from base_dao import BaseDAO
 
 
@@ -27,6 +26,7 @@ class MGITypeDAO(BaseDAO):
         if search_query.has_valid_param('_modifiedby_key'):
             _modifiedby_key = search_query.get_value('_modifiedby_key')
             query = query.filter(MGIType._modifiedby_key==_modifiedby_key)
+
         
         return query
         

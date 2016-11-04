@@ -96,12 +96,13 @@ class MGITypeOrganism(db.Model,MGIModel):
     __tablename__ = "mgi_organism_mgitype"
     _mgitype_key = db.Column(db.Integer, mgi_fk("acc_mgitype._mgitype_key"), primary_key=True)
     _organism_key = db.Column(db.Integer, mgi_fk("mgi_organism._organism_key"), primary_key=True)
+    sequencenum = db.Column(db.Integer)
 
 class Organism(db.Model,MGIModel):
     __tablename__="mgi_organism"
     _organism_key = db.Column(db.Integer,primary_key=True)
     commonname = db.Column(db.String())
-    mgitypes = db.relationship("MGIType", secondary=MGITypeOrganism.__table__, backref="organisms")
+    mgitypes = db.relationship("MGIType", secondary=MGITypeOrganism.__table__, order_by=lambda: MGITypeOrganism.sequencenum)
 
 class ReferenceAssoc(db.Model, MGIModel):
     __tablename__ = "mgi_reference_assoc"
