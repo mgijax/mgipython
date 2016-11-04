@@ -73,6 +73,7 @@ class VocTermService():
             search_query.set_param('isobsolete', 0)
             
         search_query.set_param('vocab_name', 'EMAPA')
+        search_query.sorts = ["term"]
         
         search_result = self.vocterm_dao.search(search_query)
         
