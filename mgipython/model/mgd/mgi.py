@@ -11,6 +11,13 @@ class Set(db.Model, MGIModel):
     sequencenum = db.Column(db.Integer)
     _createdby_key = db.Column(db.Integer, default=1001)
 
+class SetMemberEMAPA(db.Model, MGIModel):
+    __tablename__ = "mgi_setmember_emapa"
+    _setmember_emapa_key = db.Column(db.Integer, primary_key=True)
+    _setmember_key = db.Column(db.Integer, mgi_fk("mgi_setmember._setmember_key"))
+    _stage_key = db.Column(db.Integer)
+    _createdby_key = db.Column(db.Integer, default=1001)
+    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
 
 class SetMember(db.Model, MGIModel):
     __tablename__ = "mgi_setmember"
@@ -35,15 +42,12 @@ class SetMember(db.Model, MGIModel):
         foreign_keys="[SetMember._object_key]",
         uselist=False)
 
-
-class SetMemberEMAPA(db.Model, MGIModel):
-    __tablename__ = "mgi_setmember_emapa"
-    _setmember_emapa_key = db.Column(db.Integer, primary_key=True)
-    _setmember_key = db.Column(db.Integer, mgi_fk("mgi_setmember._setmember_key"))
-    _stage_key = db.Column(db.Integer)
-    _createdby_key = db.Column(db.Integer, default=1001)
-    _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
-    
+    emaps_term = db.relationship("VocTermEMAPS",
+        primaryjoin="and_(SetMember._setmember_key==SetMemberEMAPA._setmember_key,SetMember._object_key == VocTermEMAPS._emapa_term_key)",
+        secondaryjoin="SetMemberEMAPA._stage_key==VocTermEMAPS._stage_key",
+        secondary="join(SetMemberEMAPA, VocTermEMAPS, SetMemberEMAPA._stage_key==VocTermEMAPS._stage_key)",
+        foreign_keys="[SetMemberEMAPA._setmember_key,VocTermEMAPS._stage_key,VocTermEMAPS._emapa_term_key]",
+        uselist=False)
 
 class EmapSMapping(db.Model, MGIModel):
     __tablename__ = "mgi_emaps_mapping"

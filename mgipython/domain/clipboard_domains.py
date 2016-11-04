@@ -1,5 +1,5 @@
 from base_serializer import Field, Serializer
-
+from mgipython.domain.voc_domains import *
 
 class EMAPAClipboardItem(Serializer):
     
@@ -8,7 +8,8 @@ class EMAPAClipboardItem(Serializer):
         Field("emapa_term"),
         Field("emapa_term_key"),
         Field("emapa_stage"),
-        Field("emapa_stage_key")
+        Field("emapa_stage_key"),
+        Field("emaps_term", conversion_class=VocTermEMAPSDomain),
     ]
     
     def get_emapa_term(self, item):
@@ -22,6 +23,4 @@ class EMAPAClipboardItem(Serializer):
 
     def get_emapa_stage(self, item):
         return item.emapa._stage_key
-
-
 
