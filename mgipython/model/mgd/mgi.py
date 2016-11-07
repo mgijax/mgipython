@@ -47,6 +47,7 @@ class SetMember(db.Model, MGIModel):
         secondaryjoin="SetMemberEMAPA._stage_key==VocTermEMAPS._stage_key",
         secondary="join(SetMemberEMAPA, VocTermEMAPS, SetMemberEMAPA._stage_key==VocTermEMAPS._stage_key)",
         foreign_keys="[SetMemberEMAPA._setmember_key,VocTermEMAPS._stage_key,VocTermEMAPS._emapa_term_key]",
+        viewonly=True,
         uselist=False)
 
 class EmapSMapping(db.Model, MGIModel):
