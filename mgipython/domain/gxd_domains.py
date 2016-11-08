@@ -43,6 +43,7 @@ class GxdHTSampleDomain(Serializer):
         Field("genotype_object", conversion_class=GenotypeDomain),
         Field("emaps_object", conversion_class=VocTermEMAPSDomain),
 
+        Field("notes", conversion_class=NoteDomain),
     ]
 
     def getKey(self):

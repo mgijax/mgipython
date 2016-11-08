@@ -148,6 +148,34 @@ class GxdHTExperimentService():
         else:
             pass
 
+        _note_key_index = BaseDAO()._get_next_key(Note)
+
+        if len(args["notes"]) > 0:
+            if len(experiment.notes) > 0:
+                if len(experiment.notes[0].chunks) > 0:
+                    experiment.notes[0].chunks[0].note = args["notes"][0]["text"]
+                else:
+                    notechunk = NoteChunk()
+                    notechunk._note_key = experiment.notes[0]._note_key
+                    notechunk.sequencenum = 1
+                    notechunk.note = args["notes"][0]["text"]
+                    experiment.notes[0].chunks.append(notechunk)
+            else:
+                newnote = Note()
+                newnote._note_key = _note_key_index
+                _note_key_index = _note_key_index + 1
+                newnote._object_key = experiment._experiment_key
+                newnote._mgitype_key = 42
+                newnote._notetype_key = 1047
+
+                notechunk = NoteChunk()
+                notechunk._note_key = newnote._note_key
+                notechunk.sequencenum = 1
+                notechunk.note = args["notes"][0]["text"]
+
+                newnote.chunks.append(notechunk)
+                experiment.notes.append(newnote)
+
         experiment._modifiedby_key = current_user._user_key
         experiment.modification_date = datetime.now()
 
@@ -185,6 +213,37 @@ class GxdHTExperimentService():
 
                     if sample_collection.sample_domain != None:
                         self.loadOrganisms()
+
+                        if sample_collection.sample_domain.notes != None and len(sample_collection.sample_domain.notes) > 0:
+                            
+                            if len(newsample.notes) > 0:
+                                if len(newsample.notes[0].chunks) > 0:
+                                    print "Modify Sample Note"
+                                    newsample.notes[0].chunks[0].note = sample_collection.sample_domain.notes[0].text
+                                else:
+                                    print "Create Sample Note"
+                                    notechunk = NoteChunk()
+                                    notechunk._note_key = newsample.notes[0]._note_key
+                                    notechunk.sequencenum = 1
+                                    notechunk.note = sample_collection.sample_domain.notes[0].text
+                                    newsample.notes[0].chunks.append(notechunk)
+                            else:
+                                newnote = Note()
+                                newnote._note_key = _note_key_index
+                                _note_key_index = _note_key_index + 1
+                                newnote._object_key = newsample._sample_key
+                                newnote._mgitype_key = 43
+                                newnote._notetype_key = 1048
+
+                                notechunk = NoteChunk()
+                                notechunk._note_key = newnote._note_key
+                                notechunk.sequencenum = 1
+                                notechunk.note = sample_collection.sample_domain.notes[0].text
+
+                                print "Create Sample Note"
+                                print "Modify Sample Note"
+                                newnote.chunks.append(notechunk)
+                                newsample.notes.append(newnote)
 
                         if sample_collection.sample_domain._organism_key == None:
                             newsample._organism_key = self.organism_mouse_key

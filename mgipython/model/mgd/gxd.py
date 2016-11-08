@@ -1078,10 +1078,11 @@ class GxdHTExperiment(db.Model, MGIModel):
     modifiedby_object = db.relationship("MGIUser", primaryjoin="GxdHTExperiment._modifiedby_key==MGIUser._user_key", uselist=False)
 
     # Type GXD HT Experiment
-    _mgitype_key = 42
+    _mgitype_key = 42 # GXD HT Experiment
+    _notetype_key = 1047 # GXD HT Experiment Note
 
     notes = db.relationship("Note", primaryjoin="and_(GxdHTExperiment._experiment_key==Note._object_key,"
-        "Note._mgitype_key==%d)" % _mgitype_key, foreign_keys="[Note._object_key]"
+        "Note._mgitype_key==%d,Note._notetype_key==%d)" % (_mgitype_key, _notetype_key), foreign_keys="[Note._object_key]"
     )
 
     experiment_variables = db.relationship("GxdHTExperimentVariable",
@@ -1130,6 +1131,9 @@ class GxdHTSample(db.Model, MGIModel):
     name = db.Column(db.String())
     age = db.Column(db.String())
 
+    _mgitype_key = 43 # GXD HT Sample
+    _notetype_key = 1048 # GXD HT Sample Note
+
     _organism_key = db.Column(db.Integer, mgi_fk("mgi_organism._organism_key"))
     _sex_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
     _emapa_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
@@ -1143,6 +1147,10 @@ class GxdHTSample(db.Model, MGIModel):
     relevance_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==GxdHTSample._relevance_key", uselist=False)
 
     emaps_object = db.relationship("VocTermEMAPS", primaryjoin="and_(VocTermEMAPS._stage_key==GxdHTSample._stage_key,VocTermEMAPS._emapa_term_key==GxdHTSample._emapa_key)", foreign_keys="[VocTermEMAPS._emapa_term_key,VocTermEMAPS._stage_key]", uselist=False)
+
+    notes = db.relationship("Note", primaryjoin="and_(GxdHTSample._sample_key==Note._object_key,"
+        "Note._mgitype_key==%d,Note._notetype_key==%d)" % (_mgitype_key, _notetype_key), foreign_keys="[Note._object_key]"
+    )
 
     _createdby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
     _modifiedby_key = db.Column(db.Integer, mgi_fk("mgi_user._user_key"))
