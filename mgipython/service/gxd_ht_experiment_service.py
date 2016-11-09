@@ -34,6 +34,7 @@ class GxdHTExperimentService():
         self.gender_ns_key = None
         self.gender_na_key = None
         self.age_term_na_term = None
+        self.age_term_ns_term = None
         self.genotype_na_key = None
         self.genotype_ns_key = None
         self.accession_key_cache = {}
@@ -208,6 +209,7 @@ class GxdHTExperimentService():
                         newsample = self.sample_dao.get_by_key(sample_collection.sample_domain._sample_key)
                     else:
                         newsample = GxdHTSample()
+                        experiment.samples.append(newsample)
                         newsample._sample_key = first_key
                         first_key = first_key + 1
 
@@ -261,7 +263,10 @@ class GxdHTExperimentService():
 
                         if sample_collection.sample_domain.ageunit == None:
                             self.loadAgeTerms()
-                            newsample.age = self.age_term_na_term
+                            if newsample._relevance_key == self.relevance_term_yes_key:
+                                newsample.age = self.age_term_ns_term
+                            else:
+                                newsample.age = self.age_term_na_term
                         else:
                             newsample.age = str(sample_collection.sample_domain.ageunit)
                             if sample_collection.sample_domain.agerange != None:
@@ -307,7 +312,6 @@ class GxdHTExperimentService():
                         newsample.creation_date = datetime.now()
                         newsample._modifiedby_key = current_user._user_key
                         newsample.modification_date = datetime.now()
-                        experiment.samples.append(newsample)
 
         if len(experiment.samples) > 0:
             self.loadCurationStates()
@@ -414,7 +418,7 @@ class GxdHTExperimentService():
                 self.gender_na_key = gender._term_key
 
     def loadAgeTerms(self):
-        if self.age_term_na_term != None:
+        if self.age_term_na_term != None and self.age_term_ns_term != None:
             return
 
         age_search_query = SearchQuery()
@@ -423,6 +427,8 @@ class GxdHTExperimentService():
         for age in age_search_result.items:
             if age.term == "Not Applicable":
                 self.age_term_na_term = age.term
+            if age.term == "Not Specified":
+                self.age_term_ns_term = age.term
 
     def loadOrganisms(self):
         if self.organism_mouse_key != None:
