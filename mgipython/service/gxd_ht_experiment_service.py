@@ -307,6 +307,9 @@ class GxdHTExperimentService():
                             else:
                                 newsample._emapa_key = None
                                 newsample._stage_key = None
+                        else:
+                            newsample._emapa_key = None
+                            newsample._stage_key = None
 
                         newsample._createdby_key = current_user._user_key
                         newsample.creation_date = datetime.now()
