@@ -39,6 +39,14 @@ class EMAPATermDomain(Serializer):
     def get_endstage(self, term):
         return term.emapa_info.endstage
     
+    def get_term_highlight(self, term):
+        """
+        default this field to the actual term. 
+        vocterm_service will set this if there is 
+        any special term highlighting to be done
+        """
+        return term.term
+    
     
     
 class DagNodeDomain(Serializer):
