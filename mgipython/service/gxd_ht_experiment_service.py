@@ -269,7 +269,7 @@ class GxdHTExperimentService():
                                 newsample.age = self.age_term_na_term
                         else:
                             newsample.age = str(sample_collection.sample_domain.ageunit)
-                            if sample_collection.sample_domain.agerange != None:
+                            if sample_collection.sample_domain.agerange != None and len(sample_collection.sample_domain.agerange) > 0:
                                 newsample.age = newsample.age + " " + str(sample_collection.sample_domain.agerange)
 
                         if sample_collection.sample_domain._sex_key == None:
