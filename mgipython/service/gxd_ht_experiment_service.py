@@ -109,9 +109,9 @@ class GxdHTExperimentService():
             #domain_sample._experiment_key = int(key)
             #domain_sample.name = raw_domain_sample.source["name"]
             #collection.domain_sample = domain_sample
-
-            collection.name = raw_domain_sample.source["name"]
-            newItems.append(collection)
+            if raw_domain_sample.source != None and "name" in raw_domain_sample.source:
+                collection.name = raw_domain_sample.source["name"]
+                newItems.append(collection)
 
         #search_result.items = newItems
         search_result.items = SampleGrouper().group_raw_samples(newItems)
