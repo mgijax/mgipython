@@ -87,6 +87,9 @@ class SearchQuery(Serializer):
         if isinstance(value, bool):
             return True
         
+        if isinstance(value, int):
+            return True
+        
         return True and value
     
     

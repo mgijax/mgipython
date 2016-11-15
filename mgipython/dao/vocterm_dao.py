@@ -22,6 +22,10 @@ class VocTermDAO(BaseDAO):
 
         query = VocTerm.query
         
+        if search_query.has_valid_param("isobsolete"):
+            isobsolete = search_query.get_value("isobsolete")
+            query = query.filter(VocTerm.isobsolete==isobsolete)
+        
         if search_query.has_valid_param("_vocab_key"):
             query = query.filter(VocTerm._vocab_key==search_query.get_value("_vocab_key"))
 

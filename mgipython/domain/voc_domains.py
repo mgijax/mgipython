@@ -34,18 +34,21 @@ class EMAPATermDomain(Serializer):
     ]
     
     def get_startstage(self, term):
+        print term.term
         return term.emapa_info.startstage
     
     def get_endstage(self, term):
         return term.emapa_info.endstage
     
     def get_term_highlight(self, term):
-        """
-        default this field to the actual term. 
-        vocterm_service will set this if there is 
-        any special term highlighting to be done
-        """
-        return term.term
+        
+        # default to using raw term value
+        term_highlight = term.term
+        
+        if hasattr(term, "term_highlight") and term.term_highlight:
+            term_highlight = term.term_highlight
+            
+        return term_highlight
     
     
     
