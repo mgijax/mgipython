@@ -13,7 +13,11 @@ class GxdHTExperimentSummaryDomain(Serializer):
     __fields__ = [
         Field("_experiment_key"),
         Field("primaryid"),
+        Field("sample_count"),
     ]
+
+    def get_sample_count(self, item):
+        return len(item.samples)
 
 class GenotypeDomain(Serializer):
     __fields__ = [
