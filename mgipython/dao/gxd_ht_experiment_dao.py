@@ -119,4 +119,7 @@ class GxdHTExperimentDAO(BaseDAO):
                 sq = sq.correlate(GxdHTExperiment)
                 query = query.filter(sq.exists())
 
+
+        query = query.order_by(GxdHTExperiment.primaryid.asc())
+
         return query
