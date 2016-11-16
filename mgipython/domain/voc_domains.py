@@ -34,7 +34,6 @@ class EMAPATermDomain(Serializer):
     ]
     
     def get_startstage(self, term):
-        print term.term
         return term.emapa_info.startstage
     
     def get_endstage(self, term):
