@@ -47,6 +47,16 @@ class EMAPATermDomain(Serializer):
     def get_endstage(self, term):
         return term.emapa_info.endstage
     
+    def get_term_highlight(self, term):
+        
+        # default to using raw term value
+        term_highlight = term.term
+        
+        if hasattr(term, "term_highlight") and term.term_highlight:
+            term_highlight = term.term_highlight
+            
+        return term_highlight
+    
     
     
 class DagNodeDomain(Serializer):
