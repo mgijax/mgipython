@@ -13,6 +13,7 @@ class GxdHTExperimentSummaryDomain(Serializer):
     __fields__ = [
         Field("_experiment_key"),
         Field("primaryid"),
+        Field("_curationstate_key"),
     ]
 
 class GenotypeDomain(Serializer):
