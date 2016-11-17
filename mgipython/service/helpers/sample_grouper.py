@@ -3,20 +3,25 @@ import unicodedata
 
 class SampleGrouper:
 
-    def group_raw_samples(self, samples):
+    def group_raw_samples(self, samples, consolidate_rows):
         sample_hash = {}
         for row in samples:
             self.mergeDupColumns(row.raw_sample)
-        for row in samples:
-            if row.getKey() in sample_hash:
-                self.mergeRawSample(sample_hash[row.getKey()].raw_sample, row.raw_sample)
-            else:
-                sample_hash[row.getKey()] = row
-        keylist = natsorted(sample_hash.keys(), key=lambda y: str(y).lower())
-        retlist = []
-        for key in keylist:
-            retlist.append(sample_hash[key])
-        return retlist
+
+        print "Rows: " + str(consolidate_rows)
+        if consolidate_rows:
+            for row in samples:
+                if row.getKey() in sample_hash:
+                    self.mergeRawSample(sample_hash[row.getKey()].raw_sample, row.raw_sample)
+                else:
+                    sample_hash[row.getKey()] = row
+            keylist = natsorted(sample_hash.keys(), key=lambda y: str(y).lower())
+            retlist = []
+            for key in keylist:
+                retlist.append(sample_hash[key])
+            return retlist
+        else:
+            return samples
 
     def cleanData(self, in_string):
         if in_string == None:

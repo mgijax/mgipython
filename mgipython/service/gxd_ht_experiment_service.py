@@ -90,7 +90,7 @@ class GxdHTExperimentService():
         ret_experiment.load_from_model(experiment)
         return ret_experiment
  
-    def get_samples(self, key):
+    def get_samples(self, key, consolidate_rows):
         experiment = self.gxd_dao.get_by_key(key)
         if not experiment:
             raise NotFoundError("No GxdHTExperiment for _experiment_key=%d" % key)
@@ -114,7 +114,7 @@ class GxdHTExperimentService():
                 newItems.append(collection)
 
         #search_result.items = newItems
-        search_result.items = SampleGrouper().group_raw_samples(newItems)
+        search_result.items = SampleGrouper().group_raw_samples(newItems, consolidate_rows)
         search_result.total_count = len(newItems)
 
         return search_result
