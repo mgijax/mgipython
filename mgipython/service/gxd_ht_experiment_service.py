@@ -151,15 +151,15 @@ class GxdHTExperimentService():
 
         _note_key_index = BaseDAO()._get_next_key(Note)
 
-        if len(args["notes"]) > 0:
+        if len(args["notetext"]) > 0:
             if len(experiment.notes) > 0:
                 if len(experiment.notes[0].chunks) > 0:
-                    experiment.notes[0].chunks[0].note = args["notes"][0]["text"]
+                    experiment.notes[0].chunks[0].note = args["notetext"]
                 else:
                     notechunk = NoteChunk()
                     notechunk._note_key = experiment.notes[0]._note_key
                     notechunk.sequencenum = 1
-                    notechunk.note = args["notes"][0]["text"]
+                    notechunk.note = args["notetext"]
                     experiment.notes[0].chunks.append(notechunk)
             else:
                 newnote = Note()
@@ -172,7 +172,7 @@ class GxdHTExperimentService():
                 notechunk = NoteChunk()
                 notechunk._note_key = newnote._note_key
                 notechunk.sequencenum = 1
-                notechunk.note = args["notes"][0]["text"]
+                notechunk.note = args["notestext"]
 
                 newnote.chunks.append(notechunk)
                 experiment.notes.append(newnote)

@@ -31,7 +31,7 @@ class SearchQuery(Serializer):
     sorts is a list of sort argument strings
     paginator is a Paginator instance
     """
-    __field__ = [
+    __fields__ = [
         Field("_params"),
         Field("sorts"),
         Field("paginator", conversion_class=Paginator)

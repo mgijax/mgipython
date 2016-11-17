@@ -6,7 +6,6 @@ from mgipython.model import MGIUser
 from mgipython.model import db
 from base_dao import BaseDAO
 
-
 class GxdHTExperimentDAO(BaseDAO):
     
     model_class = GxdHTExperiment
@@ -100,6 +99,9 @@ class GxdHTExperimentDAO(BaseDAO):
             accession = db.aliased(Accession)
             secondaryid = search_query.get_value("secondaryid").lower()
             query = query.join(accession, GxdHTExperiment.secondaryid_objects).filter(db.func.lower(accession.accid).like(secondaryid))
+
+        if search_query.has_valid_param("notetext"):
+            print search_query.serialize()
 
         # The next portition of code will break if aliasing of gxd_experiment is used
         if search_query.has_valid_param("experiment_variables"):
