@@ -172,7 +172,7 @@ class GxdHTExperimentService():
                 notechunk = NoteChunk()
                 notechunk._note_key = newnote._note_key
                 notechunk.sequencenum = 1
-                notechunk.note = args["notestext"]
+                notechunk.note = args["notetext"]
 
                 newnote.chunks.append(notechunk)
                 experiment.notes.append(newnote)
