@@ -18,6 +18,10 @@ class SampleGrouper:
             retlist.append(sample_hash[key])
         return retlist
 
+    def cleanData(self, in_string):
+        if in_string == None:
+            in_string = ""
+        return unicodedata.normalize('NFKD', unicode(in_string)).encode('ascii','ignore')
 
     def mergeDupColumns(self, source_object):
 
@@ -29,7 +33,7 @@ class SampleGrouper:
              
             if char["category"] not in char_hash:
                 char_hash[char["category"]] = char
-                oldval = unicodedata.normalize('NFKD', char["value"]).encode('ascii','ignore')
+                oldval = self.cleanData(char["value"])
                 char_hash[char["category"]]["value"] = []
                 char_hash[char["category"]]["value"].append(str(oldval))
                 char_ret_hash.append(char)
@@ -44,7 +48,7 @@ class SampleGrouper:
             for var in source_object.variable:
                 if var["name"] not in var_hash:
                     var_hash[var["name"]] = var
-                    oldval = unicodedata.normalize('NFKD', var["value"]).encode('ascii','ignore')
+                    oldval = self.cleanData(var["value"])
                     var_hash[var["name"]]["value"] = []
                     var_hash[var["name"]]["value"].append(str(oldval))
                     var_ret_hash.append(var)
@@ -72,7 +76,7 @@ class SampleGrouper:
             for source in source_object.source["comment"]:
                 if source["name"] not in source_hash:
                     source_hash[source["name"]] = source
-                    oldval = unicodedata.normalize('NFKD', source["value"]).encode('ascii','ignore')
+                    oldval = self.cleanData(source["value"])
                     source_hash[source["name"]]["value"] = []
                     source_hash[source["name"]]["value"].append(str(oldval))
                     source_ret_hash.append(source)
@@ -83,7 +87,7 @@ class SampleGrouper:
             source = source_object.source["comment"]
             if source["name"] not in source_hash:
                 source_hash[source["name"]] = source
-                oldval = unicodedata.normalize('NFKD', source["value"]).encode('ascii','ignore')
+                oldval = self.cleanData(source["value"])
                 source_hash[source["name"]]["value"] = []
                 source_hash[source["name"]]["value"].append(str(oldval))
                 source_ret_hash.append(source)
