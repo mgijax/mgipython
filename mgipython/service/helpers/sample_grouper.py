@@ -101,6 +101,7 @@ class SampleGrouper:
         self.filterOutListDups(target_object.variable, source_object.variable, "name", "value")
         self.filterOutListDups(target_object.source["comment"], source_object.source["comment"], "name", "value")
         self.filterOutFieldDups(target_object.assay, source_object.assay, "name")
+        self.filterOutFieldDups(target_object.extract, source_object.extract, "name")
 
     def filterOutListDups(self, target_object_list, source_object_list, prime_field_name, sub_field_name):
         if target_object_list != None and source_object_list != None:
