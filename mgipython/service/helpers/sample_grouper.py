@@ -8,7 +8,6 @@ class SampleGrouper:
         for row in samples:
             self.mergeDupColumns(row.raw_sample)
 
-        print "Rows: " + str(consolidate_rows)
         if consolidate_rows:
             for row in samples:
                 if row.getKey() in sample_hash:
@@ -64,6 +63,10 @@ class SampleGrouper:
 
         source_hash = {}
         source_ret_hash = []
+
+        if not source_object.source:
+            source_object.source = {}
+
         if "comment" not in source_object.source:
             source_object.source["comment"] = []
 
