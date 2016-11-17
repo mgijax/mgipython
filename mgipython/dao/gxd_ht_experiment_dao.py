@@ -1,9 +1,5 @@
 from mgipython.service.helpers.date_helper import DateHelper
-from mgipython.model import GxdHTExperiment
-from mgipython.model import GxdHTExperimentVariable
-from mgipython.model import Accession
-from mgipython.model import MGIUser
-from mgipython.model import db
+from mgipython.model import *
 from base_dao import BaseDAO
 
 class GxdHTExperimentDAO(BaseDAO):
@@ -101,7 +97,9 @@ class GxdHTExperimentDAO(BaseDAO):
             query = query.join(accession, GxdHTExperiment.secondaryid_objects).filter(db.func.lower(accession.accid).like(secondaryid))
 
         if search_query.has_valid_param("notetext"):
-            print search_query.serialize()
+            notetext = search_query.get_value("notetext").lower()
+            query = query.join(Note, GxdHTExperiment.notes).join(NoteChunk, Note.chunks).filter(db.func.lower(NoteChunk.note).like(notetext))
+
 
         # The next portition of code will break if aliasing of gxd_experiment is used
         if search_query.has_valid_param("experiment_variables"):
