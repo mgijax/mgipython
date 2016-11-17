@@ -151,7 +151,7 @@ class GxdHTExperimentService():
 
         _note_key_index = BaseDAO()._get_next_key(Note)
 
-        if len(args["notetext"]) > 0:
+        if "notetext" in args and len(args["notetext"]) > 0:
             if len(experiment.notes) > 0:
                 if len(experiment.notes[0].chunks) > 0:
                     experiment.notes[0].chunks[0].note = args["notetext"]
