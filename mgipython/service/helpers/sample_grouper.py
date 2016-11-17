@@ -56,6 +56,16 @@ class SampleGrouper:
         source_ret_hash = []
         if "comment" not in source_object.source:
             source_object.source["comment"] = []
+
+        if source_object.assay and "name" in source_object.assay:
+            name = source_object.assay["name"]
+            source_object.assay["name"] = []
+            source_object.assay["name"].append(name)
+
+        if source_object.extract and "name" in source_object.extract:
+            name = source_object.extract["name"]
+            source_object.extract["name"] = []
+            source_object.extract["name"].append(name)
   
         if type(source_object.source["comment"]) is list:
             for source in source_object.source["comment"]:
@@ -82,11 +92,12 @@ class SampleGrouper:
         source_object.source["comment"] = source_ret_hash
 
     def mergeRawSample(self, target_object, source_object):
-        self.filterOutDups(target_object.characteristic, source_object.characteristic, "category", "value")
-        self.filterOutDups(target_object.variable, source_object.variable, "name", "value")
-        self.filterOutDups(target_object.source["comment"], source_object.source["comment"], "name", "value")
+        self.filterOutListDups(target_object.characteristic, source_object.characteristic, "category", "value")
+        self.filterOutListDups(target_object.variable, source_object.variable, "name", "value")
+        self.filterOutListDups(target_object.source["comment"], source_object.source["comment"], "name", "value")
+        self.filterOutFieldDups(target_object.assay, source_object.assay, "name")
 
-    def filterOutDups(self, target_object_list, source_object_list, prime_field_name, sub_field_name):
+    def filterOutListDups(self, target_object_list, source_object_list, prime_field_name, sub_field_name):
         if target_object_list != None and source_object_list != None:
             item_hash = {}
             for item in target_object_list:
@@ -100,3 +111,8 @@ class SampleGrouper:
                             item_hash[item[prime_field_name]][sub_field_name].append(value)
                 else:
                     item_hash[item[prime_field_name]] = item
+
+    def filterOutFieldDups(self, target_value_list, source_value_list, field):
+        for value in source_value_list[field]:
+            if value not in target_value_list[field]:
+                target_value_list[field].append(value)
