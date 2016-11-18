@@ -109,9 +109,17 @@ class GxdHTExperimentService():
             #domain_sample._experiment_key = int(key)
             #domain_sample.name = raw_domain_sample.source["name"]
             #collection.domain_sample = domain_sample
-            if (raw_domain_sample.source != None and "name" in raw_domain_sample.source) or not consolidate_rows:
-                if raw_domain_sample.source != None and"name" in raw_domain_sample.source:
-                    collection.name = raw_domain_sample.source["name"]
+            if not raw_domain_sample.source:
+                raw_domain_sample.source = {} 
+
+            if "name" not in raw_domain_sample.source:
+                if raw_domain_sample.assay and "name" in raw_domain_sample.assay:
+                    raw_domain_sample.source["name"] = raw_domain_sample.assay["name"]
+                   
+            if "name" in raw_domain_sample.source:
+                collection.name = raw_domain_sample.source["name"]
+
+            if "name" in raw_domain_sample.source or consolidate_rows:
                 newItems.append(collection)
 
         #search_result.items = newItems

@@ -64,9 +64,6 @@ class SampleGrouper:
         source_hash = {}
         source_ret_hash = []
 
-        if not source_object.source:
-            source_object.source = {}
-
         if "comment" not in source_object.source:
             source_object.source["comment"] = []
 
@@ -108,8 +105,10 @@ class SampleGrouper:
         self.filterOutListDups(target_object.characteristic, source_object.characteristic, "category", "value")
         self.filterOutListDups(target_object.variable, source_object.variable, "name", "value")
         self.filterOutListDups(target_object.source["comment"], source_object.source["comment"], "name", "value")
-        self.filterOutFieldDups(target_object.assay, source_object.assay, "name")
-        self.filterOutFieldDups(target_object.extract, source_object.extract, "name")
+        if source_object.assay:
+            self.filterOutFieldDups(target_object.assay, source_object.assay, "name")
+        if source_object.extract:
+            self.filterOutFieldDups(target_object.extract, source_object.extract, "name")
 
     def filterOutListDups(self, target_object_list, source_object_list, prime_field_name, sub_field_name):
         if target_object_list != None and source_object_list != None:
