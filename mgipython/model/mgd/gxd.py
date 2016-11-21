@@ -109,7 +109,7 @@ class Genotype(db.Model, MGIModel):
     comb1_notetype_key = 1016
     _mp_annottype_key = 1002
     _disease_geno_anottype_key = 1005
-    _disease_geno_DO_anottype_key = 1020
+    _disease_geno_DO_anottype_key = 1025
     
     # combination1 is a cache loaded note
     combination1_cache = db.column_property(
