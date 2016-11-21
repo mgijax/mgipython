@@ -113,6 +113,14 @@ class VocTerm(db.Model,MGIModel):
             Accession._object_key==_term_key)) 
     )
     
+    primarynumericid = db.column_property(
+        db.select([Accession.numericpart]).
+        where(db.and_(Accession._mgitype_key==_mgitype_key,
+            Accession.preferred==1,
+            Accession.private==0, 
+            Accession._object_key==_term_key)) 
+    )
+    
     vocabname = db.column_property(
         db.select([Vocab.name]).
         where(Vocab._vocab_key==_vocab_key) 
