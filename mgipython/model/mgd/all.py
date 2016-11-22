@@ -325,7 +325,7 @@ class Allele(db.Model,MGIModel):
         return terms
 
     @property
-    def disease_terms_DO(self):
+    def disease_terms_do(self):
         terms = [d.term for d in self.disease_annots_do]
         terms.sort()
         return terms
