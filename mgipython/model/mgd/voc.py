@@ -58,7 +58,6 @@ class VocTermEMAPS(db.Model,MGIModel):
     primaryid = db.column_property(
         db.select([Accession.accid]).
         where(db.and_(Accession._mgitype_key==13,
-            Accession.prefixpart=='MGI:',
             Accession.preferred==1,
             Accession.private==0, 
             Accession._object_key==_term_key)) 
