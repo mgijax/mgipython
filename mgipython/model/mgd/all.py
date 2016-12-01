@@ -86,6 +86,7 @@ class Allele(db.Model,MGIModel):
     _nomen_note_type = 1022
     _mp_annottype_key = 1002
     _disease_geno_anottype_key = 1005
+    _disease_geno_DO_anottype_key = 1020
     _disease_allele_annottype_key = 1012
     # joined fields
 
@@ -272,6 +273,11 @@ class Allele(db.Model,MGIModel):
                         "VocAnnot._annottype_key.in_(%s))" % 
                         [_disease_geno_anottype_key,_disease_allele_annottype_key])
 
+    disease_annots_DO = db.relationship("VocAnnot",
+            secondary=AlleleAnnotView.__table__,
+            secondaryjoin="and_(VocAnnot._annot_key==AlleleAnnotView._annot_key,"
+                        "VocAnnot._annottype_key.in_(%s))" % 
+                        [_disease_geno_DO_anottype_key,_disease_allele_annottype_key])
 
     explicit_references = db.relationship("Reference",
         secondary=ReferenceAssoc.__table__,
@@ -315,6 +321,12 @@ class Allele(db.Model,MGIModel):
     @property
     def disease_terms(self):
         terms = [d.term for d in self.disease_annots]
+        terms.sort()
+        return terms
+
+    @property
+    def disease_terms_DO(self):
+        terms = [d.term for d in self.disease_annots_DO]
         terms.sort()
         return terms
 
