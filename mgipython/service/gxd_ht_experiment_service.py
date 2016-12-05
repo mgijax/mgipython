@@ -225,7 +225,7 @@ class GxdHTExperimentService():
                     if sample_collection.sample_domain != None:
                         self.loadOrganisms()
 
-                        if sample_collection.sample_domain.notes != None and len(sample_collection.sample_domain.notes) > 0:
+                        if sample_collection.sample_domain.notes != None and len(sample_collection.sample_domain.notes) > 0 and len(sample_collection.sample_domain.notes[0].text) > 0:
                             
                             if len(newsample.notes) > 0:
                                 if len(newsample.notes[0].chunks) > 0:
@@ -309,7 +309,11 @@ class GxdHTExperimentService():
                         newsample.name = sample_collection.sample_domain.name
 
                         if sample_collection.sample_domain._emapa_key:
-                            emaps_object = self.lookupEMAPSObject(sample_collection.sample_domain._emapa_key)
+                            if sample_collection.sample_domain.emaps_object:
+                                emaps_object = sample_collection.sample_domain.emaps_object
+                            else:
+                                emaps_object = self.lookupEMAPSObject(sample_collection.sample_domain._emapa_key)
+
                             if emaps_object != None:
                                 newsample._emapa_key = emaps_object._emapa_term_key
                                 newsample._stage_key = emaps_object._stage_key
