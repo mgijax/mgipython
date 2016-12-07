@@ -309,7 +309,7 @@ class GxdHTExperimentService():
                         newsample.name = sample_collection.sample_domain.name
 
                         if sample_collection.sample_domain._emapa_key:
-                            if sample_collection.sample_domain.emaps_object:
+                            if sample_collection.sample_domain.emaps_object and sample_collection.sample_domain.emaps_object.primaryid == sample_collection.sample_domain._emapa_key:
                                 emaps_object = sample_collection.sample_domain.emaps_object
                             else:
                                 emaps_object = self.lookupEMAPSObject(sample_collection.sample_domain._emapa_key)
