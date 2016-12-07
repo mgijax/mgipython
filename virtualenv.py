@@ -491,7 +491,7 @@ def _install_req(py_executable, unzip=False, distribute=False,
     if not distribute:
         egg_path = 'setuptools-*-py%s.egg' % sys.version[:3]
         found, egg_path = _find_file(egg_path, search_dirs)
-        project_name = 'setuptools'
+        project_name = 'setuptools==30.1.0'
         bootstrap_script = EZ_SETUP_PY
         tgz_path = None
     else:
