@@ -88,6 +88,7 @@ class Allele(db.Model,MGIModel):
     _disease_geno_anottype_key = 1005
     _disease_geno_do_anottype_key = 1025
     _disease_allele_annottype_key = 1012
+    _disease_allele_do_annottype_key = 1024
     # joined fields
 
     alleletype = db.column_property(
@@ -277,7 +278,7 @@ class Allele(db.Model,MGIModel):
             secondary=AlleleAnnotView.__table__,
             secondaryjoin="and_(VocAnnot._annot_key==AlleleAnnotView._annot_key,"
                         "VocAnnot._annottype_key.in_(%s))" % 
-                        [_disease_geno_do_anottype_key,_disease_allele_annottype_key])
+                        [_disease_geno_do_anottype_key,_disease_allele_do_annottype_key])
 
     explicit_references = db.relationship("Reference",
         secondary=ReferenceAssoc.__table__,
