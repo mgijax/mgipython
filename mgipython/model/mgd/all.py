@@ -244,6 +244,13 @@ class Allele(db.Model,MGIModel):
         uselist=False
     )
 
+    ikmcnoteRaw = db.relationship("Note",
+        primaryjoin="and_(Allele._allele_key==Note._object_key, " 
+                "Note._mgitype_key==11, Note._notetype_key==1041) ",
+        foreign_keys="[Note._object_key]",
+        uselist=False
+    )
+
     generalnoteRaw = db.relationship("Note",
         primaryjoin="and_(Allele._allele_key==Note._object_key, " 
                 "Note._mgitype_key==11, Note._notetype_key==1020) ",
@@ -353,6 +360,11 @@ class Allele(db.Model,MGIModel):
     def nomennote(self):
         nomennote = self.nomennoteRaw or ''
         return nomennote
+
+    @property
+    def ikmcnote(self):
+        ikmcnoteRaw = self.ikmcnoteRaw or ''
+        return ikmcnoteRaw
 
     @property
     def primaryimageid(self):
