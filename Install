@@ -14,7 +14,7 @@ printf "\nTo use this installation in the future, you will need to call source b
 source bin/activate
 
 printf "\nInstalling psycopg2\n"
-easy_install psycopg2
+easy_install psycopg2==2.6.1
 
 printf "\nInstalling SQL Alchemy\n"
 
