@@ -214,6 +214,14 @@ class Marker(db.Model,MGIModel):
         foreign_keys="[Assay._marker_key]",
         backref=db.backref("marker", uselist=False))
     
+    locationnote = db.relationship("Note",
+        primaryjoin="and_(Allele._allele_key==Note._object_key, " 
+                "Note._mgitype_key==2, Note._notetype_key==1049) ",
+        foreign_keys="[Note._object_key]",
+        uselist=False
+    )
+
+
     # antibodies
     # backref defined in Antibody class
     
