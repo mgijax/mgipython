@@ -108,8 +108,7 @@ class Genotype(db.Model, MGIModel):
     _mgitype_key = 12
     comb1_notetype_key = 1016
     _mp_annottype_key = 1002
-    _disease_geno_anottype_key = 1005
-    _disease_geno_do_anottype_key = 1025
+    _disease_geno_anottype_key = 1020
     
     # combination1 is a cache loaded note
     combination1_cache = db.column_property(
@@ -149,11 +148,6 @@ class Genotype(db.Model, MGIModel):
     disease_annots = db.relationship("VocAnnot",
             primaryjoin="and_(VocAnnot._object_key==Genotype._genotype_key,"
                         "VocAnnot._annottype_key==%d)" % _disease_geno_anottype_key,
-            foreign_keys="[VocAnnot._object_key]")
-    
-    disease_annots_do = db.relationship("VocAnnot",
-            primaryjoin="and_(VocAnnot._object_key==Genotype._genotype_key,"
-                        "VocAnnot._annottype_key==%d)" % _disease_geno_do_anottype_key,
             foreign_keys="[VocAnnot._object_key]")
     
     primaryimagepane = db.relationship("ImagePane",
