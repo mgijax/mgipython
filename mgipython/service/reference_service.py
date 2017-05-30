@@ -47,7 +47,7 @@ class ReferenceService():
         search references by args object
         """
         
-        references = self.reference_dao.search(
+        references = self.reference_dao.search_old(
             accids=args.accids,
             journal=args.journal,
             title=args.title,
@@ -69,7 +69,7 @@ class ReferenceService():
         populates has_* exists attributes for reference
         summary
         """
-        references = self.reference_dao.search(
+        references = self.reference_dao.search_old(
             accids=form.accids.data,
             primeAuthor=form.primeAuthor.data,
             authors=form.authors.data,

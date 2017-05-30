@@ -1,4 +1,5 @@
 from mgipython.model import Accession, Allele, Marker, Reference
+from mgipython.service_schema.search import SearchQuery
 from mgipython.model import db
 from mgipython.parse.parser import splitCommaInput
 from base_dao import BaseDAO
@@ -33,8 +34,104 @@ class ReferenceDAO(BaseDAO):
         
         return query.filter( sq.exists() ).first()
 
+    def _build_search_query(self, search_query):
+        query = Reference.query
+        
+        if search_query.has_valid_param("title"):
+            title = search_query.get_value("title").lower()
+            query = query.filter(db.func.lower(Reference.title).like(title))
+            
+        if search_query.has_valid_param("authors"):
+            authors = search_query.get_value("authors").lower()
+            query = query.filter(db.func.lower(Reference.authors).like(authors))
+            
+        if search_query.has_valid_param("primaryAuthor"):
+            primaryAuthor = search_query.get_value("primaryAuthor").lower()
+            query = query.filter(db.func.lower(Reference._primary).like(primaryAuthor))
+            
+        if search_query.has_valid_param("journal"):
+            journal = search_query.get_value("journal").lower()
+            query = query.filter(db.func.lower(Reference.journal).like(journal))
+            
+        if search_query.has_valid_param("volume"):
+            volume = search_query.get_value("volume").lower()
+            query = query.filter(db.func.lower(Reference.vol) == volume)
+            
+        if search_query.has_valid_param("year"):
+            query = query.filter(Reference.year == int(search_query.get_value("year")))
 
-    def search(self, accids=None, 
+        # IDs of markers related to the reference
+        if search_query.has_valid_param("marker_id"):
+            marker_id = search_query.get_value("marker_id")
+            marker_accession = db.aliased(Accession)
+            sub_reference = db.aliased(Reference)
+            
+            # doing this in a subquery
+            sq = db.session.query(sub_reference) \
+                    .join(sub_reference.all_markers) \
+                    .join(marker_accession, Marker.mgiid_object) \
+                    .filter(marker_accession.accid==marker_id) \
+                    .filter(sub_reference._refs_key==Reference._refs_key) \
+                    .correlate(Reference)
+                    
+            query = query.filter(sq.exists())
+            
+        # IDs of alleles related to the reference
+        if search_query.has_valid_param("allele_id"):
+            allele_id = search_query.get_value("allele_id")
+            allele_accession = db.aliased(Accession)
+            sub_reference = db.aliased(Reference)
+            
+            # doing this in a subquery
+            sq = db.session.query(sub_reference) \
+                    .join(sub_reference.explicit_alleles) \
+                    .join(allele_accession, Allele.mgiid_object) \
+                    .filter(allele_accession.accid==allele_id) \
+                    .filter(sub_reference._refs_key==Reference._refs_key) \
+                    .correlate(Reference)
+                
+            query = query.filter(sq.exists())
+            
+        # any IDs associated with the reference
+        if search_query.has_valid_param("accids"):
+            # split and prep the IDs
+            accidsToSearch = splitCommaInput(search_query.get_value("accids").lower())
+            
+            # subquery for searching by J#
+            jnum_accession = db.aliased(Accession)
+            sub_ref1 = db.aliased(Reference)
+            ref_sq = db.session.query(sub_ref1) \
+                    .join(jnum_accession, sub_ref1.jnumid_object) \
+                    .filter(db.func.lower(jnum_accession.accid).in_(accidsToSearch)) \
+                    .filter(sub_ref1._refs_key==Reference._refs_key) \
+                    .correlate(Reference)
+
+            query1 = query.filter(ref_sq.exists())
+
+            # subquery for searching by PubMed ID        
+            pmed_accession = db.aliased(Accession)
+            sub_ref2 = db.aliased(Reference)
+            pmed_sq = db.session.query(sub_ref2) \
+                    .join(pmed_accession, sub_ref2.pubmedid_object) \
+                    .filter(db.func.lower(pmed_accession.accid).in_(accidsToSearch)) \
+                    .filter(sub_ref2._refs_key==Reference._refs_key) \
+                    .correlate(Reference)
+            
+            query2 = query.filter(pmed_sq.exists())
+            
+            # pull the two subqueries together into the main query using a union
+            query = query1.union(query2)
+                            
+        # setting sort, roughly bringing newer references to the top
+        query = query.order_by(Reference._refs_key.desc())
+    
+        # setting limit on number of returned references, if specified
+        if search_query.has_valid_param("limit"):
+            query = query.limit(int(search_query.get_value("limit"))) 
+
+        return query
+
+    def search_old(self, accids=None, 
                      journal=None, 
                      title=None,
                      authors=None, 
@@ -58,104 +155,34 @@ class ReferenceDAO(BaseDAO):
         """
         
         query = Reference.query
+        search_query = SearchQuery()
         
         if authors:
-            authors = authors.lower()
-            query = query.filter(
-                db.func.lower(Reference.authors).like(authors),
-            )
+            search_query.set_param("authors", authors)
     
         if primeAuthor:
-            primeAuthor = primeAuthor.lower()
-            query = query.filter(
-                db.func.lower(Reference._primary).like(primeAuthor),
-            )
+            search_query.set_param("primaryAuthor", primeAuthor)
     
         if journal:
-            journal = journal.lower()
-            query = query.filter(
-                db.func.lower(Reference.journal).like(journal),
-            )
+            search_query.set_param("journal", journal)
             
         if title:
-            title = title.lower()
-            query = query.filter(
-                db.func.lower(Reference.title).like(title),
-            )
+            search_query.set_param("title", title)
     
         if volume:
-            volume = volume.lower()
-            query = query.filter(db.func.lower(Reference.vol)==volume)
+            search_query.set_param("volume", volume)
     
         if year:
-            query = query.filter(Reference.year==int(year))
+            search_query.set_param("year", year)
     
         if marker_id:
-            marker_accession = db.aliased(Accession)
-            sub_reference = db.aliased(Reference)
-            sq = db.session.query(sub_reference) \
-                    .join(sub_reference.all_markers) \
-                    .join(marker_accession, Marker.mgiid_object) \
-                    .filter(marker_accession.accid==marker_id) \
-                    .filter(sub_reference._refs_key==Reference._refs_key) \
-                    .correlate(Reference)
-                    
-            query = query.filter(
-                    sq.exists()     
-            )
+            search_query.set_param("marker_id", marker_id)
             
         if allele_id:
-            allele_accession = db.aliased(Accession)
-            sub_reference = db.aliased(Reference)
-            sq = db.session.query(sub_reference) \
-                    .join(sub_reference.explicit_alleles) \
-                    .join(allele_accession, Allele.mgiid_object) \
-                    .filter(allele_accession.accid==allele_id) \
-                    .filter(sub_reference._refs_key==Reference._refs_key) \
-                    .correlate(Reference)
-                
-            query = query.filter(
-                    sq.exists()
-            )
-            
+            search_query.set_param("allele_id", allele_id)
             
         if accids:
-            # split and prep the IDs
-            accids = accids.lower()
-            accidsToSearch = splitCommaInput(accids)
-            
-            jnum_accession = db.aliased(Accession)
-            sub_ref1 = db.aliased(Reference)
-            
-            ref_sq = db.session.query(sub_ref1) \
-                    .join(jnum_accession, sub_ref1.jnumid_object) \
-                    .filter(db.func.lower(jnum_accession.accid).in_(accidsToSearch)) \
-                    .filter(sub_ref1._refs_key==Reference._refs_key) \
-                    .correlate(Reference)
-                    
-            pmed_accession = db.aliased(Accession)
-            sub_ref2 = db.aliased(Reference)
-                    
-            pmed_sq = db.session.query(sub_ref2) \
-                    .join(pmed_accession, sub_ref2.pubmedid_object) \
-                    .filter(db.func.lower(pmed_accession.accid).in_(accidsToSearch)) \
-                    .filter(sub_ref2._refs_key==Reference._refs_key) \
-                    .correlate(Reference)
-            
-            query1 = query.filter(ref_sq.exists())
-            query2 = query.filter(pmed_sq.exists())
-            
-            query = query1.union(query2)
-                            
-        # setting sort
-        query = query.order_by(Reference._refs_key.desc())
-    
-        # setting limit on number of returned references
-        if limit:
-            query = query.limit(limit) 
-                       
-        references = query.all()
+            search_query.set_param("accids", accids)
            
-        return references
-    
+        return self.search(search_query).items
     
