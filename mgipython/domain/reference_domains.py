@@ -18,4 +18,18 @@ class SmallReference(Serializer):
       Field("short_citation")
     ]
     
+class ReferenceDomain(Serializer):
+    """
+    Represents a reference object
+    """
+    __fields__ = [
+       Field("_refs_key"),
+       Field("jnumid"),
+       Field("title"), 
+       Field("authors"), 
+       Field("primaryAuthor"), 
+       Field("journal"), 
+       Field("volume"), 
+       Field("year")
+    ]
     

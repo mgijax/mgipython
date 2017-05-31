@@ -119,6 +119,14 @@ class Reference(db.Model,MGIModel):
     # backref in AntibodyPrep class
 
     @property
+    def volume(self):
+        return self.vol
+
+    @property
+    def primaryAuthor(self):
+        return self._primary
+
+    @property
     def citation(self):
         authors = self.authors or ''
         title = self.title or ''

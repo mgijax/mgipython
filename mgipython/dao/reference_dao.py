@@ -58,42 +58,45 @@ class ReferenceDAO(BaseDAO):
             query = query.filter(db.func.lower(Reference.vol) == volume)
             
         if search_query.has_valid_param("year"):
-            query = query.filter(Reference.year == int(search_query.get_value("year")))
+            if int(search_query.get_value("year")) > 0:
+                query = query.filter(Reference.year == int(search_query.get_value("year")))
 
-        # IDs of markers related to the reference
+        # ID of marker related to the reference
         if search_query.has_valid_param("marker_id"):
             marker_id = search_query.get_value("marker_id")
-            marker_accession = db.aliased(Accession)
-            sub_reference = db.aliased(Reference)
+            if marker_id.strip() != '':
+                marker_accession = db.aliased(Accession)
+                sub_reference = db.aliased(Reference)
             
-            # doing this in a subquery
-            sq = db.session.query(sub_reference) \
+                # doing this in a subquery
+                sq = db.session.query(sub_reference) \
                     .join(sub_reference.all_markers) \
                     .join(marker_accession, Marker.mgiid_object) \
                     .filter(marker_accession.accid==marker_id) \
                     .filter(sub_reference._refs_key==Reference._refs_key) \
                     .correlate(Reference)
                     
-            query = query.filter(sq.exists())
+                query = query.filter(sq.exists())
             
-        # IDs of alleles related to the reference
+        # ID of allele related to the reference
         if search_query.has_valid_param("allele_id"):
             allele_id = search_query.get_value("allele_id")
-            allele_accession = db.aliased(Accession)
-            sub_reference = db.aliased(Reference)
+            if allele_id.strip() != '':
+                allele_accession = db.aliased(Accession)
+                sub_reference = db.aliased(Reference)
             
-            # doing this in a subquery
-            sq = db.session.query(sub_reference) \
+                # doing this in a subquery
+                sq = db.session.query(sub_reference) \
                     .join(sub_reference.explicit_alleles) \
                     .join(allele_accession, Allele.mgiid_object) \
                     .filter(allele_accession.accid==allele_id) \
                     .filter(sub_reference._refs_key==Reference._refs_key) \
                     .correlate(Reference)
                 
-            query = query.filter(sq.exists())
+                query = query.filter(sq.exists())
             
         # any IDs associated with the reference
-        if search_query.has_valid_param("accids"):
+        if search_query.has_valid_param("accids") and (search_query.get_value("accids").strip() != ''):
             # split and prep the IDs
             accidsToSearch = splitCommaInput(search_query.get_value("accids").lower())
             
