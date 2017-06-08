@@ -2,13 +2,7 @@
 from mgipython.modelconfig import db
 from ..core import *
 from acc import Accession, AccessionReference
-
-
-class ReviewStatus(db.Model,MGIModel):
-    __tablename__="bib_reviewstatus"
-    _reviewstatus_key = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String())
-    
+from voc import *
 
 class ReferenceCitationCache(db.Model,MGIModel):
     __tablename__ = "bib_citation_cache"
@@ -20,20 +14,15 @@ class ReferenceCitationCache(db.Model,MGIModel):
 class Reference(db.Model,MGIModel):
     __tablename__ = "bib_refs"
     _refs_key = db.Column(db.Integer, primary_key=True)
-    _reviewstatus_key = db.Column(db.Integer())
-    # hide the join key from views
-    _reviewstatus_key.hidden=True
-    reftype = db.Column(db.String())
+    _referencetype_key = db.Column(db.Integer())
     authors = db.Column(db.String())
     _primary = db.Column(db.String())
     title = db.Column(db.String())
     # this is a way to fix unicode.decode errors, but has a slight performance cost
     abstract = db.Column(db.String(convert_unicode='force',unicode_error="ignore"))
-    #abstract = db.Column(db.String())
     journal = db.Column(db.String())
     year = db.Column(db.Integer())
     date = db.Column(db.Integer())
-    nlmstatus = db.Column(db.String())
     isreviewarticle = db.Column(db.Integer())
     #date.quote=False
     vol = db.Column(db.Integer())
@@ -43,25 +32,32 @@ class Reference(db.Model,MGIModel):
     # constants
     _mgitype_key=1    
     expressionImageClass = "6481781"
+    _referencetype_vocab_key = 131
 
     # mapped columns
-    #jnumid = db.Column(db.String())
+
+	
+    # turned off because reftype is not being used anywhere
+    # but would like to did this to the view
+    # unit test fails when this is turned on
+    reftype = db.column_property(
+        db.select([VocTerm.term]).
+        where(db.and_(VocTerm._term_key==_referencetype_key, \
+            VocTerm._vocab_key==_referencetype_vocab_key))
+    )   
+
     jnumid = db.column_property(
         db.select([Accession.accid]). \
         where(db.and_(Accession._mgitype_key==_mgitype_key, 
             Accession.prefixpart=='J:', 
             Accession._object_key==_refs_key)) 
     )
-    #pubmedid = db.Column(db.String())
+
     pubmedid = db.column_property(
          db.select([Accession.accid]). \
          where(db.and_(Accession._mgitype_key==_mgitype_key, 
              Accession._logicaldb_key==29, 
              Accession._object_key==_refs_key)) 
-     )
-    reviewstatus = db.column_property(
-        db.select([ReviewStatus.name]). \
-        where(ReviewStatus._reviewstatus_key==_reviewstatus_key)
     )
     
     # Relationships
