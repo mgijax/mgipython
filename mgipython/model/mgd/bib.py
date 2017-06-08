@@ -40,11 +40,11 @@ class Reference(db.Model,MGIModel):
     # turned off because reftype is not being used anywhere
     # but would like to did this to the view
     # unit test fails when this is turned on
-    reftype = db.column_property(
-        db.select([VocTerm.term]).
-        where(db.and_(VocTerm._term_key==_referencetype_key, \
-            VocTerm._vocab_key==_referencetype_vocab_key))
-    )   
+    #reftype = db.column_property(
+        #db.select([VocTerm.term]).
+        #where(db.and_(VocTerm._term_key==_referencetype_key, \
+            #VocTerm._vocab_key==_referencetype_vocab_key))
+    #)   
 
     jnumid = db.column_property(
         db.select([Accession.accid]). \
