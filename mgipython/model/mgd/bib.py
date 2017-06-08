@@ -36,15 +36,11 @@ class Reference(db.Model,MGIModel):
 
     # mapped columns
 
-	
-    # turned off because reftype is not being used anywhere
-    # but would like to did this to the view
-    # unit test fails when this is turned on
-    #reftype = db.column_property(
-        #db.select([VocTerm.term]).
-        #where(db.and_(VocTerm._term_key==_referencetype_key, \
-            #VocTerm._vocab_key==_referencetype_vocab_key))
-    #)   
+    # must use db.relationship or unit test will fail
+    reftype = db.relationship("VocTerm",
+                primaryjoin="Reference._referencetype_key==VocTerm._term_key",
+                foreign_keys="[VocTerm._term_key]",
+                uselist=False)
 
     jnumid = db.column_property(
         db.select([Accession.accid]). \
@@ -65,9 +61,7 @@ class Reference(db.Model,MGIModel):
     # accessions
     # backref defined in Accession class
     
-    citation_cache = db.relationship("ReferenceCitationCache", 
-        uselist=False
-    )
+    citation_cache = db.relationship("ReferenceCitationCache", uselist=False)
 
     gxd_images = db.relationship("Image",
         primaryjoin="and_(Image._refs_key==Reference._refs_key, "
