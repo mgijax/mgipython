@@ -320,8 +320,10 @@ class Allele(db.Model,MGIModel):
 
     @property
     def disease_terms(self):
-        terms = [d.term for d in self.disease_annots]
-        terms.sort()
+	terms = ""
+	if (self.disease_annots):
+          terms = [d.term for d in self.disease_annots]
+          terms.sort()
         return terms
 
     @property
