@@ -25,11 +25,15 @@ class ReferenceDomain(Serializer):
     __fields__ = [
        Field("_refs_key"),
        Field("jnumid"),
+       Field("pubmedid"),
+       Field("doiid"),
        Field("title"), 
+      Field("short_citation"),
        Field("authors"), 
        Field("primaryAuthor"), 
        Field("journal"), 
        Field("volume"), 
        Field("year")
     ]
+    
     
