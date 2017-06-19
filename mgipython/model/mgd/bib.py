@@ -55,6 +55,13 @@ class Reference(db.Model,MGIModel):
              Accession._logicaldb_key==29, 
              Accession._object_key==_refs_key)) 
     )
+
+    doiid = db.column_property(
+         db.select([Accession.accid]). \
+         where(db.and_(Accession._mgitype_key==_mgitype_key, 
+             Accession._logicaldb_key==65, 
+             Accession._object_key==_refs_key)) 
+    )
     
     # Relationships
     
