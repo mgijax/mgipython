@@ -23,3 +23,9 @@ class MGITypeDomain(Serializer):
         Field("dbview"),
         Field("organisms", conversion_class=MGIOrganism),
     ]
+
+class ActualDbDomain(Serializer):
+    __fields__ = [
+        Field("url"),
+        Field("name")
+    ]
