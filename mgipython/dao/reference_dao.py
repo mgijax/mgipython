@@ -3,6 +3,7 @@ from mgipython.service_schema.search import SearchQuery
 from mgipython.model import db, MLDReferenceNoteChunk, VocTerm
 from mgipython.parse.parser import splitCommaInput
 from base_dao import BaseDAO
+import re
 
 import logging
 
@@ -126,33 +127,94 @@ class ReferenceDAO(BaseDAO):
             
         # any IDs associated with the reference
         if search_query.has_valid_param("accids") and (search_query.get_value("accids").strip() != ''):
-            # split and prep the IDs
-            accidsToSearch = splitCommaInput(search_query.get_value("accids").lower())
+            # split and prep the IDs; eliminate extra spaces, replacing them with commas
+            idString = re.sub('[\s,]+', ',', search_query.get_value("accids").lower())
+            accidsToSearch = splitCommaInput(idString)
             
-            # subquery for searching by J#
-            jnum_accession = db.aliased(Accession)
-            sub_ref1 = db.aliased(Reference)
-            ref_sq = db.session.query(sub_ref1) \
+            # Searching by accession ID is valid for J: numbers, MGI IDs, PubMed IDs, GO_REF IDs,
+            # and DOI (Journal Link) IDs.  Each of these is currently handled in a subquery, but
+            # for performance reasons, we try to include only those that are relevant to a given
+            # set of input IDs.
+            
+            subqueries = []
+            
+            # subquery for searching by J# (if j: present in string)
+            if idString.find("j:") >= 0:
+                jnum_accession = db.aliased(Accession)
+                sub_ref1 = db.aliased(Reference)
+                ref_sq = db.session.query(sub_ref1) \
                     .join(jnum_accession, sub_ref1.jnumid_object) \
                     .filter(db.func.lower(jnum_accession.accid).in_(accidsToSearch)) \
                     .filter(sub_ref1._refs_key==Reference._refs_key) \
                     .correlate(Reference)
 
-            query1 = query.filter(ref_sq.exists())
+                subqueries.append(query.filter(ref_sq.exists()))
 
-            # subquery for searching by PubMed ID        
-            pmed_accession = db.aliased(Accession)
-            sub_ref2 = db.aliased(Reference)
-            pmed_sq = db.session.query(sub_ref2) \
+            # subquery for searching by PubMed ID (if only digits in at least one ID)
+            digitsOnly = False              # True if at least one ID has only digits
+            for accid in accidsToSearch:
+                if re.match('^[0-9]+$', accid):
+                    digitsOnly = True
+                    break
+                
+            if digitsOnly:
+                pmed_accession = db.aliased(Accession)
+                sub_ref2 = db.aliased(Reference)
+                pmed_sq = db.session.query(sub_ref2) \
                     .join(pmed_accession, sub_ref2.pubmedid_object) \
                     .filter(db.func.lower(pmed_accession.accid).in_(accidsToSearch)) \
                     .filter(sub_ref2._refs_key==Reference._refs_key) \
                     .correlate(Reference)
             
-            query2 = query.filter(pmed_sq.exists())
+                subqueries.append(query.filter(pmed_sq.exists()))
+            
+            # subquery for searching by MGI ID (if mgi: present in string)
+            if idString.find("mgi:") >= 0:
+                mgi_accession = db.aliased(Accession)
+                sub_ref3 = db.aliased(Reference)
+                mgi_sq = db.session.query(sub_ref3) \
+                    .join(mgi_accession, sub_ref3.mgiid_object) \
+                    .filter(db.func.lower(mgi_accession.accid).in_(accidsToSearch)) \
+                    .filter(sub_ref3._refs_key==Reference._refs_key) \
+                    .correlate(Reference)
+
+                subqueries.append(query.filter(mgi_sq.exists()))
+
+            # subquery for searching by DOI ID (if at least one ID begins with 10.)
+            beginsTen = False              # True if at least one ID begins with 10.
+            for accid in accidsToSearch:
+                if accid.startswith('10.'):
+                    beginsTen = True
+                    break
+                
+            if beginsTen:
+                doi_accession = db.aliased(Accession)
+                sub_ref4 = db.aliased(Reference)
+                doi_sq = db.session.query(sub_ref4) \
+                    .join(doi_accession, sub_ref4.doiid_object) \
+                    .filter(db.func.lower(doi_accession.accid).in_(accidsToSearch)) \
+                    .filter(sub_ref4._refs_key==Reference._refs_key) \
+                    .correlate(Reference)
+            
+                subqueries.append(query.filter(doi_sq.exists()))
+            
+            # subquery for GO_REF ID (if the ID string contains with go_ref:)
+            if idString.find("go_ref:") >= 0:
+                goref_accession = db.aliased(Accession)
+                sub_ref5 = db.aliased(Reference)
+                goref_sq = db.session.query(sub_ref5) \
+                    .join(goref_accession, sub_ref5.gorefid_object) \
+                    .filter(db.func.lower(goref_accession.accid).in_(accidsToSearch)) \
+                    .filter(sub_ref5._refs_key==Reference._refs_key) \
+                    .correlate(Reference)
+
+                subqueries.append(query.filter(goref_sq.exists())) 
             
             # pull the two subqueries together into the main query using a union
-            query = query1.union(query2)
+            if subqueries:
+                query = subqueries[0]
+                for subquery in subqueries[1:]:
+                    query = query.union(subquery)
                             
         # setting sort, roughly bringing newer references to the top
         query = query.order_by(Reference._refs_key.desc())

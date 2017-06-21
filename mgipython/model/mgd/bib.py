@@ -93,6 +93,33 @@ class Reference(db.Model,MGIModel):
             foreign_keys="[Accession._object_key]",
             uselist=False)
     
+    doiid_object = db.relationship("Accession",
+            primaryjoin="and_(Accession._object_key==Reference._refs_key,"
+                            "Accession.preferred==1,"
+                            "Accession._logicaldb_key==65,"
+                            "Accession._mgitype_key==%d)" % _mgitype_key,
+            foreign_keys="[Accession._object_key]",
+            uselist=False)
+    
+    # note that GO_REF IDs are private and not preferred
+    gorefid_object = db.relationship("Accession",
+            primaryjoin="and_(Accession._object_key==Reference._refs_key,"
+                            "Accession.private==1,"
+                            "Accession.preferred==0,"
+                            "Accession._logicaldb_key==185,"
+                            "Accession._mgitype_key==%d)" % _mgitype_key,
+            foreign_keys="[Accession._object_key]",
+            uselist=False)
+    
+    mgiid_object = db.relationship("Accession",
+            primaryjoin="and_(Accession._object_key==Reference._refs_key,"
+                            "Accession.prefixpart=='MGI:',"
+                            "Accession.preferred==1,"
+                            "Accession._logicaldb_key==1,"
+                            "Accession._mgitype_key==%d)" % _mgitype_key,
+            foreign_keys="[Accession._object_key]",
+            uselist=False)
+    
     # explicit_alleles
     # backref defined in Allele class
     
