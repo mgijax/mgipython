@@ -1,6 +1,6 @@
 from mgipython.model import Accession, Allele, Marker, Reference
 from mgipython.service_schema.search import SearchQuery
-from mgipython.model import db
+from mgipython.model import db, MLDReferenceNoteChunk, VocTerm
 from mgipython.parse.parser import splitCommaInput
 from base_dao import BaseDAO
 
@@ -53,13 +53,14 @@ class ReferenceDAO(BaseDAO):
             abstract = search_query.get_value("abstract").lower()
             query = query.filter(db.func.lower(Reference.abstract).like(abstract))
             
-#        if search_query.has_valid_param("notes"):
-#            notes = search_query.get_value("notes").lower()
-#            query = query.filter(db.func.lower(Reference.experiment_notechunks).like(notes))
+        if search_query.has_valid_param("notes"):
+            notes = search_query.get_value("notes").lower()
+            query = query.join(MLDReferenceNoteChunk, Reference.experiment_notechunks).filter(db.func.lower(MLDReferenceNoteChunk.note).like(notes))
             
         if search_query.has_valid_param("reference_type"):
             referenceType = search_query.get_value("reference_type").lower()
-            query = query.filter(db.func.lower(Reference.reftype).like(referenceType))
+            query = query.join(Reference.reftype)
+            query = query.filter(db.func.lower(VocTerm.term).like(referenceType))
             
         if search_query.has_valid_param("is_review"):
             if int(search_query.get_value("is_review")) > 0:
