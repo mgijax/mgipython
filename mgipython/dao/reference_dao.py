@@ -85,7 +85,7 @@ class ReferenceDAO(BaseDAO):
             
         if search_query.has_valid_param("volume"):
             volume = search_query.get_value("volume").lower()
-            query = query.filter(db.func.lower(Reference.vol) == volume)
+            query = query.filter(db.func.lower(Reference.vol).like(volume))
             
         if search_query.has_valid_param("year"):
             if int(search_query.get_value("year")) > 0:
