@@ -37,6 +37,34 @@ class ReferenceDAO(BaseDAO):
     def _build_search_query(self, search_query):
         query = Reference.query
         
+        if search_query.has_valid_param("issue"):
+            issue = search_query.get_value("issue").lower()
+            query = query.filter(db.func.lower(Reference.issue).like(issue))
+            
+        if search_query.has_valid_param("pages"):
+            pages = search_query.get_value("pages").lower()
+            query = query.filter(db.func.lower(Reference.pgs).like(pages))
+            
+        if search_query.has_valid_param("date"):
+            date = search_query.get_value("date").lower()
+            query = query.filter(db.func.lower(Reference.date).like(date))
+            
+        if search_query.has_valid_param("abstract"):
+            abstract = search_query.get_value("abstract").lower()
+            query = query.filter(db.func.lower(Reference.abstract).like(abstract))
+            
+#        if search_query.has_valid_param("notes"):
+#            notes = search_query.get_value("notes").lower()
+#            query = query.filter(db.func.lower(Reference.experiment_notechunks).like(notes))
+            
+        if search_query.has_valid_param("reference_type"):
+            referenceType = search_query.get_value("reference_type").lower()
+            query = query.filter(db.func.lower(Reference.reftype).like(referenceType))
+            
+        if search_query.has_valid_param("is_review"):
+            if int(search_query.get_value("is_review")) > 0:
+                query = query.filter(Reference.isreviewarticle == int(search_query.get_value("is_review")))
+            
         if search_query.has_valid_param("title"):
             title = search_query.get_value("title").lower()
             query = query.filter(db.func.lower(Reference.title).like(title))
@@ -45,8 +73,8 @@ class ReferenceDAO(BaseDAO):
             authors = search_query.get_value("authors").lower()
             query = query.filter(db.func.lower(Reference.authors).like(authors))
             
-        if search_query.has_valid_param("primaryAuthor"):
-            primaryAuthor = search_query.get_value("primaryAuthor").lower()
+        if search_query.has_valid_param("primary_author"):
+            primaryAuthor = search_query.get_value("primary_author").lower()
             query = query.filter(db.func.lower(Reference._primary).like(primaryAuthor))
             
         if search_query.has_valid_param("journal"):
@@ -164,7 +192,7 @@ class ReferenceDAO(BaseDAO):
             search_query.set_param("authors", authors)
     
         if primeAuthor:
-            search_query.set_param("primaryAuthor", primeAuthor)
+            search_query.set_param("primary_author", primeAuthor)
     
         if journal:
             search_query.set_param("journal", journal)
