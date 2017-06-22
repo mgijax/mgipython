@@ -64,7 +64,7 @@ class ReferenceDAO(BaseDAO):
             query = query.filter(db.func.lower(VocTerm.term).like(referenceType))
             
         if search_query.has_valid_param("is_review"):
-            if int(search_query.get_value("is_review")) > 0:
+            if int(search_query.get_value("is_review")) in (0, 1):
                 query = query.filter(Reference.isreviewarticle == int(search_query.get_value("is_review")))
             
         if search_query.has_valid_param("title"):
