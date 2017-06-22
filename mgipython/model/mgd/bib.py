@@ -10,6 +10,13 @@ class ReferenceCitationCache(db.Model,MGIModel):
     citation = db.Column(db.String)
     short_citation = db.Column(db.String)
     
+class ReferenceNoteChunk(db.Model, MGIModel):
+    __tablename__ = "bib_notes"
+    _refs_key = db.Column(db.Integer,
+                          mgi_fk("bib_refs._refs_key"),
+                          primary_key=True)
+    sequencenum = db.Column(db.Integer, primary_key=True)
+    note = db.Column(db.String())
 
 class Reference(db.Model,MGIModel):
     __tablename__ = "bib_refs"
@@ -130,6 +137,7 @@ class Reference(db.Model,MGIModel):
     # backref defined in Marker class
     
     experiment_notechunks = db.relationship("MLDReferenceNoteChunk")
+    reference_notechunks = db.relationship("ReferenceNoteChunk")
     
     expression_assays = db.relationship("Assay",
         primaryjoin="Reference._refs_key==Assay._refs_key",
@@ -167,6 +175,10 @@ class Reference(db.Model,MGIModel):
     @property
     def experimentnote(self):
         return "".join([nc.note for nc in self.experiment_notechunks])
+            
+    @property
+    def referencenote(self):
+        return "".join([nc.note for nc in self.reference_notechunks])
             
     @property
     def short_citation(self):

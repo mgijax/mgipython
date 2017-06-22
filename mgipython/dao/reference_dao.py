@@ -1,6 +1,6 @@
 from mgipython.model import Accession, Allele, Marker, Reference
 from mgipython.service_schema.search import SearchQuery
-from mgipython.model import db, MLDReferenceNoteChunk, VocTerm
+from mgipython.model import db, MLDReferenceNoteChunk, VocTerm, ReferenceNoteChunk
 from mgipython.parse.parser import splitCommaInput
 from base_dao import BaseDAO
 import re
@@ -56,7 +56,7 @@ class ReferenceDAO(BaseDAO):
             
         if search_query.has_valid_param("notes"):
             notes = search_query.get_value("notes").lower()
-            query = query.join(MLDReferenceNoteChunk, Reference.experiment_notechunks).filter(db.func.lower(MLDReferenceNoteChunk.note).like(notes))
+            query = query.join(ReferenceNoteChunk, Reference.reference_notechunks).filter(db.func.lower(ReferenceNoteChunk.note).like(notes))
             
         if search_query.has_valid_param("reference_type"):
             referenceType = search_query.get_value("reference_type").lower()
