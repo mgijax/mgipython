@@ -2,6 +2,7 @@
 from mgipython.modelconfig import db
 from ..core import *
 from acc import Accession, AccessionReference
+from mgipython.domain.reference_domains import WorkflowStatusDomain
 from voc import *
 
 class ReferenceCitationCache(db.Model,MGIModel):
@@ -17,6 +18,40 @@ class ReferenceNoteChunk(db.Model, MGIModel):
                           primary_key=True)
     sequencenum = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.String())
+
+class WorkflowStatus(db.Model, MGIModel):
+    __tablename__ = 'bib_workflow_status'
+
+    # constants
+    workflow_group_vocab_key = 127
+    workflow_status_vocab_key = 128
+
+    # fields from database
+    _assoc_key = db.Column(db.Integer, primary_key=True)
+    _refs_key = db.Column(db.Integer, mgi_fk("bib_refs._refs_key"))
+    iscurrent = db.Column(db.Integer)
+    _group_key = db.Column(db.Integer)
+    _status_key = db.Column(db.Integer)
+    
+    # associated vocabulary terms
+    groupVT = db.relationship("VocTerm",
+        primaryjoin="and_(VocTerm._term_key==WorkflowStatus._group_key, "
+            "VocTerm._vocab_key == %d) " % workflow_group_vocab_key,
+        foreign_keys="[VocTerm._term_key]",
+        uselist=False
+    )
+
+    statusVT = db.relationship("VocTerm",
+        primaryjoin="and_(VocTerm._term_key==WorkflowStatus._status_key, "
+            "VocTerm._vocab_key == %d) " % workflow_status_vocab_key,
+        foreign_keys="[VocTerm._term_key]",
+        uselist=False
+    )
+    
+    def loadTerms(self):
+        self.group = self.groupVT.term
+        self.status = self.statusVT.term
+        self.groupAbbreviation = self.groupVT.abbreviation
 
 class Reference(db.Model,MGIModel):
     __tablename__ = "bib_refs"
@@ -126,6 +161,25 @@ class Reference(db.Model,MGIModel):
                             "Accession._mgitype_key==%d)" % _mgitype_key,
             foreign_keys="[Accession._object_key]",
             uselist=False)
+    
+    current_statuses = db.relationship("WorkflowStatus",
+            primaryjoin="and_(WorkflowStatus._refs_key==Reference._refs_key,"
+                "WorkflowStatus.iscurrent == 1)",
+            foreign_keys="[WorkflowStatus._refs_key]",
+            uselist=True)
+
+    @property
+    def current_workflow_statuses(self):
+        statuses = []
+        for wfStatus in self.current_statuses:
+            wfStatus.loadTerms()
+            
+#            g = wfStatus.group
+#            s = wfStatus.status
+            dom = WorkflowStatusDomain()
+            dom.load_from_model(wfStatus)
+            statuses.append(dom.serialize())
+        return statuses
     
     # explicit_alleles
     # backref defined in Allele class

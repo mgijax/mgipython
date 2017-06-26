@@ -28,12 +28,24 @@ class ReferenceDomain(Serializer):
        Field("pubmedid"),
        Field("doiid"),
        Field("title"), 
-      Field("short_citation"),
+       Field("short_citation"),
        Field("authors"), 
        Field("primaryAuthor"), 
        Field("journal"), 
        Field("volume"), 
-       Field("year")
+       Field("year"),
+       Field("current_workflow_statuses")
     ]
     
-    
+class WorkflowStatusDomain(Serializer):
+    """
+    Represents a status entry for one workflow group for a reference
+    """
+    __fields__ = [
+        Field("_group_key"),
+        Field("_status_key"),
+        Field("iscurrent"),
+        Field("group"),
+        Field("groupAbbreviation"),
+        Field("status")
+    ] 
