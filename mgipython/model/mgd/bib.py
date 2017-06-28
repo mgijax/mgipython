@@ -79,7 +79,7 @@ class Reference(db.Model,MGIModel):
     # mapped columns
 
     # must use db.relationship or unit test will fail
-    reftype = db.relationship("VocTerm",
+    reftype_object = db.relationship("VocTerm",
                 primaryjoin="Reference._referencetype_key==VocTerm._term_key",
                 foreign_keys="[VocTerm._term_key]",
                 uselist=False)
@@ -88,6 +88,15 @@ class Reference(db.Model,MGIModel):
         db.select([Accession.accid]). \
         where(db.and_(Accession._mgitype_key==_mgitype_key, 
             Accession.prefixpart=='J:', 
+            Accession._logicaldb_key==1,
+            Accession._object_key==_refs_key)) 
+    )
+
+    mgiid = db.column_property(
+        db.select([Accession.accid]). \
+        where(db.and_(Accession._mgitype_key==_mgitype_key, 
+            Accession.prefixpart=='MGI:', 
+            Accession._logicaldb_key==1,
             Accession._object_key==_refs_key)) 
     )
 
@@ -102,6 +111,15 @@ class Reference(db.Model,MGIModel):
          db.select([Accession.accid]). \
          where(db.and_(Accession._mgitype_key==_mgitype_key, 
              Accession._logicaldb_key==65, 
+             Accession._object_key==_refs_key)) 
+    )
+    
+    gorefid = db.column_property(
+         db.select([Accession.accid]). \
+         where(db.and_(Accession._mgitype_key==_mgitype_key, 
+             Accession._logicaldb_key==185, 
+             Accession.private==1,
+             Accession.preferred==0,
              Accession._object_key==_refs_key)) 
     )
     
@@ -181,6 +199,10 @@ class Reference(db.Model,MGIModel):
             statuses.append(dom.serialize())
         return statuses
     
+    @property
+    def reftype(self):
+        return self.reftype_object.term
+
     # explicit_alleles
     # backref defined in Allele class
     

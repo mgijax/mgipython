@@ -36,6 +36,34 @@ class ReferenceDomain(Serializer):
        Field("year"),
        Field("current_workflow_statuses")
     ]
+
+class ReferenceFullDomain(Serializer):
+    """
+    Represents a reference object
+    """
+    __fields__ = [
+       Field("_refs_key"),
+       Field("reftype"),
+       Field("isreviewarticle"),
+       Field("jnumid"),
+       Field("pubmedid"),
+       Field("doiid"),
+       Field("mgiid"),
+       Field("gorefid"),
+       Field("title"), 
+       Field("short_citation"),
+       Field("authors"), 
+       Field("primaryAuthor"), 
+       Field("journal"), 
+       Field("volume"), 
+       Field("issue"), 
+       Field("pages"), 
+       Field("year"),
+       Field("abstract"), 
+       Field("date"),
+       Field("current_workflow_statuses"),
+       Field("referencenote")
+    ]
     
 class WorkflowStatusDomain(Serializer):
     """

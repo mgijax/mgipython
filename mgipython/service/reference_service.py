@@ -3,7 +3,7 @@ from mgipython.model import GxdIndexRecord
 from mgipython.model.query import batchLoadAttributeExists
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
-from mgipython.domain.reference_domains import SmallReference, ReferenceDomain
+from mgipython.domain.reference_domains import SmallReference, ReferenceDomain, ReferenceFullDomain
 from mgipython.domain import convert_models
 from mgipython.parse import parse_jnumber
 
@@ -17,6 +17,12 @@ class ReferenceService():
             raise NotFoundError("No Reference for _refs_key=%d" % _refs_key)
     
         return reference
+    
+    def get_domain_by_key(self, _refs_key):
+        referenceFull = ReferenceFullDomain()
+        referenceFull.load_from_model(self.get_by_key(_refs_key))
+
+        return referenceFull
     
     
     def get_by_jnum_id(self, jnum_id):
