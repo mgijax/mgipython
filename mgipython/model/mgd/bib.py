@@ -79,7 +79,7 @@ class Reference(db.Model,MGIModel):
     # mapped columns
 
     # must use db.relationship or unit test will fail
-    reftype_object = db.relationship("VocTerm",
+    reftype = db.relationship("VocTerm",
                 primaryjoin="Reference._referencetype_key==VocTerm._term_key",
                 foreign_keys="[VocTerm._term_key]",
                 uselist=False)
@@ -199,10 +199,6 @@ class Reference(db.Model,MGIModel):
             statuses.append(dom.serialize())
         return statuses
     
-    @property
-    def reftype(self):
-        return self.reftype_object.term
-
     # explicit_alleles
     # backref defined in Allele class
     
