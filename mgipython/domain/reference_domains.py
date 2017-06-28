@@ -34,7 +34,11 @@ class ReferenceDomain(Serializer):
        Field("journal"), 
        Field("volume"), 
        Field("year"),
-       Field("current_workflow_statuses")
+       Field("go_status"),
+       Field("ap_status"),
+       Field("gxd_status"),
+       Field("qtl_status"),
+       Field("tumor_status")
     ]
 
 class ReferenceFullDomain(Serializer):

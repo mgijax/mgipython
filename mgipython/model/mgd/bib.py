@@ -32,6 +32,7 @@ class WorkflowStatus(db.Model, MGIModel):
     iscurrent = db.Column(db.Integer)
     _group_key = db.Column(db.Integer)
     _status_key = db.Column(db.Integer)
+    loaded = False
     
     # associated vocabulary terms
     groupVT = db.relationship("VocTerm",
@@ -49,9 +50,12 @@ class WorkflowStatus(db.Model, MGIModel):
     )
     
     def loadTerms(self):
-        self.group = self.groupVT.term
-        self.status = self.statusVT.term
-        self.groupAbbreviation = self.groupVT.abbreviation
+        if not self.loaded:
+            self.group = self.groupVT.term
+            self.status = self.statusVT.term
+            self.groupAbbreviation = self.groupVT.abbreviation
+            self.loaded = True
+        return
 
 class Reference(db.Model,MGIModel):
     __tablename__ = "bib_refs"
@@ -199,6 +203,34 @@ class Reference(db.Model,MGIModel):
             statuses.append(dom.serialize())
         return statuses
     
+    def get_current_status(self, abbrev):
+        for wfStatus in self.current_statuses:
+            wfStatus.loadTerms()
+
+            if wfStatus.groupAbbreviation == abbrev:
+                return wfStatus.status
+        return None
+    
+    @property
+    def go_status(self):
+        return self.get_current_status("GO")
+
+    @property
+    def ap_status(self):
+        return self.get_current_status("AP")
+
+    @property
+    def qtl_status(self):
+        return self.get_current_status("QTL")
+
+    @property
+    def gxd_status(self):
+        return self.get_current_status("GXD")
+
+    @property
+    def tumor_status(self):
+        return self.get_current_status("Tumor")
+
     # explicit_alleles
     # backref defined in Allele class
     
