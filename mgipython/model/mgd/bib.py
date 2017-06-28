@@ -231,6 +231,10 @@ class Reference(db.Model,MGIModel):
     def tumor_status(self):
         return self.get_current_status("Tumor")
 
+    @property
+    def reference_type(self):
+        return self.reftype.term
+ 
     # explicit_alleles
     # backref defined in Allele class
     

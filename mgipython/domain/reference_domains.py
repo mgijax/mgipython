@@ -47,7 +47,7 @@ class ReferenceFullDomain(Serializer):
     """
     __fields__ = [
        Field("_refs_key"),
-       Field("reftype"),
+       Field("reference_type"),
        Field("isreviewarticle"),
        Field("jnumid"),
        Field("pubmedid"),
@@ -65,7 +65,11 @@ class ReferenceFullDomain(Serializer):
        Field("year"),
        Field("abstract"), 
        Field("date"),
-       Field("current_workflow_statuses"),
+       Field("go_status"),
+       Field("ap_status"),
+       Field("gxd_status"),
+       Field("qtl_status"),
+       Field("tumor_status"),
        Field("referencenote")
     ]
     
