@@ -281,6 +281,10 @@ class Reference(db.Model,MGIModel):
             rdate,vol,issue,pgs)
             
     @property
+    def pages(self):
+        return self.pgs
+    
+    @property
     def experimentnote(self):
         return "".join([nc.note for nc in self.experiment_notechunks])
             
