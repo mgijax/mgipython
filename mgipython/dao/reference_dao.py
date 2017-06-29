@@ -1,6 +1,6 @@
 from mgipython.model import Accession, Allele, Marker, Reference
 from mgipython.service_schema.search import SearchQuery
-from mgipython.model import db, MLDReferenceNoteChunk, VocTerm, ReferenceNoteChunk
+from mgipython.model import db, MLDReferenceNoteChunk, VocTerm, ReferenceNoteChunk, WorkflowStatus
 from mgipython.parse.parser import splitCommaInput
 from base_dao import BaseDAO
 import re
@@ -127,6 +127,49 @@ class ReferenceDAO(BaseDAO):
                     .correlate(Reference)
                 
                 query = query.filter(sq.exists())
+            
+        # any choices for workflow group status should be OR-ed together
+        workflow_groups = {
+            'ap_status' : 'AP',             # fieldname : group abbreviation
+            'go_status' : 'GO',
+            'gxd_status' : 'GXD',
+            'qtl_status' : 'QTL',
+            'tumor_status' : 'Tumor',
+        }
+
+        status_choices = []                 # list of (workflow group abbreviation, [ status values ])
+        for fieldname in workflow_groups:
+            if search_query.has_valid_param(fieldname):
+                status_choices.append( (workflow_groups[fieldname], search_query.get_value(fieldname).split(',')) )
+
+        if status_choices:
+            subqueries = []
+            for (group, statusList) in status_choices:
+                ref_table = db.aliased(Reference)
+                wfStatus_table = db.aliased(WorkflowStatus)
+                status_table = db.aliased(VocTerm)
+                group_table = db.aliased(VocTerm)
+
+                sq = db.session.query(ref_table) \
+                    .join(wfStatus_table, ref_table.current_statuses) \
+                    .join(status_table, wfStatus_table.statusVT) \
+                    .join(group_table, wfStatus_table.groupVT) \
+                    .filter(status_table.term.in_(statusList)) \
+                    .filter(group_table.abbreviation == group) \
+                    .filter(ref_table._refs_key==Reference._refs_key) \
+                    .correlate(Reference)
+                    
+                subqueries.append(query.filter(sq.exists()))
+                
+            # union the subqueries together to find all the references with at least one
+            # of the selected status values
+            if subqueries:
+                statusQuery = subqueries[0]
+                for subquery in subqueries[1:]:
+                    statusQuery = statusQuery.union(subquery)
+                            
+            # turn the union into an exists query and join it to the main query
+            query = statusQuery
             
         # any IDs associated with the reference
         if search_query.has_valid_param("accids") and (search_query.get_value("accids").strip() != ''):
