@@ -5,6 +5,19 @@ from acc import Accession, AccessionReference
 from mgipython.domain.reference_domains import WorkflowStatusDomain
 from voc import *
 
+AP_GROUP = "AP"                     # workflow group abbreviations
+GO_GROUP = "GO"
+GXD_GROUP = "GXD"
+QTL_GROUP = "QTL"
+TUMOR_GROUP = "Tumor"
+
+NOT_ROUTED_STATUS = "Not Routed"    # workflow group statuses
+ROUTED_STATUS = "Routed"
+CHOSEN_STATUS = "Chosen"
+REJECTED_STATUS = "Rejected"
+INDEXED_STATUS = "Indexed"
+FULLY_CURATED_STATUS = "Fully curated"
+
 class ReferenceCitationCache(db.Model,MGIModel):
     __tablename__ = "bib_citation_cache"
     _refs_key = db.Column(db.Integer, mgi_fk("bib_refs._refs_key"), primary_key=True)
@@ -184,6 +197,12 @@ class Reference(db.Model,MGIModel):
             foreign_keys="[Accession._object_key]",
             uselist=False)
     
+    @property
+    def reference_type(self):
+        return self.reftype.term
+ 
+    ###--- methods for getting the current status for each workflow group (for summary display) ---###
+    
     current_statuses = db.relationship("WorkflowStatus",
             primaryjoin="and_(WorkflowStatus._refs_key==Reference._refs_key,"
                 "WorkflowStatus.iscurrent == 1)",
@@ -196,8 +215,6 @@ class Reference(db.Model,MGIModel):
         for wfStatus in self.current_statuses:
             wfStatus.loadTerms()
             
-#            g = wfStatus.group
-#            s = wfStatus.status
             dom = WorkflowStatusDomain()
             dom.load_from_model(wfStatus)
             statuses.append(dom.serialize())
@@ -213,28 +230,157 @@ class Reference(db.Model,MGIModel):
     
     @property
     def go_status(self):
-        return self.get_current_status("GO")
+        return self.get_current_status(GO_GROUP)
 
     @property
     def ap_status(self):
-        return self.get_current_status("AP")
+        return self.get_current_status(AP_GROUP)
 
     @property
     def qtl_status(self):
-        return self.get_current_status("QTL")
+        return self.get_current_status(QTL_GROUP)
 
     @property
     def gxd_status(self):
-        return self.get_current_status("GXD")
+        return self.get_current_status(GXD_GROUP)
 
     @property
     def tumor_status(self):
-        return self.get_current_status("Tumor")
+        return self.get_current_status(TUMOR_GROUP)
+
+    ###--- methods for retrieving 1/0 flag for each status/workflow group pair (for detail display) ---###
+    
+    def group_has_status(self, abbrev, status):
+        # returns 1 if the workflow group with the given abbreviation currently has the given status, 0 if not
+        
+        if self.get_current_status(abbrev) == status:
+            return 1
+        return 0
+    
+    # Fields for workflow status are formatted like status_<group abbreviation>_<status>, where the status has
+    # spaces replaced by underscores.  A 1 value for one of these fields indicates the status is current for that
+    # workflow group, while a 0 indicates it is not.
 
     @property
-    def reference_type(self):
-        return self.reftype.term
- 
+    def status_AP_Not_Routed(self):
+        return self.group_has_status(AP_GROUP, NOT_ROUTED_STATUS)
+
+    @property
+    def status_AP_Routed(self):
+        return self.group_has_status(AP_GROUP, ROUTED_STATUS)
+
+    @property
+    def status_AP_Chosen(self):
+        return self.group_has_status(AP_GROUP, CHOSEN_STATUS)
+
+    @property
+    def status_AP_Rejected(self):
+        return self.group_has_status(AP_GROUP, REJECTED_STATUS)
+
+    @property
+    def status_AP_Indexed(self):
+        return self.group_has_status(AP_GROUP, INDEXED_STATUS)
+
+    @property
+    def status_AP_Fully_curated(self):
+        return self.group_has_status(AP_GROUP, FULLY_CURATED_STATUS)
+
+    @property
+    def status_GO_Not_Routed(self):
+        return self.group_has_status(GO_GROUP, NOT_ROUTED_STATUS)
+
+    @property
+    def status_GO_Routed(self):
+        return self.group_has_status(GO_GROUP, ROUTED_STATUS)
+
+    @property
+    def status_GO_Chosen(self):
+        return self.group_has_status(GO_GROUP, CHOSEN_STATUS)
+
+    @property
+    def status_GO_Rejected(self):
+        return self.group_has_status(GO_GROUP, REJECTED_STATUS)
+
+    @property
+    def status_GO_Indexed(self):
+        return self.group_has_status(GO_GROUP, INDEXED_STATUS)
+
+    @property
+    def status_GO_Fully_curated(self):
+        return self.group_has_status(GO_GROUP, FULLY_CURATED_STATUS)
+
+    @property
+    def status_GXD_Not_Routed(self):
+        return self.group_has_status(GXD_GROUP, NOT_ROUTED_STATUS)
+
+    @property
+    def status_GXD_Routed(self):
+        return self.group_has_status(GXD_GROUP, ROUTED_STATUS)
+
+    @property
+    def status_GXD_Chosen(self):
+        return self.group_has_status(GXD_GROUP, CHOSEN_STATUS)
+
+    @property
+    def status_GXD_Rejected(self):
+        return self.group_has_status(GXD_GROUP, REJECTED_STATUS)
+
+    @property
+    def status_GXD_Indexed(self):
+        return self.group_has_status(GXD_GROUP, INDEXED_STATUS)
+
+    @property
+    def status_GXD_Fully_curated(self):
+        return self.group_has_status(GXD_GROUP, FULLY_CURATED_STATUS)
+
+    @property
+    def status_QTL_Not_Routed(self):
+        return self.group_has_status(QTL_GROUP, NOT_ROUTED_STATUS)
+
+    @property
+    def status_QTL_Routed(self):
+        return self.group_has_status(QTL_GROUP, ROUTED_STATUS)
+
+    @property
+    def status_QTL_Chosen(self):
+        return self.group_has_status(QTL_GROUP, CHOSEN_STATUS)
+
+    @property
+    def status_QTL_Rejected(self):
+        return self.group_has_status(QTL_GROUP, REJECTED_STATUS)
+
+    @property
+    def status_QTL_Indexed(self):
+        return self.group_has_status(QTL_GROUP, INDEXED_STATUS)
+
+    @property
+    def status_QTL_Fully_curated(self):
+        return self.group_has_status(QTL_GROUP, FULLY_CURATED_STATUS)
+
+    @property
+    def status_Tumor_Not_Routed(self):
+        return self.group_has_status(TUMOR_GROUP, NOT_ROUTED_STATUS)
+
+    @property
+    def status_Tumor_Routed(self):
+        return self.group_has_status(TUMOR_GROUP, ROUTED_STATUS)
+
+    @property
+    def status_Tumor_Chosen(self):
+        return self.group_has_status(TUMOR_GROUP, CHOSEN_STATUS)
+
+    @property
+    def status_Tumor_Rejected(self):
+        return self.group_has_status(TUMOR_GROUP, REJECTED_STATUS)
+
+    @property
+    def status_Tumor_Indexed(self):
+        return self.group_has_status(TUMOR_GROUP, INDEXED_STATUS)
+
+    @property
+    def status_Tumor_Fully_curated(self):
+        return self.group_has_status(TUMOR_GROUP, FULLY_CURATED_STATUS)
+
     # explicit_alleles
     # backref defined in Allele class
     

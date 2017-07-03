@@ -6,6 +6,13 @@ import logging
 
 logger = logging.getLogger("mgipython.domain")
 
+###--- set of computed fieldnames for workflow group / status pairs ---###
+
+GROUP_STATUS_FIELDS = []
+
+for groupName in [ 'GO', 'AP', 'GXD', 'QTL', 'Tumor' ]:
+    for status in [ 'Not_Routed', 'Routed', 'Chosen', 'Rejected', 'Indexed', 'Fully_curated' ]:
+        GROUP_STATUS_FIELDS.append( Field("status_%s_%s" % (groupName, status)) )
 
 class SmallReference(Serializer):
     """
@@ -39,7 +46,7 @@ class ReferenceDomain(Serializer):
        Field("gxd_status"),
        Field("qtl_status"),
        Field("tumor_status")
-    ]
+    ] + GROUP_STATUS_FIELDS
 
 class ReferenceFullDomain(Serializer):
     """
@@ -71,7 +78,7 @@ class ReferenceFullDomain(Serializer):
        Field("qtl_status"),
        Field("tumor_status"),
        Field("referencenote")
-    ]
+    ] + GROUP_STATUS_FIELDS
     
 class WorkflowStatusDomain(Serializer):
     """

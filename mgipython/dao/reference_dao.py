@@ -128,23 +128,28 @@ class ReferenceDAO(BaseDAO):
                 
                 query = query.filter(sq.exists())
             
-        # any choices for workflow group status should be OR-ed together
-        workflow_groups = {
-            'ap_status' : 'AP',             # fieldname : group abbreviation
-            'go_status' : 'GO',
-            'gxd_status' : 'GXD',
-            'qtl_status' : 'QTL',
-            'tumor_status' : 'Tumor',
-        }
+        # any choices for workflow group status should be OR-ed together.  Search fields for workflow
+        # status are formatted like status_<group abbreviation>_<status>, where the status has
+        # spaces replaced by underscores.  The presence of one of these fields indicates the user
+        # wants to return references that have that status for that workflow group.
+        
+        workflow_groups = {}                    # fieldname : (group abbrev, status)
+        for groupName in [ 'GO', 'AP', 'GXD', 'QTL', 'Tumor' ]:
+            for status in [ 'Not_Routed', 'Routed', 'Chosen', 'Rejected', 'Indexed', 'Fully_curated' ]:
+                fieldname = 'status_%s_%s' % (groupName, status)
+                workflow_groups[fieldname]= (groupName, status.replace('_', ' '))
 
-        status_choices = []                 # list of (workflow group abbreviation, [ status values ])
+        status_choices = {}                 # workflow group abbrev : [ desired statuses ]
         for fieldname in workflow_groups:
             if search_query.has_valid_param(fieldname):
-                status_choices.append( (workflow_groups[fieldname], search_query.get_value(fieldname).split(',')) )
+                abbrev, status = workflow_groups[fieldname]
+                if abbrev not in status_choices:
+                    status_choices[abbrev] = []
+                status_choices[abbrev].append(status)
 
         if status_choices:
             subqueries = []
-            for (group, statusList) in status_choices:
+            for (group, statusList) in status_choices.items():
                 ref_table = db.aliased(Reference)
                 wfStatus_table = db.aliased(WorkflowStatus)
                 status_table = db.aliased(VocTerm)
