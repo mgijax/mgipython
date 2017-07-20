@@ -449,5 +449,12 @@ class Reference(db.Model,MGIModel):
         return "%s, %s %s;%s(%s):%s" % (primary, journal,
                 rdate, vol, issue, pgs)
 
+    @property
+    def isreviewarticleYN(self):
+        if self.isreviewarticle == 0:
+            return 'No'
+        return 'Yes'
+
+
     def __repr__(self):
         return "<Reference %s,%s>"%(self.title,self.authors)
