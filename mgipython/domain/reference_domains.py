@@ -55,7 +55,7 @@ class ReferenceFullDomain(Serializer):
     __fields__ = [
        Field("_refs_key"),
        Field("reference_type"),
-       Field("isreviewarticle"),
+       Field("isreviewarticleYN"),
        Field("jnumid"),
        Field("pubmedid"),
        Field("doiid"),
