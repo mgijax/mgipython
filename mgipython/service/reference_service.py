@@ -18,19 +18,6 @@ class ReferenceService():
     
         return reference
     
-    def get_domain_by_key(self, _refs_key):
-        # first load model object and hit a lazy-loaded field to make sure it's populated
-        # before serialization
-        reference = self.get_by_key(_refs_key)
-        cws = reference.current_workflow_statuses
-        rt = reference.reftype.term
-
-        # then use it to populate a domain object
-        referenceFull = ReferenceFullDomain()
-        referenceFull.load_from_model(reference)
-
-        return referenceFull
-    
     
     def get_by_jnum_id(self, jnum_id):
         """

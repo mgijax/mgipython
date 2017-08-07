@@ -1,6 +1,6 @@
 from mgipython.model import Accession, Allele, Marker, Reference
 from mgipython.service_schema.search import SearchQuery
-from mgipython.model import db, MLDReferenceNoteChunk, VocTerm, ReferenceNoteChunk, WorkflowStatus
+from mgipython.model import db, MLDReferenceNoteChunk, VocTerm, ReferenceNoteChunk
 from mgipython.parse.parser import splitCommaInput
 from base_dao import BaseDAO
 import re
@@ -127,54 +127,6 @@ class ReferenceDAO(BaseDAO):
                     .correlate(Reference)
                 
                 query = query.filter(sq.exists())
-            
-        # any choices for workflow group status should be OR-ed together.  Search fields for workflow
-        # status are formatted like status_<group abbreviation>_<status>, where the status has
-        # spaces replaced by underscores.  The presence of one of these fields indicates the user
-        # wants to return references that have that status for that workflow group.
-        
-        workflow_groups = {}                    # fieldname : (group abbrev, status)
-        for groupName in [ 'GO', 'AP', 'GXD', 'QTL', 'Tumor' ]:
-            for status in [ 'Not_Routed', 'Routed', 'Chosen', 'Rejected', 'Indexed', 'Fully_curated' ]:
-                fieldname = 'status_%s_%s' % (groupName, status)
-                workflow_groups[fieldname]= (groupName, status.replace('_', ' '))
-
-        status_choices = {}                 # workflow group abbrev : [ desired statuses ]
-        for fieldname in workflow_groups:
-            if search_query.has_valid_param(fieldname):
-                abbrev, status = workflow_groups[fieldname]
-                if abbrev not in status_choices:
-                    status_choices[abbrev] = []
-                status_choices[abbrev].append(status)
-
-        if status_choices:
-            subqueries = []
-            for (group, statusList) in status_choices.items():
-                ref_table = db.aliased(Reference)
-                wfStatus_table = db.aliased(WorkflowStatus)
-                status_table = db.aliased(VocTerm)
-                group_table = db.aliased(VocTerm)
-
-                sq = db.session.query(ref_table) \
-                    .join(wfStatus_table, ref_table.current_statuses) \
-                    .join(status_table, wfStatus_table.statusVT) \
-                    .join(group_table, wfStatus_table.groupVT) \
-                    .filter(status_table.term.in_(statusList)) \
-                    .filter(group_table.abbreviation == group) \
-                    .filter(ref_table._refs_key==Reference._refs_key) \
-                    .correlate(Reference)
-                    
-                subqueries.append(query.filter(sq.exists()))
-                
-            # union the subqueries together to find all the references with at least one
-            # of the selected status values
-            if subqueries:
-                statusQuery = subqueries[0]
-                for subquery in subqueries[1:]:
-                    statusQuery = statusQuery.union(subquery)
-                            
-            # turn the union into an exists query and join it to the main query
-            query = statusQuery
             
         # any IDs associated with the reference
         if search_query.has_valid_param("accids") and (search_query.get_value("accids").strip() != ''):
