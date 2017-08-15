@@ -4,7 +4,7 @@ from ..core import *
 from acc import Accession, AccessionReference
 from mgi import Organism
 from voc import VocTerm
-
+from mgi import Note, NoteChunk
 
 class ProbeMarkerCache(db.Model, MGIModel):
     __tablename__ = "prb_marker"
@@ -194,6 +194,20 @@ class Probe(db.Model,MGIModel):
             db.select([VocTerm.term]).
             where(VocTerm._term_key==_vector_key)
     )
+
+    _rawsequence_notetype_key = 1037
+
+    # Probe Raw Sequence Note
+    rawseqnote = db.column_property(
+        db.select([NoteChunk.note]).
+        where(db.and_(Note._note_key==NoteChunk._note_key,
+                     NoteChunk.sequencenum==1,
+                     Note._object_key==_probe_key,
+                     Note._mgitype_key==_mgitype_key,
+                     Note._notetype_key==_rawsequence_notetype_key)
+        )
+    )
+
     
     # relationships
     
@@ -323,8 +337,7 @@ class Probe(db.Model,MGIModel):
     @property
     def probenote(self):
         return "".join([nc.note for nc in self.probenotechunks])
-    
-    
+
 class ProbeNoteChunk(db.Model,MGIModel):
     __tablename__ = "prb_notes"
     _probe_key = db.Column(db.Integer,mgi_fk("prb_probe._probe_key"),primary_key=True)
