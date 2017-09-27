@@ -3,7 +3,7 @@ from mgipython.model import GxdIndexRecord
 from mgipython.model.query import batchLoadAttributeExists
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
-from mgipython.domain.reference_domains import SmallReference
+from mgipython.domain.reference_domains import SmallReference, ReferenceDomain, ReferenceFullDomain
 from mgipython.domain import convert_models
 from mgipython.parse import parse_jnumber
 
@@ -42,25 +42,19 @@ class ReferenceService():
         return convert_models(reference, SmallReference)
   
   
-    def search(self, args):
+    def search(self, search_query):
         """
-        search references by args object
+        search references by fields in search_query object
         """
         
-        references = self.reference_dao.search(
-            accids=args.accids,
-            journal=args.journal,
-            title=args.title,
-            authors=args.authors,
-            primeAuthor=args.primeAuthor,
-            volume=args.volume,
-            year=args.year,
-            marker_id=args.marker_id,
-            allele_id=args.allele_id,
-            limit=args.limit
-        )
-        
-        return references
+        search_result = self.reference_dao.search(search_query)
+        newitems = []
+        for item in search_result.items:
+            newitem = ReferenceDomain()
+            newitem.load_from_model(item)
+            newitems.append(newitem)
+        search_result.items = newitems
+        return search_result
     
     
     def search_for_summary(self, form):
@@ -69,7 +63,7 @@ class ReferenceService():
         populates has_* exists attributes for reference
         summary
         """
-        references = self.reference_dao.search(
+        references = self.reference_dao.search_old(
             accids=form.accids.data,
             primeAuthor=form.primeAuthor.data,
             authors=form.authors.data,
