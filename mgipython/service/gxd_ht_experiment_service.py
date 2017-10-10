@@ -8,6 +8,7 @@ from mgipython.domain import *
 from mgipython.error import *
 from dateutil import parser
 from datetime import datetime
+import symbolsort
 import re
 
 class GxdHTExperimentService():
@@ -65,9 +66,15 @@ class GxdHTExperimentService():
             newitem = GxdHTExperimentSummaryDomain()
             newitem.load_from_model(item)
             newitems.append(newitem)
+        self._smartAlphaSortSummary(newitems)
         search_result.items = newitems
         return search_result
 
+    def _smartAlphaSortSummary(self, experimentList):
+        def idCompare(a, b):
+            return symbolsort.nomenCompare(a.primaryid, b.primaryid)
+        experimentList.sort(idCompare)
+        return
 
     def total_count(self):
         return self.gxd_dao.get_total_count()
