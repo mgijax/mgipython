@@ -7,70 +7,33 @@ printf "\nCleaning up old Install files if needed\n"
 
 printf "\nSetting up new local virtual environment using python located in $PYTHON\n"
 # set up virtual environment
-$PYTHON virtualenv.py -p $PYTHON .
+virtualenv -p $PYTHON .
 
 printf "\nsourcing the new virtual environment."
 printf "\nTo use this installation in the future, you will need to call source bin/activate\n"
 source bin/activate
 
-printf "\nInstalling psycopg2\n"
-easy_install psycopg2==2.6.1
+#easy_install psycopg2==2.6.1
+#easy_install sqlalchemy==1.0.8
+#easy_install markupsafe
+#easy_install sqlparse
+#easy_install Flask
+#easy_install Flask-SQLAlchemy
+#easy_install Flask-Admin
+#easy_install Flask-JSON
+#easy_install flask_login
+#easy_install flask-restplus
+#pip install --upgrade jsonschema
+#easy_install marshmallow
+#easy_install Flask-Cache
+#easy_install python-pam
+#easy_install wtforms
+#easy_install cherrypy==6.2.0
+#pip install --upgrade jsonschema
+#easy_install natsort
+#easy_install watchdog
 
-printf "\nInstalling SQL Alchemy\n"
-
-easy_install sqlalchemy==1.0.8
-
-printf "\nInstalling markupsafe\n"
-easy_install markupsafe
-
-printf "\nInstalling sqlparse\n"
-easy_install sqlparse
-
-printf "\nInstalling Flask\n" 
-easy_install Flask
-
-printf "\nInstalling Flask-SQLAlchemy extension\n" 
-easy_install Flask-SQLAlchemy
-
-printf "\nInstalling Flask-Admin extension\n"
-easy_install Flask-Admin
-
-printf "\nInstalling Flask-JSON extension\n"
-easy_install Flask-JSON
-
-printf "\nInstalling Flask Login extension\n"
-easy_install flask_login
-
-printf "\nInstalling Flask RESTPlus extension\n"
-easy_install flask-restplus
-
-# Fix dependency error with jsonschema
-printf "\nUpdating jsonschema dependency\n"
-pip install --upgrade jsonschema
-
-printf "\nInstalling Marshmallow\n"
-easy_install marshmallow
-
-printf "\nInstalling Flask Cache extension\n"
-easy_install Flask-Cache
-
-printf "\nInstalling Python-PAM\n"
-easy_install python-pam
-
-printf "\nInstalling WT Forms extension\n" 
-easy_install wtforms
-
-printf "\nInstalling CherryPy WSGI server \n"
-easy_install cherrypy==6.2.0
-
-printf "\nMake sure jsonschema is up to date \n"
-pip install --upgrade jsonschema
-
-printf "\nInstalling natsort for sorting \"Smart Alpha\"\n"
-easy_install natsort
-
-printf "\nInstalling watchdog for dev file monitoring \n"
-easy_install watchdog
+pip install -r requirements.txt
 
 printf "\nInstalling mgipython library \n"
 python setup.py install --record installed_files.txt
