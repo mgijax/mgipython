@@ -8,7 +8,7 @@ from mgipython.domain import *
 from mgipython.error import *
 from dateutil import parser
 from datetime import datetime
-import symbolsort
+import helpers.symbolsort
 import re
 
 class GxdHTExperimentService():
