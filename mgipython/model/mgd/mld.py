@@ -104,7 +104,6 @@ class MLDReferenceNoteChunk(db.Model, MGIModel):
     _refs_key = db.Column(db.Integer,
                           mgi_fk("bib_refs._refs_key"),
                           primary_key=True)
-    sequencenum = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.String())
     
 class ExperimentNoteChunk(db.Model, MGIModel):
@@ -112,7 +111,6 @@ class ExperimentNoteChunk(db.Model, MGIModel):
     _expt_key = db.Column(db.Integer,
                           mgi_fk("mld_expts._expt_key"),
                           primary_key=True)
-    sequencenum = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.String())
     
     
