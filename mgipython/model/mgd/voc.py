@@ -18,7 +18,6 @@ class Vocab(db.Model,MGIModel):
 class VocTextChunk(db.Model,MGIModel):
     __tablename__ = "voc_text"
     _term_key = db.Column(db.Integer,mgi_fk("voc_term._term_key"),primary_key=True)
-    sequencenum = db.Column(db.Integer(),primary_key=True)
     note = db.Column(db.String())
     
 class VocTermEMAPA(db.Model,MGIModel):
@@ -171,9 +170,7 @@ class VocTerm(db.Model,MGIModel):
             foreign_keys="[Note._object_key, NoteChunk._note_key]",
             order_by="NoteChunk.sequencenum")
     
-    voctextchunks = db.relationship("VocTextChunk",
-        order_by="VocTextChunk.sequencenum")
-    
+    voctextchunks = db.relationship("VocTextChunk")
     
     # only valid for EMAPS term
     emapa_info = db.relationship("VocTermEMAPA",
