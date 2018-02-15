@@ -15,11 +15,6 @@ class Vocab(db.Model,MGIModel):
     _refs_key = db.Column(db.Integer, mgi_fk("bib_refs._refs_key"))
     name = db.Column(db.String())
     
-class VocTextChunk(db.Model,MGIModel):
-    __tablename__ = "voc_text"
-    _term_key = db.Column(db.Integer,mgi_fk("voc_term._term_key"),primary_key=True)
-    note = db.Column(db.String())
-    
 class VocTermEMAPA(db.Model,MGIModel):
     __tablename__ = "voc_term_emapa"
     _term_key = db.Column(db.Integer,mgi_fk("voc_term._term_key"),primary_key=True)
@@ -93,6 +88,7 @@ class VocTerm(db.Model,MGIModel):
     _vocab_key = db.Column(db.Integer, mgi_fk('voc_vocab._vocab_key'))
     term = db.Column(db.String())
     abbreviation = db.Column(db.String())
+    note = db.Column(db.String())
     sequencenum = db.Column(db.Integer)
     isobsolete = db.Column(db.Integer)
     _modifiedby_key = db.Column(db.Integer, default=1001)
@@ -170,8 +166,6 @@ class VocTerm(db.Model,MGIModel):
             foreign_keys="[Note._object_key, NoteChunk._note_key]",
             order_by="NoteChunk.sequencenum")
     
-    voctextchunks = db.relationship("VocTextChunk")
-    
     # only valid for EMAPS term
     emapa_info = db.relationship("VocTermEMAPA",
                 primaryjoin="VocTermEMAPA._term_key==VocTerm._term_key",
@@ -199,10 +193,6 @@ class VocTerm(db.Model,MGIModel):
     def public_comment(self):
         return "".join([c.note for c in self.public_commentchunks])
     
-    @property
-    def definition(self):
-        return "".join([vtc.note for vtc in self.voctextchunks])
-
     @property
     def dagnode(self):
         dagnode = None
