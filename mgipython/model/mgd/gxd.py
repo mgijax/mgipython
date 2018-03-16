@@ -182,7 +182,6 @@ class Genotype(db.Model, MGIModel):
 class AssayNote(db.Model, MGIModel):
     __tablename__ = "gxd_assaynote"
     _assay_key = db.Column(db.Integer, mgi_fk("gxd_assay._assay_key"), primary_key=True)
-    sequencenum = db.Column(db.Integer, primary_key=True)
     #assaynote = db.Column(db.String())
     # this is a way to fix unicode.decode errors, but has a slight performance cost
     assaynote = db.Column(db.String(convert_unicode='force',unicode_error="ignore"))
@@ -251,7 +250,7 @@ class Assay(db.Model, MGIModel):
     antibodyprep = db.relationship("AntibodyPrep", 
                     backref=db.backref("assay", uselist=False),
                     uselist=False)
-    assaynotes = db.relationship("AssayNote", order_by="AssayNote.sequencenum")
+    assaynotes = db.relationship("AssayNote")
     
     
     specimens = db.relationship("Specimen",  

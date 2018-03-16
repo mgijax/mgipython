@@ -54,6 +54,17 @@ class AlleleMutation(db.Model,MGIModel):
                            mgi_fk("voc_term._term_key"),
                            primary_key=True)
 
+class AlleleDriverRelationship(db.Model,MGIModel):
+    __tablename__="mgi_relationship"
+    _relationship_key = db.Column(db.Integer,primary_key=True)
+    _category_key = db.Column(db.Integer)
+    _object_key_1 = db.Column(db.Integer, 
+    			mgi_fk("all_allele._allele_key"), 
+			primary_key=True)
+    _object_key_2 = db.Column(db.Integer, 
+    			mgi_fk("mrk_marker._marker_key"), 
+			primary_key=True)
+
 ########################
 ###   Main Objects   ###
 ########################
@@ -221,11 +232,12 @@ class Allele(db.Model,MGIModel):
         backref="explicit_subtypes"
     )
 
-    drivernote = db.relationship("Note",
-        primaryjoin="and_(Allele._allele_key==Note._object_key, " 
-                "Note._mgitype_key==11, Note._notetype_key==1034) ",
-        foreign_keys="[Note._object_key]",
-        uselist=False
+    drivernote = db.relationship("Marker",
+        secondary=AlleleDriverRelationship.__table__,
+        primaryjoin="and_(Allele._allele_key==AlleleDriverRelationship._object_key_1, " 
+                "AlleleDriverRelationship._category_key==1006)",
+	secondaryjoin="AlleleDriverRelationship._object_key_2==Marker._marker_key",
+        foreign_keys="[Allele._allele_key,Marker._marker_key]",
     )
 
     induciblenote = db.relationship("Note",

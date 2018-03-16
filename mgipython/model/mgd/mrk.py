@@ -23,7 +23,6 @@ class MarkerDetailClipNoteChunk(db.Model,MGIModel):
     __tablename__ = "mrk_notes"
     _marker_key = db.Column(db.Integer,mgi_fk("mrk_marker._marker_key"),primary_key=True)
     note = db.Column(db.String())
-    sequencenum = db.Column(db.Integer, primary_key=True)
 
 class MarkerLocationCache(db.Model,MGIModel):
     __tablename__="mrk_location_cache"
@@ -183,7 +182,6 @@ class Marker(db.Model,MGIModel):
 
     detailclipchunks = db.relationship("MarkerDetailClipNoteChunk",
         primaryjoin= "MarkerDetailClipNoteChunk._marker_key==Marker._marker_key",
-        order_by="MarkerDetailClipNoteChunk.sequencenum",
         foreign_keys="[MarkerDetailClipNoteChunk._marker_key]")
     
     current_markers = db.relationship("Marker",

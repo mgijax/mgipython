@@ -51,8 +51,7 @@ class ProbeReferenceCache(db.Model, MGIModel):
         )
     refnotechunks = db.relationship("ProbeReferenceNotes",
         primaryjoin="ProbeReferenceCache._reference_key==ProbeReferenceNotes._reference_key",
-        foreign_keys="[ProbeReferenceNotes._reference_key]",
-        order_by="ProbeReferenceNotes.sequencenum"
+        foreign_keys="[ProbeReferenceNotes._reference_key]"
         )
     
     
@@ -101,7 +100,6 @@ class ProbeReferenceNotes(db.Model, MGIModel):
     _reference_key = db.Column(db.Integer, 
                            mgi_fk("prb_reference._reference_key"), 
                            primary_key=True)
-    sequencenum = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.String())
 
 class ProbeRFLV(db.Model, MGIModel):
@@ -261,8 +259,7 @@ class Probe(db.Model,MGIModel):
     
     probenotechunks = db.relationship("ProbeNoteChunk",
         primaryjoin="ProbeNoteChunk._probe_key==Probe._probe_key",
-        foreign_keys="[ProbeNoteChunk._probe_key]",
-        order_by="ProbeNoteChunk.sequencenum"
+        foreign_keys="[ProbeNoteChunk._probe_key]"
     )
     
     # probepreps
@@ -342,7 +339,6 @@ class ProbeNoteChunk(db.Model,MGIModel):
     __tablename__ = "prb_notes"
     _probe_key = db.Column(db.Integer,mgi_fk("prb_probe._probe_key"),primary_key=True)
     note = db.Column(db.String())
-    sequencenum = db.Column(db.Integer, primary_key=True)
     
     
 class ProbeSource(db.Model,MGIModel):
