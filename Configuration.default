@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # if MGICONFIG is not set, then set it
 # you can override MGICONFIG later, if need be
