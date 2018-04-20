@@ -11,7 +11,7 @@ fi
 
 # Set the python that we want to use in this virtual environment
 # We need a 2.7 python executable with zlib and ssl
-PYTHON_HOME=/opt/python
+PYTHON_HOME=/usr
 if [ "${OVERRIDE_PYTHON_HOME}" != "" ]; then
 	PYTHON_HOME=$OVERRIDE_PYTHON_HOME
 fi
