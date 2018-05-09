@@ -2,7 +2,7 @@ psycopg2
 sqlalchemy
 markupsafe
 sqlparse
-Flask
+Flask==0.12.2
 Flask-SQLAlchemy
 Flask-Admin
 Flask-JSON
