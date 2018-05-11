@@ -1,4 +1,4 @@
-ycopg2==2.7.4
+psycopg2==2.7.4
 sqlalchemy==1.2.7
 markupsafe==1.0
 sqlparse==0.2.4
