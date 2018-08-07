@@ -1139,10 +1139,10 @@ class GxdHTSample(db.Model, MGIModel):
     _genotype_key = db.Column(db.Integer, mgi_fk("gxd_genotype._genotype_key"))
     _relevance_key = db.Column(db.Integer, mgi_fk("voc_term._term_key"))
 
-    organism_object = db.relationship("Organism", primaryjoin="Organism._organism_key==GxdHTSample._organism_key", uselist=False)
-    sex_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==GxdHTSample._sex_key", uselist=False)
-    genotype_object = db.relationship("Genotype", primaryjoin="Genotype._genotype_key==GxdHTSample._genotype_key", foreign_keys="[Genotype._genotype_key]", uselist=False)
-    relevance_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==GxdHTSample._relevance_key", uselist=False)
+    organism_object = db.relationship("Organism", primaryjoin="Organism._organism_key==foreign(GxdHTSample._organism_key)", uselist=False)
+    sex_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==foreign(GxdHTSample._sex_key)", uselist=False)
+    genotype_object = db.relationship("Genotype", primaryjoin="Genotype._genotype_key==foreign(GxdHTSample._genotype_key)", uselist=False)
+    relevance_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==foreign(GxdHTSample._relevance_key)", uselist=False)
 
     emaps_object = db.relationship("VocTermEMAPS", primaryjoin="and_(VocTermEMAPS._stage_key==GxdHTSample._stage_key,VocTermEMAPS._emapa_term_key==GxdHTSample._emapa_key)", foreign_keys="[VocTermEMAPS._emapa_term_key,VocTermEMAPS._stage_key]", uselist=False)
 

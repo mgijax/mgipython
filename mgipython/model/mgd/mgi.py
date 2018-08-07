@@ -73,8 +73,7 @@ class Note(db.Model,MGIModel):
                 where(NoteType._notetype_key==_notetype_key)
         )  
 
-    chunks = db.relationship("NoteChunk",
-        order_by="NoteChunk.sequencenum")
+    chunks = db.relationship("NoteChunk", order_by="NoteChunk.sequencenum", cascade="all, delete, delete-orphan")
 
     @property
     def text(self):

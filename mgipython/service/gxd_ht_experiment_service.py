@@ -195,7 +195,8 @@ class GxdHTExperimentService():
 
         else:
             if len(experiment.notes) > 0:
-                print "Need to delete notes and chunks."
+                self.gxd_dao.delete(experiment.notes[0])
+                experiment.notes = []
 
         experiment._modifiedby_key = current_user._user_key
         experiment.modification_date = datetime.now()
@@ -268,7 +269,10 @@ class GxdHTExperimentService():
                                 newsample.notes.append(newnote)
 
                         else:
-                            print "Delete note chunk, note for this sample"
+                            if len(newsample.notes) > 0:
+                                print "Delete note chunk, note for this sample"
+                                self.sample_dao.delete(newsample.notes[0])
+                                newsample.notes = []
 
                         if sample_collection.sample_domain._organism_key == None:
                             newsample._organism_key = self.organism_mouse_key
@@ -342,6 +346,16 @@ class GxdHTExperimentService():
                         newsample.creation_date = datetime.now()
                         newsample._modifiedby_key = current_user._user_key
                         newsample.modification_date = datetime.now()
+
+        else:
+            if experiment_sample_count > 0:
+                for sample in experiment.samples:
+                    if len(sample.notes) > 0:
+                        print "Delete Note: " + str(sample.notes[0]._note_key)
+                        self.sample_dao.delete(sample.notes[0])
+                    print "Delete Sample: " + str(sample._sample_key)
+                    self.sample_dao.delete(sample)
+                experiment.samples = []
 
         if len(experiment.samples) > 0:
             self.loadCurationStates()
