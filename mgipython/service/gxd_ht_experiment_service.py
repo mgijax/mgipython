@@ -193,6 +193,10 @@ class GxdHTExperimentService():
                 newnote.chunks.append(notechunk)
                 experiment.notes.append(newnote)
 
+        else:
+            if len(experiment.notes) > 0:
+                print "Need to delete notes and chunks."
+
         experiment._modifiedby_key = current_user._user_key
         experiment.modification_date = datetime.now()
 
@@ -262,6 +266,9 @@ class GxdHTExperimentService():
                                 print "Modify Sample Note"
                                 newnote.chunks.append(notechunk)
                                 newsample.notes.append(newnote)
+
+                        else:
+                            print "Delete note chunk, note for this sample"
 
                         if sample_collection.sample_domain._organism_key == None:
                             newsample._organism_key = self.organism_mouse_key
