@@ -237,7 +237,7 @@ class GxdHTExperimentService():
                     if sample_collection.sample_domain != None:
                         self.loadOrganisms()
 
-                        if sample_collection.sample_domain.notes != None and len(sample_collection.sample_domain.notes) > 0 and len(sample_collection.sample_domain.notes[0].text) > 0:
+                        if sample_collection.sample_domain.notes != None and len(sample_collection.sample_domain.notes) > 0 and sample_collection.sample_domain.notes[0].text != None and len(sample_collection.sample_domain.notes[0].text) > 0:
                             
                             if len(newsample.notes) > 0:
                                 if len(newsample.notes[0].chunks) > 0:
