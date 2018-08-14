@@ -1144,7 +1144,7 @@ class GxdHTSample(db.Model, MGIModel):
     genotype_object = db.relationship("Genotype", primaryjoin="Genotype._genotype_key==foreign(GxdHTSample._genotype_key)", uselist=False)
     relevance_object = db.relationship("VocTerm", primaryjoin="VocTerm._term_key==foreign(GxdHTSample._relevance_key)", uselist=False)
 
-    emaps_object = db.relationship("VocTermEMAPS", primaryjoin="and_(VocTermEMAPS._stage_key==GxdHTSample._stage_key,VocTermEMAPS._emapa_term_key==GxdHTSample._emapa_key)", foreign_keys="[VocTermEMAPS._emapa_term_key,VocTermEMAPS._stage_key]", uselist=False)
+    emaps_object = db.relationship("VocTermEMAPS", primaryjoin="and_(VocTermEMAPS._stage_key==foreign(GxdHTSample._stage_key),VocTermEMAPS._emapa_term_key==foreign(GxdHTSample._emapa_key))", uselist=False)
 
     notes = db.relationship("Note", primaryjoin="and_(GxdHTSample._sample_key==Note._object_key,"
         "Note._mgitype_key==%d,Note._notetype_key==%d)" % (_mgitype_key, _notetype_key), foreign_keys="[Note._object_key]"
