@@ -356,6 +356,8 @@ class GxdHTExperimentService():
                     print "Delete Sample: " + str(sample._sample_key)
                     self.sample_dao.delete(sample)
                 experiment.samples = []
+                self.loadCurationStates()
+                experiment._curationstate_key = self.curation_state_notdone_term_key
 
         if len(experiment.samples) > 0:
             self.loadCurationStates()
