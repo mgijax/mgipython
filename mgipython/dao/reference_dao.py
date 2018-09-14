@@ -38,6 +38,9 @@ class ReferenceDAO(BaseDAO):
     def _build_search_query(self, search_query):
         query = Reference.query
         
+	# only include isDiscared = 0
+        query = query.filter(Reference.isdiscard == 0)
+            
         if search_query.has_valid_param("issue"):
             issue = search_query.get_value("issue").lower()
             query = query.filter(db.func.lower(Reference.issue).like(issue))
