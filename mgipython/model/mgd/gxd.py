@@ -365,10 +365,13 @@ class Result(db.Model, MGIModel):
     _genotype_key = db.Column(db.Integer, mgi_fk("gxd_genotype._genotype_key"))
     _specimen_key = db.Column(db.Integer, mgi_fk("gxd_specimen._specimen_key"))
     
+    resultnote = db.Column(db.String())
+
     age = db.Column(db.String())
     agemin = db.Column(db.Integer)
     agemax = db.Column(db.Integer)
     expressed = db.Column(db.Integer)
+    strength = db.Column(db.String())
     isforgxd = db.Column(db.Integer)
     isrecombinase = db.Column(db.Integer)
 
