@@ -8,7 +8,6 @@ from acc import Accession
 class Image(db.Model,MGIModel):
     __tablename__ = "img_image"
     _image_key = db.Column(db.Integer,primary_key=True)
-    _mgitype_key = db.Column(db.Integer)
     _imageclass_key = db.Column(db.Integer)
     _refs_key = db.Column(db.Integer)
     _thumbnailimage_key = db.Column(db.Integer, mgi_fk("img_image._image_key"))
