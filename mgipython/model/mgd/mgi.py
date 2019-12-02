@@ -77,7 +77,11 @@ class Note(db.Model,MGIModel):
 
     @property
     def text(self):
-        return ''.join([c.note for c in self.chunks])
+	text = ''.join([c.note for c in self.chunks])
+	#text = u''.join([c.note for c in self.chunks])
+	return text
+	#return text.encode('utf-8')
+        #return unicode(text)
 
     def __repr__(self):
         return self.text
