@@ -2,7 +2,7 @@ psycopg2==2.7.4
 sqlalchemy==1.2.7
 markupsafe==1.0
 sqlparse==0.2.4
-Flask==0.12.2
+Flask==1.0
 Flask-SQLAlchemy==2.3.2
 Flask-Admin==1.5.1
 Flask-JSON==0.3.2
