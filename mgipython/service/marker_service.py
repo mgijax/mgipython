@@ -27,7 +27,7 @@ class MarkerService():
         search_query = SearchQuery()
         search_query.set_param('symbol', symbol)
         # restrict to official and withdrawn
-        search_query.set_param('_marker_status_keys', [1,2])
+        search_query.set_param('_marker_status_keys', [1])
         
         # only search mouse
         search_query.set_param('_organism_keys', [1])
