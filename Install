@@ -38,10 +38,10 @@ pip install -r requirements.txt
 printf "\nInstalling mgipython library \n"
 python setup.py install --record installed_files.txt
 
-printf "\nRunning unit tests \n"
-cd tests
-python all_tests.py
-if [ $? -ne 0 ]; then
-	printf "\nUnit tests failed \n"
-        exit 1
-fi
+#printf "\nRunning unit tests \n"
+#cd tests
+#python all_tests.py
+#if [ $? -ne 0 ]; then
+#	printf "\nUnit tests failed \n"
+#        exit 1
+#fi
