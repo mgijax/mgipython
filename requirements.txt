@@ -17,4 +17,5 @@ cherrypy==14.2.0
 natsort==5.3.0
 watchdog==0.8.3
 dateutils==0.6.6
+Werkzeug==0.16.1
 
