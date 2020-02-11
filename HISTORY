@@ -1,3 +1,9 @@
+TAG: mgipython-6-0-15-3
+DATE: 02/11/2020
+STAFF: lec
+CHANGES: TR13007/RNA Sequence project
+requirements.txt:  added Werkzeug==0.16.1
+
 TAG: mgipython-6-0-15-2
 DATE: 01/20/2020
 STAFF: lec
