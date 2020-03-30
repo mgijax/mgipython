@@ -30,9 +30,9 @@ def _loadFeatureTypeDag():
     if rootTerm and rootTerm.dagnodes:
         dagtree = DagBuilder.buildDagTreeFromRoot(rootTerm.dagnodes[0])
 
-	for node in dagtree['root'].tree_list:
-	    db.session.expunge(node.dagnode)
-	    db.session.expunge(node.dagnode.vocterm)
+        for node in dagtree['root'].tree_list:
+            db.session.expunge(node.dagnode)
+            db.session.expunge(node.dagnode.vocterm)
     
     return dagtree
     

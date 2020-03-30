@@ -8,7 +8,6 @@ from mgipython.domain import *
 from mgipython.error import *
 from dateutil import parser
 from datetime import datetime
-import helpers.symbolsort
 import re
 
 class GxdHTExperimentService():
@@ -241,10 +240,10 @@ class GxdHTExperimentService():
                             
                             if len(newsample.notes) > 0:
                                 if len(newsample.notes[0].chunks) > 0:
-                                    print "Modify Sample Note"
+                                    print("Modify Sample Note")
                                     newsample.notes[0].chunks[0].note = sample_collection.sample_domain.notes[0].text
                                 else:
-                                    print "Create Sample Note"
+                                    print("Create Sample Note")
                                     notechunk = NoteChunk()
                                     notechunk._note_key = newsample.notes[0]._note_key
                                     notechunk.sequencenum = 1
@@ -263,14 +262,14 @@ class GxdHTExperimentService():
                                 notechunk.sequencenum = 1
                                 notechunk.note = sample_collection.sample_domain.notes[0].text
 
-                                print "Create Sample Note"
-                                print "Modify Sample Note"
+                                print("Create Sample Note")
+                                print("Modify Sample Note")
                                 newnote.chunks.append(notechunk)
                                 newsample.notes.append(newnote)
 
                         else:
                             if len(newsample.notes) > 0:
-                                print "Delete note chunk, note for this sample"
+                                print("Delete note chunk, note for this sample")
                                 self.sample_dao.delete(newsample.notes[0])
                                 newsample.notes = []
 
@@ -351,9 +350,9 @@ class GxdHTExperimentService():
             if experiment_sample_count > 0:
                 for sample in experiment.samples:
                     if len(sample.notes) > 0:
-                        print "Delete Note: " + str(sample.notes[0]._note_key)
+                        print("Delete Note: " + str(sample.notes[0]._note_key))
                         self.sample_dao.delete(sample.notes[0])
-                    print "Delete Sample: " + str(sample._sample_key)
+                    print("Delete Sample: " + str(sample._sample_key))
                     self.sample_dao.delete(sample)
                 experiment.samples = []
                 self.loadCurationStates()
@@ -368,9 +367,9 @@ class GxdHTExperimentService():
                 experiment._initialcuratedby_key = current_user._user_key
                 experiment.initial_curated_date = datetime.now()
 
-        print "Running update on experiment"
+        print("Running update on experiment")
         self.gxd_dao.update(experiment)
-        print "Finished update on experiment"
+        print("Finished update on experiment")
 
         ret_experiment = GxdHTExperimentDomain()
         ret_experiment.load_from_model(experiment)

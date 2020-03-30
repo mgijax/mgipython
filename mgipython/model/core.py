@@ -1,5 +1,5 @@
 """
-	Contains core functions and classes for working with SQL Alchemy
+        Contains core functions and classes for working with SQL Alchemy
 """
 from mgipython.modelconfig import db
 from sqlalchemy.inspection import inspect
@@ -9,12 +9,12 @@ class Serializer(object):
 
     def serialize(self):
         dict = {}
-        for c in inspect(self).attrs.keys():
+        for c in list(inspect(self).attrs.keys()):
             if c not in inspect(self).unloaded:
                 if isinstance(getattr(self, c), list):
                     dict[c] = self.serialize_list(getattr(self, c))
-                elif isinstance(getattr(self, c), unicode):
-                    dict[c] = unicode(getattr(self, c))
+                elif isinstance(getattr(self, c), str):
+                    dict[c] = str(getattr(self, c))
                 elif isinstance(getattr(self, c), datetime):
                     dict[c] = str(getattr(self, c))
                 elif isinstance(getattr(self, c), float):
@@ -57,13 +57,13 @@ def mgi_table(tableName,*others):
         table = db.Table(tableName,*others,quote=False)
         return table
 def mgi_fk(fkString):
-	fkString = "mgd."+fkString
-	fk = db.ForeignKey(fkString)
-	return fk
+        fkString = "mgd."+fkString
+        fk = db.ForeignKey(fkString)
+        return fk
 
 def getColumnNames(dbModel):
         colnames = []
-        for colname,col in dbModel.__mapper__.columns.items():
+        for colname,col in list(dbModel.__mapper__.columns.items()):
                 if not isColumnHidden(col):
                         colnames.append(colname)
         return colnames
@@ -102,5 +102,5 @@ def printquery(statement, bind=None):
             )   
 
     compiler = LiteralCompiler(dialect, statement)
-    print compiler.process(statement)
+    print(compiler.process(statement))
     

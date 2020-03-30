@@ -1,7 +1,7 @@
 from mgipython.model import Accession, Synonym, Vocab, VocTerm, VocTermEMAPA, VocTermEMAPS
 from mgipython.model import db
 from mgipython.parse import emapaStageParser, splitSemicolonInput
-from base_dao import BaseDAO
+from .base_dao import BaseDAO
 
 class VocTermDAO(BaseDAO):
     

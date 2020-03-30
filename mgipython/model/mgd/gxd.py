@@ -17,12 +17,12 @@ but column property tables must appear first
 from mgipython.modelconfig import db
 from ..core import *
 from datetime import datetime
-from acc import Accession
-from img import ImagePaneAssoc
-from mgi import Note, NoteChunk, Organism, ReferenceAssoc
-from mrk import Marker
-from prb import Strain
-from voc import VocTerm
+from .acc import Accession
+from .img import ImagePaneAssoc
+from .mgi import Note, NoteChunk, Organism, ReferenceAssoc
+from .mrk import Marker
+from .prb import Strain
+from .voc import VocTerm
 
 from mgipython.util.gxdindex import gxdindex_aggregator
 

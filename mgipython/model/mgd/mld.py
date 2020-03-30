@@ -1,7 +1,7 @@
 # All models for the mgi_* tables
 from mgipython.modelconfig import db
 from ..core import *
-from acc import Accession
+from .acc import Accession
 
 class ExperimentAssayType(db.Model,MGIModel):
     __tablename__ = "mld_assay_types"

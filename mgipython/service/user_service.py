@@ -7,7 +7,7 @@ from flask_login import current_user
 from mgipython.error import NotFoundError
 from mgipython.modelconfig import cache
 from mgipython.domain import convert_models
-from vocterm_service import VocTermService
+from .vocterm_service import VocTermService
 
 class UserService():
     

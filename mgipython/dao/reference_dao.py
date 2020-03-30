@@ -2,7 +2,7 @@ from mgipython.model import Accession, Allele, Marker, Reference
 from mgipython.service_schema.search import SearchQuery
 from mgipython.model import db, MLDReferenceNoteChunk, VocTerm, ReferenceNoteChunk
 from mgipython.parse.parser import splitCommaInput
-from base_dao import BaseDAO
+from .base_dao import BaseDAO
 import re
 
 import logging
@@ -38,7 +38,7 @@ class ReferenceDAO(BaseDAO):
     def _build_search_query(self, search_query):
         query = Reference.query
         
-	# only include isDiscared = 0
+        # only include isDiscared = 0
         query = query.filter(Reference.isdiscard == 0)
             
         if search_query.has_valid_param("issue"):

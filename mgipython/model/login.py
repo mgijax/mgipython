@@ -3,7 +3,7 @@
 #
 
 from pam import pam
-from mgd.mgi import MGIUser
+from .mgd.mgi import MGIUser
 import logging
 #from mgipython import logger
 

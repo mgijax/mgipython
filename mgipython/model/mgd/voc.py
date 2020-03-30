@@ -1,9 +1,9 @@
 # All models for the voc_* tables
 from mgipython.modelconfig import db
 from ..core import *
-from acc import Accession
-from bib import Reference
-from mgi import Note, NoteChunk, MGIUser
+from .acc import Accession
+from .bib import Reference
+from .mgi import Note, NoteChunk, MGIUser
 
 from datetime import datetime
 

@@ -2,7 +2,7 @@ from mgipython.model import db
 from mgipython.model import SetMember, SetMemberEMAPA
 from mgipython.model.query import performQuery
 from mgipython.service_schema.search import SearchResults
-from base_dao import BaseDAO
+from .base_dao import BaseDAO
 
 
 class EMAPAClipboardDAO(BaseDAO):

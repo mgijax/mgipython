@@ -20,14 +20,14 @@ class BuildDagTreesTestCase(unittest.TestCase):
     def test_dagnode_leaf(self):
         n1 = self.dag_node(1, 't1')
         dt = buildDagTrees([n1], batchloadOn=False)
-        self.assertEquals([[n1]], self.convertTrees(dt))
+        self.assertEqual([[n1]], self.convertTrees(dt))
         
     def test_dagnode_one_child(self):
         n1 = self.dag_node(1, 't1')
         n2 = self.dag_node(2, 't2')
         self.addChild(n1, n2, '')
         dt = buildDagTrees([n2], batchloadOn=False)
-        self.assertEquals([[n1, n2]], self.convertTrees(dt))
+        self.assertEqual([[n1, n2]], self.convertTrees(dt))
         
     def test_dagnode_siblings(self):
         n1 = self.dag_node(1, 't1')
@@ -36,7 +36,7 @@ class BuildDagTreesTestCase(unittest.TestCase):
         self.addChild(n1, n2, '')
         self.addChild(n1, n3, '')
         dt = buildDagTrees([n3], batchloadOn=False)
-        self.assertEquals([[n1, n2, n3]], self.convertTrees(dt))
+        self.assertEqual([[n1, n2, n3]], self.convertTrees(dt))
         
     def test_dagnode_nested_children(self):
         n1 = self.dag_node(1, 't1')
@@ -46,7 +46,7 @@ class BuildDagTreesTestCase(unittest.TestCase):
         self.addChild(n2, n3, '')
         
         dt = buildDagTrees([n3], batchloadOn=False)
-        self.assertEquals([[n1, n2, n3]], self.convertTrees(dt))
+        self.assertEqual([[n1, n2, n3]], self.convertTrees(dt))
         
     def test_dagnode_nested_children_and_siblings(self):
         n1 = self.dag_node(1, 't1')
@@ -60,7 +60,7 @@ class BuildDagTreesTestCase(unittest.TestCase):
         self.addChild(n2, n5, '')
         
         dt = buildDagTrees([n4], batchloadOn=False)
-        self.assertEquals([[n1, n2, n3, n4, n5]], self.convertTrees(dt))
+        self.assertEqual([[n1, n2, n3, n4, n5]], self.convertTrees(dt))
         
     def test_dagnode_two_parents(self):
         n1 = self.dag_node(1, 't1')
@@ -70,7 +70,7 @@ class BuildDagTreesTestCase(unittest.TestCase):
         self.addChild(n2, n3, '')
         
         dt = buildDagTrees([n3], batchloadOn=False)
-        self.assertEquals([[n1, n3], [n2, n3]], self.convertTrees(dt))
+        self.assertEqual([[n1, n3], [n2, n3]], self.convertTrees(dt))
         
     def test_dagnode_two_parents_two_levels(self):
         n1 = self.dag_node(1, 't1')
@@ -86,7 +86,7 @@ class BuildDagTreesTestCase(unittest.TestCase):
         
         dt = buildDagTrees([n5], batchloadOn=False)
         
-        self.assertEquals([[n1, n2, n5], [n3, n4, n5]], self.convertTrees(dt))
+        self.assertEqual([[n1, n2, n5], [n3, n4, n5]], self.convertTrees(dt))
         
     def test_dagnode_two_parents_and_children(self):
         n1 = self.dag_node(1, 't1')
@@ -100,7 +100,7 @@ class BuildDagTreesTestCase(unittest.TestCase):
         
         dt = buildDagTrees([n3], batchloadOn=False)
         
-        self.assertEquals([[n1, n2, n3], [n4, n2, n3]], self.convertTrees(dt))
+        self.assertEqual([[n1, n2, n3], [n4, n2, n3]], self.convertTrees(dt))
 
     # helpers
     
@@ -133,14 +133,14 @@ class TreeNodeTestCase(unittest.TestCase):
     
     def test_treenode_leaf(self):
         n1 = self.tree_node(1, 't1')
-        self.assertEquals([n1], n1.tree_list)
+        self.assertEqual([n1], n1.tree_list)
         
         
     def test_treenode_one_child(self):
         n1 = self.tree_node(1, 't1')
         n2 = self.tree_node(2, 't2')
         self.addChild(n1, n2)
-        self.assertEquals([n1, n2], n1.tree_list)
+        self.assertEqual([n1, n2], n1.tree_list)
         
     def test_treenode_children(self):
         n1 = self.tree_node(1, 't1')
@@ -148,7 +148,7 @@ class TreeNodeTestCase(unittest.TestCase):
         n3 = self.tree_node(3, 't3')
         self.addChild(n1, n2)
         self.addChild(n1, n3)
-        self.assertEquals([n1, n2, n3], n1.tree_list)
+        self.assertEqual([n1, n2, n3], n1.tree_list)
         
     def test_treenode_nested_children(self):
         n1 = self.tree_node(1, 't1')
@@ -156,13 +156,13 @@ class TreeNodeTestCase(unittest.TestCase):
         n3 = self.tree_node(3, 't3')
         self.addChild(n1, n2)
         self.addChild(n2, n3)
-        self.assertEquals([n1, n2, n3], n1.tree_list)
+        self.assertEqual([n1, n2, n3], n1.tree_list)
         
     def test_treenode_with_parent(self):
         n1 = self.tree_node(1, 't1')
         n2 = self.tree_node(2, 't2')
         self.addChild(n1, n2)
-        self.assertEquals([n2], n2.tree_list)
+        self.assertEqual([n2], n2.tree_list)
         
     def test_treenode_nested_children_in_middle(self):
         n1 = self.tree_node(1, 't1')
@@ -172,7 +172,7 @@ class TreeNodeTestCase(unittest.TestCase):
         self.addChild(n1, n2)
         self.addChild(n2, n3)
         self.addChild(n1, n4)
-        self.assertEquals([n1, n2, n3, n4], n1.tree_list)
+        self.assertEqual([n1, n2, n3, n4], n1.tree_list)
         
     def test_treenode_complex(self):
         n1 = self.tree_node(1, 't1')
@@ -194,7 +194,7 @@ class TreeNodeTestCase(unittest.TestCase):
         
         self.addChild(n6, n7)
         
-        self.assertEquals([n1, n2, n3, n4, n5, n6, n7, n8], n1.tree_list)
+        self.assertEqual([n1, n2, n3, n4, n5, n6, n7, n8], n1.tree_list)
         
     def test_treenode_many_childs(self):
         n1 = self.tree_node(1, 't1')
@@ -215,7 +215,7 @@ class TreeNodeTestCase(unittest.TestCase):
         
         self.addChild(n5, n6)
         
-        self.assertEquals([n1, n2, n3, n4, n5, n6, n7, n8], n1.tree_list)
+        self.assertEqual([n1, n2, n3, n4, n5, n6, n7, n8], n1.tree_list)
         
         
     ### test cloneSelf ###
@@ -284,11 +284,11 @@ class TreeNodeTestCase(unittest.TestCase):
         tlc_string = ','.join([n.term for n in cl])
         
         # tree list strings should match
-        self.assertEquals(tl_string, tlc_string)
+        self.assertEqual(tl_string, tlc_string)
         
         # now go through tree list and make sure each node actually is new
         for i in range(0, len(nl)):
-            self.assertNotEquals(nl[i], cl[i], "%s is same ref as %s" % (nl[i], cl[i]))
+            self.assertNotEqual(nl[i], cl[i], "%s is same ref as %s" % (nl[i], cl[i]))
             
         
 def suite():

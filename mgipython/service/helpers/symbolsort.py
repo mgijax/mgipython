@@ -7,14 +7,14 @@ digits = {  '1' : 1, '2' : 1, '3' : 1, '4' : 1,
 
 def splitter (s):
    global sdict
-   if sdict.has_key (s):
+   if s in sdict:
       return sdict[s]
    last = 0
    items = []
    sl = string.lower (s)
-   in_digits = digits.has_key (sl[0])
+   in_digits = sl[0] in digits
    for i in range(0, len(sl)):
-      if digits.has_key (sl[i]) != in_digits:
+      if (sl[i] in digits) != in_digits:
          if in_digits:
             items.append (string.atoi(sl[last:i]))
          else:

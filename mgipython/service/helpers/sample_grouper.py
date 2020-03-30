@@ -14,7 +14,7 @@ class SampleGrouper:
                     self.mergeRawSample(sample_hash[row.getKey()].raw_sample, row.raw_sample)
                 else:
                     sample_hash[row.getKey()] = row
-            keylist = natsorted(sample_hash.keys(), key=lambda y: str(y).lower())
+            keylist = natsorted(list(sample_hash.keys()), key=lambda y: str(y).lower())
             retlist = []
             for key in keylist:
                 retlist.append(sample_hash[key])
@@ -25,7 +25,7 @@ class SampleGrouper:
     def cleanData(self, in_string):
         if in_string == None:
             in_string = ""
-        return unicodedata.normalize('NFKD', unicode(in_string)).encode('ascii','ignore')
+        return unicodedata.normalize('NFKD', str(in_string)).encode('ascii','ignore')
 
     def mergeDupColumns(self, source_object):
 

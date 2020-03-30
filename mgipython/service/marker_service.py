@@ -6,7 +6,7 @@ from mgipython.modelconfig import cache
 from mgipython.domain.marker_domains import SmallMarker
 from mgipython.domain import convert_models
 from mgipython.service_schema.search import SearchQuery
-from helpers.sort_helper import ValidMarkerSortHelper
+from .helpers.sort_helper import ValidMarkerSortHelper
 
 class MarkerService():
     

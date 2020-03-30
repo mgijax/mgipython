@@ -1,6 +1,6 @@
 from mgipython.service.helpers.date_helper import DateHelper
 from mgipython.model import *
-from base_dao import BaseDAO
+from .base_dao import BaseDAO
 
 class GxdHTExperimentDAO(BaseDAO):
     

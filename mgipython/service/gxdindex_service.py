@@ -6,7 +6,7 @@ from mgipython.modelconfig import cache
 from mgipython.domain import convert_models
 from mgipython.domain.gxdindex_domains import IndexRecordDomain, IndexRecordSearchResultDomain
 from mgipython.service_schema.search import SearchQuery
-from vocterm_service import VocTermService
+from .vocterm_service import VocTermService
 from datetime import datetime
 import logging
 
@@ -149,7 +149,7 @@ class GxdIndexService():
         
         if not indexrecord_domain._marker_key:
             raise ValidationError("Please select a Marker")
-	
+        
         return indexrecord_domain
         
         

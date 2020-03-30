@@ -1,7 +1,7 @@
 """
 Marker related domain objects
 """
-from base_serializer import Field, Serializer
+from .base_serializer import Field, Serializer
 import logging
 
 logger = logging.getLogger("mgipython.domain")

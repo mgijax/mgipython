@@ -1,10 +1,10 @@
 # All models for the acc_* tables
 from mgipython.modelconfig import db
 from ..core import *
-from acc import Accession, AccessionReference
-from mgi import Organism
-from voc import VocTerm
-from mgi import Note, NoteChunk
+from .acc import Accession, AccessionReference
+from .mgi import Organism
+from .voc import VocTerm
+from .mgi import Note, NoteChunk
 
 class ProbeMarkerCache(db.Model, MGIModel):
     __tablename__ = "prb_marker"

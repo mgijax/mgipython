@@ -2,7 +2,7 @@ from mgipython.model import Accession, Result, Marker, Reference, Assay, VocTerm
 #from accession_hunter import getModelByMGIID
 
 from mgipython.model import db
-from base_dao import BaseDAO
+from .base_dao import BaseDAO
 import logging
 
 logger = logging.getLogger('mgipython.dao')

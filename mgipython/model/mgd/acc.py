@@ -1,6 +1,6 @@
 # All models for the acc_* tables
 from mgipython.modelconfig import db
-from mgi import *
+from .mgi import *
 from ..core import *
 
 class ActualDb(db.Model,MGIModel):

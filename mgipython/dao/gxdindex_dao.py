@@ -3,7 +3,7 @@ from mgipython.model import GxdIndexRecord, GxdIndexStage, \
                     Result
 
 from mgipython.model import db
-from base_dao import BaseDAO
+from .base_dao import BaseDAO
 from mgipython.service.helpers.date_helper import DateHelper
 import logging
 

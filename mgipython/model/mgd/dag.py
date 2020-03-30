@@ -1,8 +1,8 @@
 # All models for the mgi_* tables
 from mgipython.modelconfig import db
 from ..core import *
-from acc import Accession
-from voc import VocTerm
+from .acc import Accession
+from .voc import VocTerm
 
 class DagLabel(db.Model,MGIModel):
     __tablename__ = "dag_label"

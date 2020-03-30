@@ -1,7 +1,7 @@
 from mgipython.model import Accession, Allele, Marker, Reference
 from mgipython.model import db
 from mgipython.parse.parser import splitCommaInput
-from base_dao import BaseDAO
+from .base_dao import BaseDAO
 
 import logging
 

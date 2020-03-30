@@ -1,8 +1,8 @@
 # All models for the acc_* tables
 from mgipython.modelconfig import db
 from ..core import *
-from all import *
-from acc import Accession
+from .all import *
+from .acc import Accession
 
 
 class Image(db.Model,MGIModel):

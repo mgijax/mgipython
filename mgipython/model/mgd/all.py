@@ -1,12 +1,12 @@
 # All models for the acc_* tables
 from mgipython.modelconfig import db
 from ..core import *
-from acc import Accession
-from gxd import AlleleGenotype
-from img import *
-from mrk import *
-from mgi import *
-from voc import *
+from .acc import Accession
+from .gxd import AlleleGenotype
+from .img import *
+from .mrk import *
+from .mgi import *
+from .voc import *
 
 ###############################
 ###   Associative Objects   ###
@@ -59,11 +59,11 @@ class AlleleDriverRelationship(db.Model,MGIModel):
     _relationship_key = db.Column(db.Integer,primary_key=True)
     _category_key = db.Column(db.Integer)
     _object_key_1 = db.Column(db.Integer, 
-    			mgi_fk("all_allele._allele_key"), 
-			primary_key=True)
+                        mgi_fk("all_allele._allele_key"), 
+                        primary_key=True)
     _object_key_2 = db.Column(db.Integer, 
-    			mgi_fk("mrk_marker._marker_key"), 
-			primary_key=True)
+                        mgi_fk("mrk_marker._marker_key"), 
+                        primary_key=True)
 
 ########################
 ###   Main Objects   ###
@@ -236,7 +236,7 @@ class Allele(db.Model,MGIModel):
         secondary=AlleleDriverRelationship.__table__,
         primaryjoin="and_(Allele._allele_key==AlleleDriverRelationship._object_key_1, " 
                 "AlleleDriverRelationship._category_key==1006)",
-	secondaryjoin="AlleleDriverRelationship._object_key_2==Marker._marker_key",
+        secondaryjoin="AlleleDriverRelationship._object_key_2==Marker._marker_key",
         foreign_keys="[Allele._allele_key,Marker._marker_key]",
     )
 

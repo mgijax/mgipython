@@ -4,7 +4,7 @@ which takes dag nodes and builds a view
 of TreeNode objects for the template to render
 """
 from mgipython.model.query import batchLoadAttribute, batchLoadAttributeExists
-from TreeNode import TreeNode
+from .TreeNode import TreeNode
 
 def buildDagTrees(dagnodes, batchloadOn=True):
     """

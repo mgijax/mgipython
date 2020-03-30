@@ -24,7 +24,7 @@ def emapaStageParser(input):
         if "*" in input \
             or "all" in input:
             
-            return range(1, 29)
+            return list(range(1, 29))
         
         # split on comma, then parse each token
         commaSplit = input.split(",")
@@ -57,7 +57,7 @@ def emapaStageParser(input):
                     try:
                         leftStage = int(left)
                         rightStage = int(right)
-                    except ValueError, ve:
+                    except ValueError as ve:
                         raise InvalidStageInputError(ve.message)
                     
                     # left must not be greater than right
@@ -78,7 +78,7 @@ def emapaStageParser(input):
         
             try:
                 stage = int(stage)
-            except ValueError, ve:
+            except ValueError as ve:
                 raise InvalidStageInputError(ve.message)
             
             # only add distinct list of stages

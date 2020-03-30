@@ -50,7 +50,7 @@ class SearchQuery(Serializer):
         """
         sets search params
         """
-        for key, value in params.items():
+        for key, value in list(params.items()):
             self.set_param(key, value)
 
     def set_param(self, param_name, value):

@@ -1,6 +1,6 @@
 from mgipython.model import *
 from mgipython.model import *
-from base_dao import BaseDAO
+from .base_dao import BaseDAO
 
 class VocTermEMAPSDAO(BaseDAO):
 

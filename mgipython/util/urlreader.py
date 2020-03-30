@@ -3,7 +3,7 @@ Name: urlreader.py
 Purpose: to provide a convenient way to download data via a URL
 '''
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import base64
 
 # globals
@@ -45,16 +45,16 @@ class UrlReader:
         read data from the given 'url', using the given 'username' and 'password' (optionally) to log in.
         'headers' can by a python dictionary of HTTP header name : value pairs to submit to the server.
         '''
-        request = urllib2.Request(url)
+        request = urllib.request.Request(url)
 
         if headers:
-            for (name, value) in headers.items():
+            for (name, value) in list(headers.items()):
                 request.add_header(name, value)
 
         if username and password:
             request.add_header('Authorization', 'Basic ' + base64.b64encode('%s:%s' % (username, password)))
 
-        rawResponse = urllib2.urlopen(request, None, self.timeout)
+        rawResponse = urllib.request.urlopen(request, None, self.timeout)
         
         response = UrlResponse()
         response.statusCode = rawResponse.getcode()

@@ -1,8 +1,8 @@
 # All models for the bib_* tables
 from mgipython.modelconfig import db
 from ..core import *
-from acc import Accession, AccessionReference
-from voc import *
+from .acc import Accession, AccessionReference
+from .voc import *
 
 AP_GROUP = "AP"                     # workflow group abbreviations
 GO_GROUP = "GO"

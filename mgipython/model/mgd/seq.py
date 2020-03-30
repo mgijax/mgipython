@@ -2,7 +2,7 @@
 from mgipython.modelconfig import db
 from ..core import *
 
-from voc import VocTerm
+from .voc import VocTerm
 
 
 class SeqMarkerCache(db.Model,MGIModel):

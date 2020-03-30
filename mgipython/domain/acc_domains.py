@@ -1,4 +1,4 @@
-from base_serializer import Field, Serializer
+from .base_serializer import Field, Serializer
 from mgipython.domain.mgi_domains import *
 import logging
 

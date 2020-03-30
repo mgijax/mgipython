@@ -1,6 +1,6 @@
 from mgipython.model import MGIUser
 from mgipython.model import db
-from base_dao import BaseDAO
+from .base_dao import BaseDAO
 
 
 class UserDAO(BaseDAO):

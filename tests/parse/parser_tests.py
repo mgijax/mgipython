@@ -142,12 +142,12 @@ class TheilerStageParserTestCase(unittest.TestCase):
        
     def test_wildcard_asterisk(self):
        stages = emapaStageParser("*")
-       expected = range(1,29)
+       expected = list(range(1,29))
        self.assertEqual(expected, stages)
        
     def test_wildcard_all(self):
        stages = emapaStageParser("all")
-       expected = range(1,29)
+       expected = list(range(1,29))
        self.assertEqual(expected, stages)
        
        stages = emapaStageParser("ALL")
@@ -156,7 +156,7 @@ class TheilerStageParserTestCase(unittest.TestCase):
        
     def test_wildcard_in_list (self):
        stages = emapaStageParser("1, *, 20")
-       expected = range(1,29)
+       expected = list(range(1,29))
        self.assertEqual(expected, stages)
         
           
