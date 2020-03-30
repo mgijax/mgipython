@@ -10,14 +10,10 @@ then
 fi
 
 # Set the python that we want to use in this virtual environment
-# We need a 2.7 python executable with zlib and ssl
-PYTHON_HOME=/usr
-if [ "${OVERRIDE_PYTHON_HOME}" != "" ]; then
-	PYTHON_HOME=$OVERRIDE_PYTHON_HOME
-fi
-PYTHON_C_INCLUDE=$PYTHON_HOME/include/python2.7
+PYTHON_HOME=/opt/python3.7
+PYTHON_C_INCLUDE=$PYTHON_HOME/include/python3.7m
 PYTHON_LD_LIB=$PYTHON_HOME/lib
-PYTHON=$PYTHON_HOME/bin/python
+PYTHON=$PYTHON_HOME/bin/python3
 export PYTHON
 
 PG_PATH=/usr/local/pgsql/bin/:/usr/local/postgres/lib/:/usr/local/pgsql/lib/
