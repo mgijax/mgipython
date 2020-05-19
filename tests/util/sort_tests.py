@@ -8,9 +8,7 @@ sys.path.insert(1, os.path.join(os.path.dirname(__file__), '../..'))
 
 import unittest
 
-
-from mgipython.util.sort import smartAlphaCompare
-
+from mgipython.util.sort import smartAlphaCompare, smartAlphaFormat
 
 class SmartAlphaTest(unittest.TestCase):
     """
@@ -20,7 +18,7 @@ class SmartAlphaTest(unittest.TestCase):
     def test_simple_ascii(self):
         
         l = ["beta", "alpha"]       
-        l.sort(smartAlphaCompare)
+        l.sort(key=smartAlphaFormat)
         
         self.assertEqual(["alpha","beta"], l)
         
@@ -28,7 +26,7 @@ class SmartAlphaTest(unittest.TestCase):
     def test_simple_numeric(self):
         
         l = ["10","9","2","1"]       
-        l.sort(smartAlphaCompare)
+        l.sort(key=smartAlphaFormat)
         
         self.assertEqual(["1","2","9","10"], l)
         
@@ -36,7 +34,7 @@ class SmartAlphaTest(unittest.TestCase):
     def test_numeric_many_digits(self):
         
         l = ["1000000","1000","10","1","1000000000"]       
-        l.sort(smartAlphaCompare)
+        l.sort(key=smartAlphaFormat)
         
         self.assertEqual(["1","10","1000","1000000","1000000000"], l)
         
@@ -44,7 +42,7 @@ class SmartAlphaTest(unittest.TestCase):
     def test_basic_alpha_numeric(self):
         
         l = ["pax6","pax10","pax1"]       
-        l.sort(smartAlphaCompare)
+        l.sort(key=smartAlphaFormat)
         
         self.assertEqual(["pax1","pax6","pax10"], l)
         
@@ -52,7 +50,7 @@ class SmartAlphaTest(unittest.TestCase):
     def test_complex_alpha_numeric(self):
         
         l = ["10a5c50b12","10a5c50b1","1a5c50b12"]       
-        l.sort(smartAlphaCompare)
+        l.sort(key=smartAlphaFormat)
         
         self.assertEqual(["1a5c50b12","10a5c50b1","10a5c50b12"], l)
         
@@ -60,7 +58,7 @@ class SmartAlphaTest(unittest.TestCase):
     def test_alpha_numeric_with_spaces(self):
         
         l = ["somite 10", "somite 12", "somite 1"]       
-        l.sort(smartAlphaCompare)
+        l.sort(key=smartAlphaFormat)
         
         self.assertEqual(["somite 1", "somite 10", "somite 12"], l)
         
@@ -68,7 +66,7 @@ class SmartAlphaTest(unittest.TestCase):
     def test_alpha_numeric_with_special_characters(self):
         
         l = ["test.!@#$%^&*10", "test.!@#$%^&*9"]       
-        l.sort(smartAlphaCompare)
+        l.sort(key=smartAlphaFormat)
         
         self.assertEqual(["test.!@#$%^&*9", "test.!@#$%^&*10"], l)
    

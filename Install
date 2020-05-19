@@ -20,8 +20,8 @@ python setup.py install --record installed_files.txt
 
 printf "\nRunning unit tests \n"
 cd tests
-#python all_tests.py
-#if [ $? -ne 0 ]; then
-#        printf "\nUnit tests failed \n"
-#        exit 1
-#fi
+python3 all_tests.py
+if [ $? -ne 0 ]; then
+        printf "\nUnit tests failed \n"
+        exit 1
+fi

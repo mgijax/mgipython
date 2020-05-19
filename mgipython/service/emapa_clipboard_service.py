@@ -1,7 +1,7 @@
 from mgipython.modelconfig import cache
 from mgipython.error import NotFoundError, InvalidStageInputError, InvalidEMAPAIDError
 from mgipython.parse import emapaStageParser, splitCommaInput
-from mgipython.util.sort import smartAlphaCompare
+from mgipython.util.sort import smartAlphaCompare, smartAlphaFormat
 from mgipython.model.query import batchLoadAttribute
 from mgipython.model import SetMember, SetMemberEMAPA
 from mgipython.dao.emapa_clipboard_dao import EMAPAClipboardDAO
@@ -208,9 +208,19 @@ class EMAPAClipboardService():
             
             # user smart alpha for the term
             return smartAlphaCompare(a.emapa_term.term, b.emapa_term.term)
+
+
+
+        def stage_sort (set_member):
+            return set_member.emapa._stage_key
+
+        def smart_aplah_sort (set_member):
+            return smartAlphaFormat(set_member.emapa_term.term)
+
             
         # apply the sort
-        set_members.sort(stage_term_compare)
+        set_members.sort(key=smart_aplah_sort)
+        set_members.sort(key=stage_sort)
                 
         # assign sequencenum
         new_seqnum = 0
