@@ -71,7 +71,7 @@ class TreeNode():
         """
         for n in self.tree_list:
             if n.children:
-                n.children.sort(lambda a, b: cmp(a.term.lower(), b.term.lower()))
+                n.children.sort(key=lambda x: x.term.lower())
     
     def _edge_generator(self):
         """
