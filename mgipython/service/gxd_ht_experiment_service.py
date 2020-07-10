@@ -1,5 +1,6 @@
 from flask_login import current_user
 from mgipython.model.query import batchLoadAttribute
+from mgipython.util.sort import smartAlphaFormat
 from mgipython.service_schema import *
 from mgipython.service.helpers import *
 from mgipython.model import *
@@ -54,7 +55,14 @@ class GxdHTExperimentService():
         search_result.items = newitems
         return search_result
 
+    def sortResults (set_member):
+        return smartAlphaFormat(set_member.primaryid)
+
     def summary_search(self, search_query):
+
+        def sortResults (set_member):
+            return smartAlphaFormat(set_member.primaryid)
+
         for dateField in [ 'release_date', 'lastupdate_date', 'evaluated_date', 'curated_date', 'creation_date', 'modification_date' ]:
             if search_query.has_valid_param(dateField):
                 DateHelper().validate_date(search_query.get_value(dateField))
@@ -65,15 +73,9 @@ class GxdHTExperimentService():
             newitem = GxdHTExperimentSummaryDomain()
             newitem.load_from_model(item)
             newitems.append(newitem)
-        self._smartAlphaSortSummary(newitems)
+        newitems.sort(key=sortResults)
         search_result.items = newitems
         return search_result
-
-    def _smartAlphaSortSummary(self, experimentList):
-        def idCompare(a, b):
-            return symbolsort.nomenCompare(a.primaryid, b.primaryid)
-        experimentList.sort(idCompare)
-        return
 
     def total_count(self):
         return self.gxd_dao.get_total_count()

@@ -199,17 +199,6 @@ class EMAPAClipboardService():
         
         Assigns new sequencenum for each item
         """
-        
-        # define the compare function
-        def stage_term_compare(a, b):
-            
-            if a.emapa._stage_key != b.emapa._stage_key:
-                return cmp(a.emapa._stage_key, b.emapa._stage_key)
-            
-            # user smart alpha for the term
-            return smartAlphaCompare(a.emapa_term.term, b.emapa_term.term)
-
-
 
         def stage_sort (set_member):
             return set_member.emapa._stage_key
