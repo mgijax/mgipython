@@ -39,7 +39,7 @@ class MarkerService():
         batchLoadAttribute(markers, 'current_markers')
         batchLoadAttribute(markers, 'featuretype_vocterms')
         
-        ValidMarkerSortHelper().sort(markers)
+        #ValidMarkerSortHelper().sort(markers)
         
         # convert db models to domain objects
         search_results.items = convert_models(markers, SmallMarker)
