@@ -37,8 +37,7 @@ class Reference(db.Model,MGIModel):
     authors = db.Column(db.String())
     _primary = db.Column(db.String())
     title = db.Column(db.String())
-    # this is a way to fix unicode.decode errors, but has a slight performance cost
-    abstract = db.Column(db.String(convert_unicode='force',unicode_error="ignore"))
+    abstract = db.Column(db.String())
     journal = db.Column(db.String())
     year = db.Column(db.Integer())
     date = db.Column(db.Integer())

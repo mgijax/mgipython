@@ -78,10 +78,7 @@ class Note(db.Model,MGIModel):
     @property
     def text(self):
         text = ''.join([c.note for c in self.chunks])
-        #text = u''.join([c.note for c in self.chunks])
         return text
-        #return text.encode('utf-8')
-        #return unicode(text)
 
     def __repr__(self):
         return self.text
@@ -90,8 +87,7 @@ class NoteChunk(db.Model,MGIModel):
     __tablename__ = "mgi_notechunk"
     _note_key = db.Column(db.Integer,mgi_fk("mgi_note._note_key"),primary_key=True)
     sequencenum = db.Column(db.Integer,primary_key=True)
-    #note = db.Column(db.String())
-    note = db.Column(db.String(convert_unicode='force',unicode_error="ignore"))
+    note = db.Column(db.String())
     
     def __repr__(self):
         return self.note
