@@ -1,3 +1,8 @@
+TAG: mgipython-6-0-16-2
+DATE: 10/06/2020
+STAFF: lec
+bib.py , gxd.py , mgi.py : removed convert_unicode
+
 TAG: mgipython-6-0-16-1
 DATE: 08/24/2020
 STAFF: lec
