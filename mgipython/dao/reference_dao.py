@@ -39,7 +39,7 @@ class ReferenceDAO(BaseDAO):
         query = Reference.query
         
         # only include isDiscared = 0
-        query = query.filter(Reference.isdiscard == 0)
+        #query = query.filter(Reference.isdiscard == 0)
             
         if search_query.has_valid_param("issue"):
             issue = search_query.get_value("issue").lower()
