@@ -42,7 +42,7 @@ class Reference(db.Model,MGIModel):
     year = db.Column(db.Integer())
     date = db.Column(db.Integer())
     isreviewarticle = db.Column(db.Integer())
-    isdiscard = db.Column(db.Integer())
+    #isdiscard = db.Column(db.Integer())
     #date.quote=False
     vol = db.Column(db.Integer())
     issue = db.Column(db.Integer())
