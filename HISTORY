@@ -1,3 +1,8 @@
+TAG: mgipython-6-0-16-3
+DATE: 10/30/2020
+STAFF: dbm
+CHANGES: Configuration.default: Postgres 12 changes
+
 TAG: mgipython-6-0-16-2
 DATE: 10/06/2020
 STAFF: lec
